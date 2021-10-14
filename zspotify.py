@@ -230,8 +230,9 @@ def getSongInfo(songId):
     disc_number = info['tracks'][0]['disc_number']
     track_number = info['tracks'][0]['track_number']
     scrapedSongId = info['tracks'][0]['id']
+    isPlayAble = info['tracks'][0]['is_playable']
 
-    return artists, albumName, name, imageUrl, releaseYear, disc_number, track_number, scrapedSongId
+    return artists, albumName, name, imageUrl, releaseYear, disc_number, track_number, scrapedSongId, isPlayAble
     
     
     
@@ -339,69 +340,71 @@ def get_album_name(access_token, album_id):
 #Functions directly related to downloading stuff
 def downloadTrack(track_id_str: str, extra_paths = ""):
     global rootPath, skipExistingFiles
+    
     track_id = TrackId.from_base62(track_id_str)
-    artists, albumName, name, imageUrl, releaseYear, disc_number, track_number, scrapedSongId = getSongInfo(track_id_str)
+    artists, albumName, name, imageUrl, releaseYear, disc_number, track_number, scrapedSongId, isPlayAble = getSongInfo(track_id_str)
     
     songName = artists[0] + " - " + name
     filename = rootPath + extra_paths + songName + '.mp3'
     
     
-    skipExistingFiles
-    
-    if os.path.isfile(filename) and  skipExistingFiles:
-        print("###   SKIPPING:", songName, "(SONG ALREADY EXISTS)   ###")
+    if not isPlayAble:
+        print("###   SKIPPING:", songName, "(SONG IS UNAVAILABLE)   ###")
     else:
-        if track_id_str != scrapedSongId:
-            print("###   APPLYING PATCH TO LET SONG DOWNLOAD   ###")
-            track_id_str = scrapedSongId
-            track_id = TrackId.from_base62(track_id_str)
+        if os.path.isfile(filename) and  skipExistingFiles:
+            print("###   SKIPPING:", songName, "(SONG ALREADY EXISTS)   ###")
+        else:
+            if track_id_str != scrapedSongId:
+                print("###   APPLYING PATCH TO LET SONG DOWNLOAD   ###")
+                track_id_str = scrapedSongId
+                track_id = TrackId.from_base62(track_id_str)
 
-        print("###   FOUND SONG:", songName, "   ###")
+            print("###   FOUND SONG:", songName, "   ###")
 
-        stream = session.content_feeder().load(
-            track_id, VorbisOnlyAudioQuality(quality), False, None)
+            stream = session.content_feeder().load(
+                track_id, VorbisOnlyAudioQuality(quality), False, None)
 
-   
-        print("###   DOWNLOADING RAW AUDIO   ###")
+       
+            print("###   DOWNLOADING RAW AUDIO   ###")
 
-        if not os.path.isdir(rootPath + extra_paths):
-            os.makedirs(rootPath + extra_paths)
+            if not os.path.isdir(rootPath + extra_paths):
+                os.makedirs(rootPath + extra_paths)
 
-        with open(filename,'wb') as f:
-            '''
-            chunk_size = 1024 * 16
-            buffer = bytearray(chunk_size)
-            bpos = 0
-            '''
-            
-            #With the updated version of librespot my faster download method broke so we are using the old fallback method
-            while True:
-                byte = stream.input_stream.stream().read()
-                if byte == b'':
-                    break
-                f.write(byte)
-
-            '''
-            while True:
-                byte = stream.input_stream.stream().read()
+            with open(filename,'wb') as f:
+                '''
+                chunk_size = 1024 * 16
+                buffer = bytearray(chunk_size)
+                bpos = 0
+                '''
                 
-                if byte == -1:
-                    # flush buffer before breaking
-                    if bpos > 0:
-                        f.write(buffer[0:bpos])
-                    break
+                #With the updated version of librespot my faster download method broke so we are using the old fallback method
+                while True:
+                    byte = stream.input_stream.stream().read()
+                    if byte == b'':
+                        break
+                    f.write(byte)
 
-                print(bpos)
-                buffer[bpos] = byte
-                bpos += 1
+                '''
+                while True:
+                    byte = stream.input_stream.stream().read()
+                    
+                    if byte == -1:
+                        # flush buffer before breaking
+                        if bpos > 0:
+                            f.write(buffer[0:bpos])
+                        break
 
-                if bpos == (chunk_size):
-                    f.write(buffer)
-                    bpos = 0
-            '''
-        convertToMp3(filename)
-        setAudioTags(filename, artists, name, albumName, releaseYear, disc_number, track_number)
-        setMusicThumbnail(filename, imageUrl)
+                    print(bpos)
+                    buffer[bpos] = byte
+                    bpos += 1
+
+                    if bpos == (chunk_size):
+                        f.write(buffer)
+                        bpos = 0
+                '''
+            convertToMp3(filename)
+            setAudioTags(filename, artists, name, albumName, releaseYear, disc_number, track_number)
+            setMusicThumbnail(filename, imageUrl)
 
 def downloadAlbum(album):
     token = session.tokens().get("user-read-email")
