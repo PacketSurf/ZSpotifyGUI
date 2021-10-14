@@ -45,7 +45,7 @@ def wait(seconds: int = 3):
         time.sleep(1)
 
 def sanitizeData(value):
-    return value.replace("\\", "").replace("/", "")
+    return value.replace("\\", "").replace("/", "").replace(":", "").replace("*", "").replace("?", "").replace("'", "").replace("<", "").replace(">", "")
 
 def splash():
     print("=================================\n"
@@ -211,8 +211,9 @@ def search(searchTerm):
             playlistChoice = playlists[position - totalTracks - totalAlbums - 1]
             playlistSongs = get_playlist_songs(token, playlistChoice['id'])
             for song in playlistSongs:
-                downloadTrack(song['track']['id'], sanitizeData(playlistChoice['name'].strip()) + "/")
-                print("\n")
+                if song['track']['id'] != None:
+                    downloadTrack(song['track']['id'], sanitizeData(playlistChoice['name'].strip()) + "/")
+                    print("\n")
     
 def getSongInfo(songId):
     token = session.tokens().get("user-read-email")
@@ -422,8 +423,8 @@ def downloadFromOurPlaylists():
     playlistChoice = input("SELECT A PLAYLIST BY ID: ")
     playlistSongs = get_playlist_songs(token, playlists[int(playlistChoice) - 1]['id'])
     for song in playlistSongs:
-    
-        downloadTrack(song['track']['id'], sanitizeData(playlists[int(playlistChoice) - 1]['name'].strip()) + "/")
+        if song['track']['id'] != None:
+            downloadTrack(song['track']['id'], sanitizeData(playlists[int(playlistChoice) - 1]['name'].strip()) + "/")
         print("\n")
 
 
