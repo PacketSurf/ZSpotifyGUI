@@ -45,7 +45,7 @@ def wait(seconds: int = 3):
         time.sleep(1)
 
 def sanitizeData(value):
-    return value.replace("\\", "").replace("/", "").replace(":", "").replace("*", "").replace("?", "").replace("'", "").replace("<", "").replace(">", "")
+    return value.replace("\\", "").replace("/", "").replace(":", "").replace("*", "").replace("?", "").replace("'", "").replace("<", "").replace(">", "").replace('"',"")
 
 def splash():
     print("=================================\n"
