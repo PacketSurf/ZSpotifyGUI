@@ -15,14 +15,14 @@ import json
 
 import music_tag
 
-from librespot.audio.decoders import AudioQuality
+from librespot.audio.decoders import AudioQuality, VorbisOnlyAudioQuality
 from librespot.core import Session
 from librespot.metadata import TrackId
-from librespot.player.codecs import VorbisOnlyAudioQuality
 
 from pydub import AudioSegment
 
 quality: AudioQuality = AudioQuality.HIGH
+#quality: AudioQuality = AudioQuality.VERY_HIGH #Uncomment this line if you have a premium account
 session: Session = None
 
 import hashlib
@@ -367,10 +367,20 @@ def downloadTrack(track_id_str: str, extra_paths = ""):
             os.makedirs(rootPath + extra_paths)
 
         with open(filename,'wb') as f:
+            '''
             chunk_size = 1024 * 16
             buffer = bytearray(chunk_size)
             bpos = 0
+            '''
+            
+            #With the updated version of librespot my faster download method broke so we are using the old fallback method
+            while True:
+                byte = stream.input_stream.stream().read()
+                if byte == b'':
+                    break
+                f.write(byte)
 
+            '''
             while True:
                 byte = stream.input_stream.stream().read()
                 
@@ -380,13 +390,14 @@ def downloadTrack(track_id_str: str, extra_paths = ""):
                         f.write(buffer[0:bpos])
                     break
 
+                print(bpos)
                 buffer[bpos] = byte
                 bpos += 1
 
                 if bpos == (chunk_size):
                     f.write(buffer)
                     bpos = 0
-            
+            '''
         convertToMp3(filename)
         setAudioTags(filename, artists, name, albumName, releaseYear, disc_number, track_number)
         setMusicThumbnail(filename, imageUrl)
