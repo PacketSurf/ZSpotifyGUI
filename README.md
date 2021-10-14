@@ -2,6 +2,9 @@
 Spotify song downloader without injecting into the windows client
 ![image](https://user-images.githubusercontent.com/12180913/137086248-371a3d81-75b3-4d75-a90c-966549c45745.png)
 ```
+sudo apt install ffmpeg (For windows download the binarys and place it in %PATH%)
+pip music_tag
+pip pydub
 pip install git+https://github.com/kokarare1212/librespot-python
 ```
 
