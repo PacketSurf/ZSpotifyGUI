@@ -361,50 +361,52 @@ def downloadTrack(track_id_str: str, extra_paths = ""):
 
             print("###   FOUND SONG:", songName, "   ###")
 
-            stream = session.content_feeder().load(
-                track_id, VorbisOnlyAudioQuality(quality), False, None)
+            try:
+                stream = session.content_feeder().load(
+                    track_id, VorbisOnlyAudioQuality(quality), False, None)
+            except:
+                print("###   SKIPPING:", songName, "(GENERAL DOWNLOAD ERROR)   ###")
+            else:
+                print("###   DOWNLOADING RAW AUDIO   ###")
 
-       
-            print("###   DOWNLOADING RAW AUDIO   ###")
+                if not os.path.isdir(rootPath + extra_paths):
+                    os.makedirs(rootPath + extra_paths)
 
-            if not os.path.isdir(rootPath + extra_paths):
-                os.makedirs(rootPath + extra_paths)
-
-            with open(filename,'wb') as f:
-                '''
-                chunk_size = 1024 * 16
-                buffer = bytearray(chunk_size)
-                bpos = 0
-                '''
-                
-                #With the updated version of librespot my faster download method broke so we are using the old fallback method
-                while True:
-                    byte = stream.input_stream.stream().read()
-                    if byte == b'':
-                        break
-                    f.write(byte)
-
-                '''
-                while True:
-                    byte = stream.input_stream.stream().read()
+                with open(filename,'wb') as f:
+                    '''
+                    chunk_size = 1024 * 16
+                    buffer = bytearray(chunk_size)
+                    bpos = 0
+                    '''
                     
-                    if byte == -1:
-                        # flush buffer before breaking
-                        if bpos > 0:
-                            f.write(buffer[0:bpos])
-                        break
+                    #With the updated version of librespot my faster download method broke so we are using the old fallback method
+                    while True:
+                        byte = stream.input_stream.stream().read()
+                        if byte == b'':
+                            break
+                        f.write(byte)
 
-                    print(bpos)
-                    buffer[bpos] = byte
-                    bpos += 1
+                    '''
+                    while True:
+                        byte = stream.input_stream.stream().read()
+                        
+                        if byte == -1:
+                            # flush buffer before breaking
+                            if bpos > 0:
+                                f.write(buffer[0:bpos])
+                            break
 
-                    if bpos == (chunk_size):
-                        f.write(buffer)
-                        bpos = 0
-                '''
-            convertToMp3(filename)
-            setAudioTags(filename, artists, name, albumName, releaseYear, disc_number, track_number)
-            setMusicThumbnail(filename, imageUrl)
+                        print(bpos)
+                        buffer[bpos] = byte
+                        bpos += 1
+
+                        if bpos == (chunk_size):
+                            f.write(buffer)
+                            bpos = 0
+                    '''
+                convertToMp3(filename)
+                setAudioTags(filename, artists, name, albumName, releaseYear, disc_number, track_number)
+                setMusicThumbnail(filename, imageUrl)
 
 def downloadAlbum(album):
     token = session.tokens().get("user-read-email")
