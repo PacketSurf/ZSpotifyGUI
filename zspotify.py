@@ -404,9 +404,14 @@ def downloadTrack(track_id_str: str, extra_paths = ""):
                             f.write(buffer)
                             bpos = 0
                     '''
-                convertToMp3(filename)
-                setAudioTags(filename, artists, name, albumName, releaseYear, disc_number, track_number)
-                setMusicThumbnail(filename, imageUrl)
+                try:
+                    convertToMp3(filename)
+                except:
+                    os.remove(filename)
+                    print("###   SKIPPING:", songName, "(GENERAL CONVERSION ERROR)   ###")
+                else:
+                    setAudioTags(filename, artists, name, albumName, releaseYear, disc_number, track_number)
+                    setMusicThumbnail(filename, imageUrl)
 
 def downloadAlbum(album):
     token = session.tokens().get("user-read-email")
