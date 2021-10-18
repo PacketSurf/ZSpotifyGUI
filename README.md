@@ -6,6 +6,7 @@ sudo apt install ffmpeg (For windows download the binarys and place it in %PATH%
 pip install requests
 pip install music_tag
 pip install pydub
+pip install websocket-client
 pip install git+https://github.com/kokarare1212/librespot-python
 ```
 
