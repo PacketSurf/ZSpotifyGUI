@@ -249,7 +249,7 @@ def getSongInfo(songId):
 def checkPremium(access_token):
     headers = {'Authorization': f'Bearer {access_token}'}
     resp = requests.get('https://api.spotify.com/v1/me', headers=headers).json()
-    if resp["product"] == "premium":
+    if "product" in resp and resp["product"] == "premium":
         return True
     else:
         return False
