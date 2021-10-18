@@ -22,7 +22,7 @@ from librespot.metadata import TrackId
 from pydub import AudioSegment
 
 quality: AudioQuality = AudioQuality.HIGH
-#quality: AudioQuality = AudioQuality.VERY_HIGH #Uncomment this line if you have a premium account
+quality: AudioQuality = AudioQuality.VERY_HIGH #Uncomment this line if you have a premium account
 session: Session = None
 
 import hashlib
@@ -86,44 +86,44 @@ def client():
                 r"^(https?://)?open\.spotify\.com/track/(?P<TrackID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
                 sys.argv[1],
             )
-            
+
             album_uri_search = re.search(
                 r"^spotify:album:(?P<AlbumID>[0-9a-zA-Z]{22})$", sys.argv[1])
             album_url_search = re.search(
                 r"^(https?://)?open\.spotify\.com/album/(?P<AlbumID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
                 sys.argv[1],
             )
-            
+
             playlist_uri_search = re.search(
                 r"^spotify:playlist:(?P<PlaylistID>[0-9a-zA-Z]{22})$", sys.argv[1])
             playlist_url_search = re.search(
                 r"^(https?://)?open\.spotify\.com/playlist/(?P<PlaylistID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
                 sys.argv[1],
             )
-            
+
             if track_uri_search is not None or track_url_search is not None:
                 track_id_str = (track_uri_search
                                 if track_uri_search is not None else
                                 track_url_search).group("TrackID")
-                                
+
                 downloadTrack(track_id_str)
             elif album_uri_search is not None or album_url_search is not None:
                 album_id_str = (album_uri_search
                                 if album_uri_search is not None else
                                 album_url_search).group("AlbumID")
-                                
+
                 downloadAlbum(album_id_str)
             elif playlist_uri_search is not None or playlist_url_search is not None:
                 playlist_id_str = (playlist_uri_search
                                 if playlist_uri_search is not None else
                                 playlist_url_search).group("PlaylistID")
-                                
+
                 token = session.tokens().get("user-read-email")
                 playlistSongs = get_playlist_songs(token, playlist_id_str)
                 name, creator = get_playlist_info(token, playlist_id_str)
                 for song in playlistSongs:
                     downloadTrack(song['track']['id'], name + "/")
-                    print("\n")                
+                    print("\n")
         else:
             downloadFromOurPlaylists()
     else:
@@ -136,8 +136,8 @@ def client():
 #related functions that do stuff with the spotify API
 def search(searchTerm):
     token = session.tokens().get("user-read-email")
-    
-    
+
+
     resp = requests.get(
         "https://api.spotify.com/v1/search",
         {
@@ -148,7 +148,7 @@ def search(searchTerm):
         },
         headers={"Authorization": "Bearer %s" % token},
     )
-    
+
     i = 1
     tracks = resp.json()["tracks"]["items"]
     if len(tracks) > 0:
@@ -164,8 +164,8 @@ def search(searchTerm):
         print("\n")
     else:
         totalTracks = 0
-    
-    
+
+
     albums = resp.json()["albums"]["items"]
     if len(albums) > 0:
         print("###  ALBUMS  ###")
@@ -180,8 +180,8 @@ def search(searchTerm):
         print("\n")
     else:
         totalAlbums = 0
-    
-    
+
+
     playlists = resp.json()["playlists"]["items"]
     if len(playlists) > 0:
         print("###  PLAYLISTS  ###")
@@ -196,12 +196,12 @@ def search(searchTerm):
         print("\n")
     else:
         totalPlaylists = 0
-    
+
     if len(tracks) + len(albums) + len(playlists) == 0:
         print("NO RESULTS FOUND - EXITING...")
     else:
         position = int(input("SELECT ITEM BY ID: "))
-    
+
         if position <= totalTracks:
             trackId = tracks[position - 1]["id"]
             downloadTrack(trackId)
@@ -214,12 +214,12 @@ def search(searchTerm):
                 if song['track']['id'] != None:
                     downloadTrack(song['track']['id'], sanitizeData(playlistChoice['name'].strip()) + "/")
                     print("\n")
-    
+
 def getSongInfo(songId):
     token = session.tokens().get("user-read-email")
-   
+
     info = json.loads(requests.get("https://api.spotify.com/v1/tracks?ids=" + songId + '&market=from_token', headers={"Authorization": "Bearer %s" % token}).text)
-   
+
     artists = []
     for x in info['tracks'][0]['artists']:
         artists.append(sanitizeData(x['name']))
@@ -233,15 +233,19 @@ def getSongInfo(songId):
     isPlayAble = info['tracks'][0]['is_playable']
 
     return artists, albumName, name, imageUrl, releaseYear, disc_number, track_number, scrapedSongId, isPlayAble
-    
-    
-    
+
+
+
 #Functions directly related to modifying the downloaded audio and its metadata
 def convertToMp3(filename):
     print("###   CONVERTING TO MP3   ###")
     raw_audio = AudioSegment.from_file(filename, format="ogg",
                                    frame_rate=44100, channels=2, sample_width=2)
-    raw_audio.export(filename, format="mp3")
+    if quality == AudioQuality.VERY_HIGH:
+        bitrate = "320k"
+    else:
+        bitrate = "160k"
+    raw_audio.export(filename, format="mp3", bitrate=bitrate)
 
 def setAudioTags(filename, artists, name, albumName, releaseYear, disc_number, track_number):
     print("###   SETTING MUSIC TAGS   ###")
@@ -260,7 +264,7 @@ def setMusicThumbnail(filename, imageUrl):
     f = music_tag.load_file(filename)
     f['artwork'] = r
     f.save()
-    
+
 def convArtistFormat(artists):
     formatted = ""
     for x in artists:
@@ -274,10 +278,10 @@ def get_all_playlists(access_token):
     playlists = []
     limit = 50
     offset = 0
-    
+
     while True:
         headers = {'Authorization': f'Bearer {access_token}'}
-        params = {'limit': limit, 'offset': offset}        
+        params = {'limit': limit, 'offset': offset}
         resp = requests.get("https://api.spotify.com/v1/me/playlists", headers=headers, params=params).json()
         offset += limit
         playlists.extend(resp['items'])
@@ -294,11 +298,11 @@ def get_playlist_songs(access_token, playlist_id):
 
     while True:
         headers = {'Authorization': f'Bearer {access_token}'}
-        params = {'limit': limit, 'offset': offset}        
+        params = {'limit': limit, 'offset': offset}
         resp = requests.get(f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks', headers=headers, params=params).json()
         offset += limit
         songs.extend(resp['items'])
-        
+
         if len(resp['items']) < limit:
             break
 
@@ -318,11 +322,11 @@ def get_album_tracks(access_token, album_id):
 
     while True:
         headers = {'Authorization': f'Bearer {access_token}'}
-        params = {'limit': limit, 'offset': offset}        
+        params = {'limit': limit, 'offset': offset}
         resp = requests.get(f'https://api.spotify.com/v1/albums/{album_id}/tracks', headers=headers, params=params).json()
         offset += limit
         songs.extend(resp['items'])
-        
+
         if len(resp['items']) < limit:
             break
 
@@ -340,14 +344,14 @@ def get_album_name(access_token, album_id):
 #Functions directly related to downloading stuff
 def downloadTrack(track_id_str: str, extra_paths = ""):
     global rootPath, skipExistingFiles
-    
+
     track_id = TrackId.from_base62(track_id_str)
     artists, albumName, name, imageUrl, releaseYear, disc_number, track_number, scrapedSongId, isPlayAble = getSongInfo(track_id_str)
-    
+
     songName = artists[0] + " - " + name
     filename = rootPath + extra_paths + songName + '.mp3'
-    
-    
+
+
     if not isPlayAble:
         print("###   SKIPPING:", songName, "(SONG IS UNAVAILABLE)   ###")
     else:
@@ -378,7 +382,7 @@ def downloadTrack(track_id_str: str, extra_paths = ""):
                     buffer = bytearray(chunk_size)
                     bpos = 0
                     '''
-                    
+
                     #With the updated version of librespot my faster download method broke so we are using the old fallback method
                     while True:
                         byte = stream.input_stream.stream().read()
@@ -389,7 +393,7 @@ def downloadTrack(track_id_str: str, extra_paths = ""):
                     '''
                     while True:
                         byte = stream.input_stream.stream().read()
-                        
+
                         if byte == -1:
                             # flush buffer before breaking
                             if bpos > 0:
@@ -424,12 +428,12 @@ def downloadAlbum(album):
 def downloadFromOurPlaylists():
     token = session.tokens().get("user-read-email")
     playlists = get_all_playlists(token)
-    
+
     count = 1
     for playlist in playlists:
         print(str(count) + ": " + playlist['name'].strip())
         count += 1
-    
+
     playlistChoice = input("SELECT A PLAYLIST BY ID: ")
     playlistSongs = get_playlist_songs(token, playlists[int(playlistChoice) - 1]['id'])
     for song in playlistSongs:
@@ -440,13 +444,13 @@ def downloadFromOurPlaylists():
 
 #Core functions here
 def main():
-    login()  
+    login()
     client()
 
 if __name__ == "__main__":
     main()
-    
-    
+
+
 #Left over code ill probably want to reference at some point
 """
         if args[0] == "q" or args[0] == "quality":
@@ -466,4 +470,4 @@ if __name__ == "__main__":
 
 
 #TO DO'S:
-#MAKE AUDIO SAVING MORE EFFICIENT 
+#MAKE AUDIO SAVING MORE EFFICIENT
