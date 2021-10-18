@@ -12,13 +12,11 @@ Binaries
 
 Python packages:
 
-Install these with pip install *package name*
-
-- websocket-client
-- requests
-- music_tag
-- pydub
-- git+https://github.com/kokarare1212/librespot-python
+- pip install websocket-client
+- pip install requests
+- pip install music_tag
+- pip install pydub
+- pip install git+https://github.com/kokarare1212/librespot-python
 
 ```
 \*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows.
