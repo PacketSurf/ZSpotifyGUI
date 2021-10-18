@@ -21,8 +21,6 @@ from librespot.metadata import TrackId
 
 from pydub import AudioSegment
 
-quality: AudioQuality = AudioQuality.HIGH
-#quality: AudioQuality = AudioQuality.VERY_HIGH #Uncomment this line if you have a premium account
 session: Session = None
 
 import hashlib
@@ -78,6 +76,16 @@ def login():
 def client():
     global quality, session
     splash()
+
+    token = session.tokens().get("user-read-email")
+
+    if checkPremium(token):
+        print("###  DETECTED PREMIUM ACCOUNT - USING VERY_HIGH QUALITY   ###")
+        quality = AudioQuality.VERY_HIGH
+    else:
+        print("###  DETECTED FREE ACCOUNT - USING HIGH QUALITY   ###")
+        quality = AudioQuality.HIGH
+
     if len(sys.argv) > 1:
         if sys.argv[1] != "-p" and sys.argv[1] != "--playlist":
             track_uri_search = re.search(
@@ -118,7 +126,6 @@ def client():
                                 if playlist_uri_search is not None else
                                 playlist_url_search).group("PlaylistID")
 
-                token = session.tokens().get("user-read-email")
                 playlistSongs = get_playlist_songs(token, playlist_id_str)
                 name, creator = get_playlist_info(token, playlist_id_str)
                 for song in playlistSongs:
@@ -241,9 +248,9 @@ def checkPremium(access_token):
         return True
     else:
         return False
-    
 
-    
+
+
 #Functions directly related to modifying the downloaded audio and its metadata
 def convertToMp3(filename):
     print("###   CONVERTING TO MP3   ###")
@@ -457,25 +464,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-#Left over code ill probably want to reference at some point
-"""
-        if args[0] == "q" or args[0] == "quality":
-            if len(args) == 1:
-                print("Current Quality: " + quality.name)
-                wait()
-            elif len(args) == 2:
-                if args[1] == "normal" or args[1] == "96":
-                    quality = AudioQuality.NORMAL
-                elif args[1] == "high" or args[1] == "160":
-                    quality = AudioQuality.HIGH
-                elif args[1] == "veryhigh" or args[1] == "320":
-                    quality = AudioQuality.VERY_HIGH
-                print("Set Quality to %s" % quality.name)
-                wait()
-"""
-
-
-#TO DO'S:
-#MAKE AUDIO SAVING MORE EFFICIENT
