@@ -129,7 +129,7 @@ def client():
                 playlistSongs = get_playlist_songs(token, playlist_id_str)
                 name, creator = get_playlist_info(token, playlist_id_str)
                 for song in playlistSongs:
-                    downloadTrack(song['track']['id'], name + "/")
+                    downloadTrack(song['track']['id'], sanitizeData(name) + "/")
                     print("\n")
         else:
             downloadFromOurPlaylists()
