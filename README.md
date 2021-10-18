@@ -21,7 +21,7 @@ Install these with pip install *package name*
 - git+https://github.com/kokarare1212/librespot-python
 
 ```
-ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows.
+\*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows.
 
 - Use "-p" or "--playlist" to download a saved playlist from our account
 - Supply the URL or ID of a Track/Album/Playlist as an argument to download it
