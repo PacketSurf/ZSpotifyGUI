@@ -234,8 +234,16 @@ def getSongInfo(songId):
 
     return artists, albumName, name, imageUrl, releaseYear, disc_number, track_number, scrapedSongId, isPlayAble
 
+def checkPremium(access_token):
+    headers = {'Authorization': f'Bearer {access_token}'}
+    resp = requests.get('https://api.spotify.com/v1/me', headers=headers).json()
+    if resp["product"] == "premium":
+        return True
+    else:
+        return False
+    
 
-
+    
 #Functions directly related to modifying the downloaded audio and its metadata
 def convertToMp3(filename):
     print("###   CONVERTING TO MP3   ###")
