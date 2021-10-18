@@ -87,7 +87,14 @@ def client():
         quality = AudioQuality.HIGH
 
     if len(sys.argv) > 1:
-        if sys.argv[1] != "-p" and sys.argv[1] != "--playlist":
+        if sys.argv[1] == "-p" or sys.argv[1] == "--playlist":
+            downloadFromOurPlaylists()
+        elif sys.argv[1] == "-ls" or sys.argv[1] == "--liked-songs":
+            savedSongs = get_saved_tracks(token)
+            for song in savedSongs:
+                downloadTrack(song['track']['id'], "Liked Songs/")
+                print("\n")
+        else:
             track_uri_search = re.search(
                 r"^spotify:track:(?P<TrackID>[0-9a-zA-Z]{22})$", sys.argv[1])
             track_url_search = re.search(
@@ -131,8 +138,6 @@ def client():
                 for song in playlistSongs:
                     downloadTrack(song['track']['id'], sanitizeData(name) + "/")
                     print("\n")
-        else:
-            downloadFromOurPlaylists()
     else:
         searchText = input("Enter search: ")
         search(searchText)
@@ -353,6 +358,23 @@ def get_album_name(access_token, album_id):
     return resp['artists'][0]['name'], sanitizeData(resp['name'])
 
 
+#Extra functions directly related to our saved tracks
+def get_saved_tracks(access_token):
+    songs = []
+    offset = 0
+    limit = 50
+
+    while True:
+        headers = {'Authorization': f'Bearer {access_token}'}
+        params = {'limit': limit, 'offset': offset}
+        resp = requests.get(f'https://api.spotify.com/v1/me/tracks', headers=headers, params=params).json()
+        offset += limit
+        songs.extend(resp['items'])
+
+        if len(resp['items']) < limit:
+            break
+
+    return songs
 
 
 
