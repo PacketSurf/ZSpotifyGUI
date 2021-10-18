@@ -18,5 +18,6 @@ Python packages:
 \*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows.
 
 - Use "-p" or "--playlist" to download a saved playlist from our account
+- Use "-ls" or "--liked-songs" to download all the liked songs from out account
 - Supply the URL or ID of a Track/Album/Playlist as an argument to download it
 - Don't supply any arguments and it will give you a search input field to find and download a specific Track/Album/Playlist via the query.
