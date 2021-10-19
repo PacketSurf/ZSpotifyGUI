@@ -22,8 +22,16 @@ Python packages:
 - Supply the URL or ID of a Track/Album/Playlist as an argument to download it
 - Don't supply any arguments and it will give you a search input field to find and download a specific Track/Album/Playlist via the query.
 
+- Change the musicFormat variable in zspotify.py to "ogg" if you rather that over "mp3"
+
+![image](https://user-images.githubusercontent.com/12180913/137824672-569d1d32-a5c5-4a5a-908c-bfd09ef256b3.png)
+
 
 ## **Changelog:**
+**v1.4 (19 Oct 2021):**
+- Added option to encode the downloaded tracks in the "ogg" format rather than "mp3".
+- Added small improvement to sanitation function so it catches another edge case.
+
 **v1.3 (19 Oct 2021):**
 - Added auto detection about if the current account is premium or not. If it is a premium account it automatically sets the quality to VERY_HIGH and otherwise HIGH if we are using a free account.
 - Fixed conversion function so it now exports to the correct bitrate.
