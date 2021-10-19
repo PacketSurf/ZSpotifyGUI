@@ -22,9 +22,10 @@ Python packages:
 - Supply the URL or ID of a Track/Album/Playlist as an argument to download it
 - Don't supply any arguments and it will give you a search input field to find and download a specific Track/Album/Playlist via the query.
 
-- Change the musicFormat variable in zspotify.py to "ogg" if you rather that over "mp3"
+- Change the MUSIC_FORMAT variable in zspotify.py to "ogg" if you rather that over "mp3"
+- Change the FORCE_PREMIUM in zspotify.py to True if it is not automatically detecting your premium account.
 
-![image](https://user-images.githubusercontent.com/12180913/137824672-569d1d32-a5c5-4a5a-908c-bfd09ef256b3.png)
+![image](https://user-images.githubusercontent.com/12180913/137976375-835fda16-f2f4-4dcd-9d35-8789cc4c0a11.png)
 
 
 ## **Changelog:**
