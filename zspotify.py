@@ -82,7 +82,7 @@ def login():
 
 
 def client():
-    """ Connects to spotify to perform querys and get songs to download """
+    """ Connects to spotify to perform query's and get songs to download """
     global QUALITY, SESSION
     splash()
 
@@ -444,7 +444,7 @@ def download_track(track_id_str: str, extra_paths=""):
 
                 with open(filename, 'wb') as file:
                     while True:
-                        # Trys to read exactly 128kb at a time to be more efficient now
+                        # Try's to read exactly 128kb at a time to be more efficient now
                         byte = stream.input_stream.stream().read(1024 * 128)
                         if byte == b'':
                             break
