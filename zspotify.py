@@ -24,7 +24,7 @@ SESSION: Session = None
 ROOT_PATH = "ZSpotify Music/"
 SKIP_EXISTING_FILES = True
 MUSIC_FORMAT = "mp3"  # or "ogg"
-FORCE_PREMIUM = False
+FORCE_PREMIUM = False # set to True if not detecting your premium account automatically
 sanitize = ["\\", "/", ":", "*", "?", "'", "<", ">", '"']
 
 # miscellaneous functions for general use
