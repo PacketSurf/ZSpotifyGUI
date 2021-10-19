@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 """
 ZSpotify
 It's like youtube-dl, but for Spotify.
