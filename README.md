@@ -17,8 +17,8 @@ Python packages:
 ```
 \*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows.
 
-- Use "-p" or "--playlist" to download a saved playlist from our account
-- Use "-ls" or "--liked-songs" to download all the liked songs from out account
+- Use "-p" or "--playlist" to download a saved playlist from your account
+- Use "-ls" or "--liked-songs" to download all the liked songs from your account
 - Supply the URL or ID of a Track/Album/Playlist as an argument to download it
 - Don't supply any arguments and it will give you a search input field to find and download a specific Track/Album/Playlist via the query.
 
@@ -30,6 +30,15 @@ Python packages:
 
 
 ## **Changelog:**
+**v1.6 (20 Oct 2021):**
+- Added Pillow to requirements.txt.
+- Removed websocket-client from requirements.txt because librespot-python added it to their dependency list.
+- Made it hide your password when you type it in.
+- Added manual override to force premium quality if zspotify cannot auto detect it.
+- Added option to just download the raw audio with no re-encoding at all.
+- Added Shebang line so it runs smoother on Linux.
+- Made it download the entire track at once now so it is more efficent and fixed a bug users encountered.
+
 **v1.5 (19 Oct 2021):**
 - Made downloading a lot more efficient and probably faster.
 - Made the sanitizer more efficient.
@@ -43,7 +52,7 @@ Python packages:
 - Added auto detection about if the current account is premium or not. If it is a premium account it automatically sets the quality to VERY_HIGH and otherwise HIGH if we are using a free account.
 - Fixed conversion function so it now exports to the correct bitrate.
 - Added sanitation to playlist names to help catch an edge case crash.
-- Added option to download all our liked songs into a sub-folder.
+- Added option to download all your liked songs into a sub-folder.
 
 **v1.2 (18 Oct 2021):**
 - Added .gitignore.
