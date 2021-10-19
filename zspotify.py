@@ -449,12 +449,9 @@ def download_track(track_id_str: str, extra_paths=""):
                     os.makedirs(ROOT_PATH + extra_paths)
 
                 with open(filename, 'wb') as file:
-                    while True:
-                        # Try's to read exactly 128kb at a time to be more efficient now
-                        byte = stream.input_stream.stream().read(1024 * 128)
-                        if byte == b'':
-                            break
-                        file.write(byte)
+                    # Try's to download the entire track at once now to be more efficient.
+                    byte = stream.input_stream.stream().read(-1)
+                    file.write(byte)
                 if not RAW_AUDIO_AS_IS:
                     try:
                         convert_audio_format(filename)
