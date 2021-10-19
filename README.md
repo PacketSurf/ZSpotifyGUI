@@ -24,8 +24,9 @@ Python packages:
 
 - Change the MUSIC_FORMAT variable in zspotify.py to "ogg" if you rather that over "mp3"
 - Change the FORCE_PREMIUM in zspotify.py to True if it is not automatically detecting your premium account.
+- Change the RAW_AUDIO_AS_IS in zspotify.py to True if you wish to only save the raw audio stream without any re-encoding.
 
-![image](https://user-images.githubusercontent.com/12180913/137976375-835fda16-f2f4-4dcd-9d35-8789cc4c0a11.png)
+![image](https://user-images.githubusercontent.com/12180913/137978357-ee682c19-9a83-4820-82a1-7dad5230804c.png)
 
 
 ## **Changelog:**
