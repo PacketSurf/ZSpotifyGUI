@@ -28,7 +28,7 @@ import hashlib
 
 rootPath = "ZSpotify Music/"
 skipExistingFiles = True
-
+musicFormat = "mp3" #or "ogg"
 
 #miscellaneous functions for general use
 def clear():
@@ -257,15 +257,16 @@ def checkPremium(access_token):
 
 
 #Functions directly related to modifying the downloaded audio and its metadata
-def convertToMp3(filename):
-    print("###   CONVERTING TO MP3   ###")
+def convertAudioFormat(filename):
+    global musicFormat
+    print("###   CONVERTING TO " + musicFormat.upper() + "   ###")
     raw_audio = AudioSegment.from_file(filename, format="ogg",
                                    frame_rate=44100, channels=2, sample_width=2)
     if quality == AudioQuality.VERY_HIGH:
         bitrate = "320k"
     else:
         bitrate = "160k"
-    raw_audio.export(filename, format="mp3", bitrate=bitrate)
+    raw_audio.export(filename, format=musicFormat, bitrate=bitrate)
 
 def setAudioTags(filename, artists, name, albumName, releaseYear, disc_number, track_number):
     print("###   SETTING MUSIC TAGS   ###")
@@ -380,13 +381,13 @@ def get_saved_tracks(access_token):
 
 #Functions directly related to downloading stuff
 def downloadTrack(track_id_str: str, extra_paths = ""):
-    global rootPath, skipExistingFiles
+    global rootPath, skipExistingFiles, musicFormat
 
     track_id = TrackId.from_base62(track_id_str)
     artists, albumName, name, imageUrl, releaseYear, disc_number, track_number, scrapedSongId, isPlayAble = getSongInfo(track_id_str)
 
     songName = artists[0] + " - " + name
-    filename = rootPath + extra_paths + songName + '.mp3'
+    filename = rootPath + extra_paths + songName + '.' + musicFormat
 
 
     if not isPlayAble:
@@ -446,7 +447,7 @@ def downloadTrack(track_id_str: str, extra_paths = ""):
                             bpos = 0
                     '''
                 try:
-                    convertToMp3(filename)
+                    convertAudioFormat(filename)
                 except:
                     os.remove(filename)
                     print("###   SKIPPING:", songName, "(GENERAL CONVERSION ERROR)   ###")
