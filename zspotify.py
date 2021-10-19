@@ -20,12 +20,13 @@ from librespot.metadata import TrackId
 from pydub import AudioSegment
 
 SESSION: Session = None
+sanitize = ["\\", "/", ":", "*", "?", "'", "<", ">", '"']
 
 ROOT_PATH = "ZSpotify Music/"
 SKIP_EXISTING_FILES = True
 MUSIC_FORMAT = "mp3"  # or "ogg"
 FORCE_PREMIUM = False # set to True if not detecting your premium account automatically
-sanitize = ["\\", "/", ":", "*", "?", "'", "<", ">", '"']
+RAW_AUDIO_AS_IS = False # set to True if you wish you save the raw audio without re-encoding it.
 
 # miscellaneous functions for general use
 
@@ -411,7 +412,7 @@ def get_saved_tracks(access_token):
 # Functions directly related to downloading stuff
 def download_track(track_id_str: str, extra_paths=""):
     """ Downloads raw song audio from Spotify """
-    global ROOT_PATH, SKIP_EXISTING_FILES, MUSIC_FORMAT
+    global ROOT_PATH, SKIP_EXISTING_FILES, MUSIC_FORMAT, RAW_AUDIO_AS_IS
 
     track_id = TrackId.from_base62(track_id_str)
     artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable = get_song_info(
@@ -452,16 +453,17 @@ def download_track(track_id_str: str, extra_paths=""):
                         if byte == b'':
                             break
                         file.write(byte)
-                try:
-                    convert_audio_format(filename)
-                except:
-                    os.remove(filename)
-                    print("###   SKIPPING:", song_name,
-                          "(GENERAL CONVERSION ERROR)   ###")
-                else:
-                    set_audio_tags(filename, artists, name, album_name,
-                                   release_year, disc_number, track_number)
-                    set_music_thumbnail(filename, image_url)
+                if not RAW_AUDIO_AS_IS:
+                    try:
+                        convert_audio_format(filename)
+                    except:
+                        os.remove(filename)
+                        print("###   SKIPPING:", song_name,
+                            "(GENERAL CONVERSION ERROR)   ###")
+                    else:
+                        set_audio_tags(filename, artists, name, album_name,
+                                    release_year, disc_number, track_number)
+                        set_music_thumbnail(filename, image_url)
 
 
 def download_album(album):
@@ -495,9 +497,14 @@ def download_from_user_playlist():
 
 # Core functions here
 
+def checkRaw():
+    global RAW_AUDIO_AS_IS, MUSIC_FORMAT
+    if RAW_AUDIO_AS_IS:
+        MUSIC_FORMAT = "raw"
 
 def main():
     """ Main function """
+    checkRaw()
     login()
     client()
 
