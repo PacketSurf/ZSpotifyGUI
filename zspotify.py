@@ -442,37 +442,13 @@ def download_track(track_id_str: str, extra_paths=""):
                     os.makedirs(ROOT_PATH + extra_paths)
 
                 with open(filename, 'wb') as file:
-                    """
-                    chunk_size = 1024 * 16
-                    buffer = bytearray(chunk_size)
-                    bpos = 0
-                    """
-
-                    # With the updated version of librespot my faster download method broke so we are using the old fallback method
                     while True:
-                        byte = stream.input_stream.stream().read()
+                        # Trys to read exactly 128kb at a time to be more efficient now
+                        byte = stream.input_stream.stream().read(1024 * 128)
+                        print(len(byte))
                         if byte == b'':
                             break
                         file.write(byte)
-
-                    """
-                    while True:
-                        byte = stream.input_stream.stream().read()
-
-                        if byte == -1:
-                            # flush buffer before breaking
-                            if bpos > 0:
-                                file.write(buffer[0:bpos])
-                            break
-
-                        print(bpos)
-                        buffer[bpos] = byte
-                        bpos += 1
-
-                        if bpos == (chunk_size):
-                            file.write(buffer)
-                            bpos = 0
-                    """
                 try:
                     convert_audio_format(filename)
                 except:
