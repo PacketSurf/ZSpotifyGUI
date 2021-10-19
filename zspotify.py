@@ -17,6 +17,7 @@ from librespot.audio.decoders import AudioQuality, VorbisOnlyAudioQuality
 from librespot.core import Session
 from librespot.metadata import TrackId
 from pydub import AudioSegment
+from getpass import getpass
 
 SESSION: Session = None
 
@@ -73,7 +74,7 @@ def login():
             pass
     while True:
         user_name = input("UserName: ")
-        password = input("Password: ")
+        password = getpass()
         try:
             SESSION = Session.Builder().user_pass(user_name, password).create()
             return
