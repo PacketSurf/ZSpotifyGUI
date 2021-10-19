@@ -28,6 +28,11 @@ Python packages:
 
 
 ## **Changelog:**
+**v1.5 (19 Oct 2021):**
+- Made downloading a lot more efficient and probably faster.
+- Made the sanitizer more efficient.
+- Formatted and linted all the code.
+
 **v1.4 (19 Oct 2021):**
 - Added option to encode the downloaded tracks in the "ogg" format rather than "mp3".
 - Added small improvement to sanitation function so it catches another edge case.
