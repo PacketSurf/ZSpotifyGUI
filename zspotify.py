@@ -10,6 +10,7 @@ import platform
 import re
 import sys
 import time
+from getpass import getpass
 
 import music_tag
 import requests
@@ -17,13 +18,13 @@ from librespot.audio.decoders import AudioQuality, VorbisOnlyAudioQuality
 from librespot.core import Session
 from librespot.metadata import TrackId
 from pydub import AudioSegment
-from getpass import getpass
 
 SESSION: Session = None
 
 ROOT_PATH = "ZSpotify Music/"
 SKIP_EXISTING_FILES = True
 MUSIC_FORMAT = "mp3"  # or "ogg"
+FORCE_PREMIUM = False
 sanitize = ["\\", "/", ":", "*", "?", "'", "<", ">", '"']
 
 # miscellaneous functions for general use
@@ -73,7 +74,7 @@ def login():
         except RuntimeError:
             pass
     while True:
-        user_name = input("UserName: ")
+        user_name = input("Username: ")
         password = getpass()
         try:
             SESSION = Session.Builder().user_pass(user_name, password).create()
@@ -256,11 +257,12 @@ def get_song_info(song_id):
 
 
 def check_premium(access_token):
+    global FORCE_PREMIUM
     """ If user has spotify premium return true """
     headers = {'Authorization': f'Bearer {access_token}'}
     resp = requests.get('https://api.spotify.com/v1/me',
                         headers=headers).json()
-    return bool("product" in resp and resp["product"] == "premium")
+    return bool(("product" in resp and resp["product"] == "premium") or FORCE_PREMIUM)
 
 
 # Functions directly related to modifying the downloaded audio and its metadata
