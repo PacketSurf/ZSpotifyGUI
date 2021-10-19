@@ -44,10 +44,11 @@ def wait(seconds: int = 3):
 
 
 def sanitize_data(value):
+    global sanitize
     """ Returns given string with problematic removed """
     for i in sanitize:
-        sanitized_value = value.replace(i, "")
-    return sanitized_value.replace("|", "-")
+        value = value.replace(i, "")
+    return value.replace("|", "-")
 
 
 def splash():
@@ -445,7 +446,6 @@ def download_track(track_id_str: str, extra_paths=""):
                     while True:
                         # Trys to read exactly 128kb at a time to be more efficient now
                         byte = stream.input_stream.stream().read(1024 * 128)
-                        print(len(byte))
                         if byte == b'':
                             break
                         file.write(byte)
