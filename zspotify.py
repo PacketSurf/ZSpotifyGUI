@@ -106,7 +106,10 @@ def client():
             download_from_user_playlist()
         elif sys.argv[1] == "-ls" or sys.argv[1] == "--liked-songs":
             for song in get_saved_tracks(token):
-                download_track(song['track']['id'], "Liked Songs/")
+                if not song['track']['name']:
+                    print("###   SKIPPING:  SONG DOES NOT EXISTS ON SPOTIFY ANYMORE   ###")
+                else:
+                    download_track(song['track']['id'], "Liked Songs/")
                 print("\n")
         else:
             track_uri_search = re.search(
