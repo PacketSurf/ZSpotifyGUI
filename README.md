@@ -1,4 +1,4 @@
-# XSpotify
+# ZSpotify
 
 ### A Spotify downloader needing only a python interpreter and ffmpeg.
 <p align="center">
