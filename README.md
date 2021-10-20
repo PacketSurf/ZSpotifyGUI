@@ -41,6 +41,12 @@ Special hardcoded options:
 
 
 ## **Changelog:**
+**v1.7 (21 Oct 2021):**
+- Rewrote README.md to look a lot more professional.
+- Added patch to fix edge case crash when downloading liked songs.
+- Made premium account check a lot more reliable.
+- Added experimental podcast support! 
+
 **v1.6 (20 Oct 2021):**
 - Added Pillow to requirements.txt.
 - Removed websocket-client from requirements.txt because librespot-python added it to their dependency list.
