@@ -27,7 +27,7 @@ Python packages:
 ```
 Command line usage:
   python zspotify.py                              Loads search prompt to find then download a specific track, album or playlist
-  python zspotify.py <track/album/playlist url>   Downloads the track, album or playlist specified as a command line argument
+  python zspotify.py <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
 
 Extra command line options:
   -p, --playlist       Downloads a saved playlist from your account
@@ -45,7 +45,7 @@ Special hardcoded options:
 - Rewrote README.md to look a lot more professional.
 - Added patch to fix edge case crash when downloading liked songs.
 - Made premium account check a lot more reliable.
-- Added experimental podcast support! 
+- Added experimental podcast support for specific episodes!
 
 **v1.6 (20 Oct 2021):**
 - Added Pillow to requirements.txt.
