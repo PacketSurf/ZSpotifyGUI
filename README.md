@@ -18,18 +18,24 @@ Python packages:
 - pip install -r requirements.txt
 
 ```
+
 \*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows.
 
-- Use "-p" or "--playlist" to download a saved playlist from your account
-- Use "-ls" or "--liked-songs" to download all the liked songs from your account
-- Supply the URL or ID of a Track/Album/Playlist as an argument to download it
-- Don't supply any arguments and it will give you a search input field to find and download a specific Track/Album/Playlist via the query.
+```
+Command line usage:
+  python zspotify.py                              Loads search prompt to find then download a specific track, album or playlist
+  python zspotify.py <track/album/playlist url>   Downloads the track, album or playlist specified as a command line argument
 
-- Change the MUSIC_FORMAT variable in zspotify.py to "ogg" if you rather that over "mp3"
-- Change the FORCE_PREMIUM in zspotify.py to True if it is not automatically detecting your premium account.
-- Change the RAW_AUDIO_AS_IS in zspotify.py to True if you wish to only save the raw audio stream without any re-encoding.
+Extra command line options:
 
-![image](https://user-images.githubusercontent.com/12180913/137978357-ee682c19-9a83-4820-82a1-7dad5230804c.png)
+  -p, --playlist       Downloads a saved playlist from your account
+  -ls, --liked-songs   Downloads all the liked songs from your account
+
+Special hardcoded options:
+  MUSIC_FORMAT      Set this to "ogg" if you would rather that format audio over "mp3"
+  FORCE_PREMIUM     Set this to True if ZSpotify isn't automatically detecting that you are using a premium account
+  RAW_AUDIO_AS_IS   Set this to True to only stream the audio to a file and do no re-encoding or post processing
+```
 
 
 ## **Changelog:**
