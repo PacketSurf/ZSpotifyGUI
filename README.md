@@ -1,6 +1,9 @@
-# zspotify
-Spotify song downloader without injecting into the windows client
-![image](https://user-images.githubusercontent.com/12180913/137086248-371a3d81-75b3-4d75-a90c-966549c45745.png)
+# XSpotify
+
+### A Spotify downloader needing only a python interpreter and ffmpeg.
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/12180913/138040605-c9d46e45-3830-4a4b-a7ac-c56bb0d76335.png">
+</p>
 
 ```
 Requirements:
