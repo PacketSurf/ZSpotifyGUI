@@ -27,8 +27,9 @@ sanitize = ["\\", "/", ":", "*", "?", "'", "<", ">", '"']
 ROOT_PATH = "ZSpotify Music/"
 SKIP_EXISTING_FILES = True
 MUSIC_FORMAT = "mp3"  # or "ogg"
-FORCE_PREMIUM = False # set to True if not detecting your premium account automatically
-RAW_AUDIO_AS_IS = False # set to True if you wish you save the raw audio without re-encoding it.
+FORCE_PREMIUM = False  # set to True if not detecting your premium account automatically
+# set to True if you wish you save the raw audio without re-encoding it.
+RAW_AUDIO_AS_IS = False
 
 # miscellaneous functions for general use
 
@@ -93,7 +94,7 @@ def client():
 
     token = SESSION.tokens().get("user-read-email")
 
-    if check_premium(token):
+    if check_premium():
         print("###   DETECTED PREMIUM ACCOUNT - USING VERY_HIGH QUALITY   ###")
         QUALITY = AudioQuality.VERY_HIGH
     else:
@@ -259,13 +260,10 @@ def get_song_info(song_id):
     return artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable
 
 
-def check_premium(access_token):
+def check_premium():
     global FORCE_PREMIUM
     """ If user has spotify premium return true """
-    headers = {'Authorization': f'Bearer {access_token}'}
-    resp = requests.get('https://api.spotify.com/v1/me',
-                        headers=headers).json()
-    return bool(("product" in resp and resp["product"] == "premium") or FORCE_PREMIUM)
+    return bool((SESSION.get_user_attribute("type") == "premium") or FORCE_PREMIUM)
 
 
 # Functions directly related to modifying the downloaded audio and its metadata
@@ -458,10 +456,10 @@ def download_track(track_id_str: str, extra_paths=""):
                     except:
                         os.remove(filename)
                         print("###   SKIPPING:", song_name,
-                            "(GENERAL CONVERSION ERROR)   ###")
+                              "(GENERAL CONVERSION ERROR)   ###")
                     else:
                         set_audio_tags(filename, artists, name, album_name,
-                                    release_year, disc_number, track_number)
+                                       release_year, disc_number, track_number)
                         set_music_thumbnail(filename, image_url)
 
 
@@ -496,10 +494,12 @@ def download_from_user_playlist():
 
 # Core functions here
 
+
 def checkRaw():
     global RAW_AUDIO_AS_IS, MUSIC_FORMAT
     if RAW_AUDIO_AS_IS:
         MUSIC_FORMAT = "raw"
+
 
 def main():
     """ Main function """
