@@ -48,7 +48,7 @@ Special hardcoded options:
 - Added manual override to force premium quality if zspotify cannot auto detect it.
 - Added option to just download the raw audio with no re-encoding at all.
 - Added Shebang line so it runs smoother on Linux.
-- Made it download the entire track at once now so it is more efficent and fixed a bug users encountered.
+- Made it download the entire track at once now so it is more efficient and fixed a bug users encountered.
 
 **v1.5 (19 Oct 2021):**
 - Made downloading a lot more efficient and probably faster.
@@ -74,9 +74,9 @@ Special hardcoded options:
 - Added try/except to help catch crashes where a very few specific tracks would crash either the downloading or conversion part.
 
 **v1.0 (14 Oct 2021):**
-- Ajusted some functions so it runs again with the newer version of librespot-python.
+- Adjusted some functions so it runs again with the newer version of librespot-python.
 - Improved my sanitization function so it catches more edge cases.
-- Fixed an issue where sometimes spotify wouldnt provide a song id for a track we are trying to download. It will now detect and skip these invalid tracks.
+- Fixed an issue where sometimes spotify wouldn't provide a song id for a track we are trying to download. It will now detect and skip these invalid tracks.
 - Added additional check for tracks that cannot be "played" due to licence(and similar) issues. These tracks will be skipped.
 
 **v0.9 (13 Oct 2021):**
