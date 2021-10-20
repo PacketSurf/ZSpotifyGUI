@@ -18,13 +18,14 @@ import music_tag
 import requests
 from librespot.audio.decoders import AudioQuality, VorbisOnlyAudioQuality
 from librespot.core import Session
-from librespot.metadata import TrackId
+from librespot.metadata import TrackId, EpisodeId
 from pydub import AudioSegment
 
 SESSION: Session = None
 sanitize = ["\\", "/", ":", "*", "?", "'", "<", ">", '"']
 
 ROOT_PATH = "ZSpotify Music/"
+ROOT_PODCAST_PATH = "ZSpotify Podcasts/"
 SKIP_EXISTING_FILES = True
 MUSIC_FORMAT = "mp3"  # or "ogg"
 FORCE_PREMIUM = False  # set to True if not detecting your premium account automatically
@@ -107,7 +108,8 @@ def client():
         elif sys.argv[1] == "-ls" or sys.argv[1] == "--liked-songs":
             for song in get_saved_tracks(token):
                 if not song['track']['name']:
-                    print("###   SKIPPING:  SONG DOES NOT EXISTS ON SPOTIFY ANYMORE   ###")
+                    print(
+                        "###   SKIPPING:  SONG DOES NOT EXISTS ON SPOTIFY ANYMORE   ###")
                 else:
                     download_track(song['track']['id'], "Liked Songs/")
                 print("\n")
@@ -130,6 +132,13 @@ def client():
                 r"^spotify:playlist:(?P<PlaylistID>[0-9a-zA-Z]{22})$", sys.argv[1])
             playlist_url_search = re.search(
                 r"^(https?://)?open\.spotify\.com/playlist/(?P<PlaylistID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
+                sys.argv[1],
+            )
+
+            episode_uri_search = re.search(
+                r"^spotify:episode:(?P<EpisodeID>[0-9a-zA-Z]{22})$", sys.argv[1])
+            episode_url_search = re.search(
+                r"^(https?://)?open\.spotify\.com/episode/(?P<EpisodeID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
                 sys.argv[1],
             )
 
@@ -156,13 +165,50 @@ def client():
                     download_track(song['track']['id'],
                                    sanitize_data(name) + "/")
                     print("\n")
+            elif episode_uri_search is not None or episode_url_search is not None:
+                episode_id_str = (episode_uri_search
+                                  if episode_uri_search is not None else
+                                  episode_url_search).group("EpisodeID")
+
+                downloadEpisode(episode_id_str)
     else:
         search_text = input("Enter search: ")
         search(search_text)
     wait()
 
 
+def getEpisodeInfo(episode_id_str):
+    token = SESSION.tokens().get("user-read-email")
+    info = json.loads(requests.get("https://api.spotify.com/v1/episodes/" +
+                                   episode_id_str, headers={"Authorization": "Bearer %s" % token}).text)
+
+    return info["show"]["name"], info["name"]
+
+
+def downloadEpisode(episode_id_str):
+    global ROOT_PODCAST_PATH
+
+    podcastName, episodeName = getEpisodeInfo(episode_id_str)
+    filename = podcastName + " - " + episodeName + ".wav"
+
+    episode_id = EpisodeId.from_base62(episode_id_str)
+    stream = SESSION.content_feeder().load(
+        episode_id, VorbisOnlyAudioQuality(QUALITY), False, None)
+    print("###  DOWNLOADING ENTIRE PODCAST EPISODE - THIS MAY TAKE A WHILE ###")
+
+    if not os.path.isdir(ROOT_PODCAST_PATH):
+        os.makedirs(ROOT_PODCAST_PATH)
+
+    with open(ROOT_PODCAST_PATH + filename, 'wb') as file:
+        while True:
+            byte = stream.input_stream.stream().read(1024 * 1024)
+            if byte == b'':
+                break
+            file.write(byte)
+
 # related functions that do stuff with the spotify API
+
+
 def search(search_term):
     """ Searches Spotify's API for relevant data """
     token = SESSION.tokens().get("user-read-email")
@@ -501,7 +547,7 @@ def download_from_user_playlist():
 def checkRaw():
     global RAW_AUDIO_AS_IS, MUSIC_FORMAT
     if RAW_AUDIO_AS_IS:
-        MUSIC_FORMAT = "raw"
+        MUSIC_FORMAT = "wav"
 
 
 def main():
