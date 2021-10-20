@@ -30,7 +30,6 @@ Command line usage:
   python zspotify.py <track/album/playlist url>   Downloads the track, album or playlist specified as a command line argument
 
 Extra command line options:
-
   -p, --playlist       Downloads a saved playlist from your account
   -ls, --liked-songs   Downloads all the liked songs from your account
 
