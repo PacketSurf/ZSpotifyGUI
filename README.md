@@ -1,3 +1,6 @@
+![Stars](https://img.shields.io/github/stars/Footsiefat/zspotify.svg)
+![Forks](https://img.shields.io/github/forks/Footsiefat/zspotify.svg)
+![Size](https://img.shields.io/github/repo-size/Footsiefat/zspotify)
 # ZSpotify
 
 ### A Spotify downloader needing only a python interpreter and ffmpeg.
