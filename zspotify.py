@@ -122,7 +122,7 @@ def client():
                     download_track(song['track']['id'], "Liked Songs/")
                 print("\n")
         else:
-            track_id_str, album_id_str, playlist_id_str, episode_id_str = regex_input_for_urls(
+            track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str = regex_input_for_urls(
                 sys.argv[1])
 
             if track_id_str is not None:
@@ -138,10 +138,14 @@ def client():
                     print("\n")
             elif episode_id_str is not None:
                 download_episode(episode_id_str)
+            elif show_id_str is not None:
+                for episode in get_show_episodes(token, show_id_str):
+                    download_episode(episode)
+
     else:
         search_text = input("Enter search or URL: ")
 
-        track_id_str, album_id_str, playlist_id_str, episode_id_str = regex_input_for_urls(
+        track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str = regex_input_for_urls(
             search_text)
 
         if track_id_str is not None:
@@ -157,6 +161,9 @@ def client():
                 print("\n")
         elif episode_id_str is not None:
             download_episode(episode_id_str)
+        elif show_id_str is not None:
+            for episode in get_show_episodes(token, show_id_str):
+                download_episode(episode)
         else:
             search(search_text)
     wait()
@@ -191,6 +198,13 @@ def regex_input_for_urls(search_input):
         search_input,
     )
 
+    show_uri_search = re.search(
+        r"^spotify:show:(?P<ShowID>[0-9a-zA-Z]{22})$", search_input)
+    show_url_search = re.search(
+        r"^(https?://)?open\.spotify\.com/show/(?P<ShowID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
+        search_input,
+    )
+
     if track_uri_search is not None or track_url_search is not None:
         track_id_str = (track_uri_search
                         if track_uri_search is not None else
@@ -219,7 +233,14 @@ def regex_input_for_urls(search_input):
     else:
         episode_id_str = None
 
-    return track_id_str, album_id_str, playlist_id_str, episode_id_str
+    if show_uri_search is not None or show_url_search is not None:
+        show_id_str = (show_uri_search
+                       if show_uri_search is not None else
+                       show_url_search).group("ShowID")
+    else:
+        show_id_str = None
+
+    return track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str
 
 
 def get_episode_info(episode_id_str):
@@ -230,13 +251,29 @@ def get_episode_info(episode_id_str):
     if "error" in info:
         return None, None
     else:
-        return info["show"]["name"], info["name"]
+        return sanitize_data(info["show"]["name"]), sanitize_data(info["name"])
+
+
+def get_show_episodes(access_token, show_id_str):
+    episodes = []
+
+    headers = {'Authorization': f'Bearer {access_token}'}
+    resp = requests.get(
+        f'https://api.spotify.com/v1/shows/{show_id_str}/episodes', headers=headers).json()
+
+    for episode in resp["items"]:
+        episodes.append(episode["id"])
+
+    return episodes
 
 
 def download_episode(episode_id_str):
     global ROOT_PODCAST_PATH
 
     podcast_name, episode_name = get_episode_info(episode_id_str)
+
+    extra_paths = podcast_name + "/"
+
     if podcast_name is None:
         print("###   SKIPPING: (EPISODE NOT FOUND)   ###")
     else:
@@ -245,12 +282,13 @@ def download_episode(episode_id_str):
         episode_id = EpisodeId.from_base62(episode_id_str)
         stream = SESSION.content_feeder().load(
             episode_id, VorbisOnlyAudioQuality(QUALITY), False, None)
-        print("###  DOWNLOADING ENTIRE PODCAST EPISODE - THIS MAY TAKE A WHILE ###")
+        print("###  DOWNLOADING '" + podcast_name + " - " +
+              episode_name + "' - THIS MAY TAKE A WHILE ###")
 
-        if not os.path.isdir(ROOT_PODCAST_PATH):
-            os.makedirs(ROOT_PODCAST_PATH)
+        if not os.path.isdir(ROOT_PODCAST_PATH + extra_paths):
+            os.makedirs(ROOT_PODCAST_PATH + extra_paths)
 
-        with open(ROOT_PODCAST_PATH + filename, 'wb') as file:
+        with open(ROOT_PODCAST_PATH + extra_paths + filename, 'wb') as file:
             while True:
                 byte = stream.input_stream.stream().read(1024 * 1024)
                 if byte == b'':
