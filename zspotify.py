@@ -611,7 +611,7 @@ def download_artist_albums(artist):
     """ Downloads albums of an artist """
     token = SESSION.tokens().get("user-read-email")
     albums = get_artist_albums(token, artist)
-    for name, album_id in albums:
+    for album_id in albums:
         download_album(album_id)
 
 def download_from_user_playlist():
