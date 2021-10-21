@@ -8,8 +8,7 @@
   <img src="https://user-images.githubusercontent.com/12180913/138040605-c9d46e45-3830-4a4b-a7ac-c56bb0d76335.png">
 </p>
 
-[Discord Server](https://discord.gg/AXeyDkgh2W)
-
+[Discord Server](https://discord.gg/AXeyDkgh2W) - [Gitea Mirror](https://git.robinsmediateam.dev/Footsiefat/zspotify)
 ```
 Requirements:
 
