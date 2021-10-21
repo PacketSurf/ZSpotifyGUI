@@ -127,6 +127,8 @@ def client():
 
             if track_id_str is not None:
                 download_track(track_id_str)
+            elif artist_id_str is not None:
+                download_artist_albums(artist_id_str)
             elif album_id_str is not None:
                 download_album(album_id_str)
             elif playlist_id_str is not None:
@@ -146,6 +148,8 @@ def client():
 
         if track_id_str is not None:
             download_track(track_id_str)
+        elif artist_id_str is not None:
+            download_artist_albums(artist_id_str)
         elif album_id_str is not None:
             download_album(album_id_str)
         elif playlist_id_str is not None:
@@ -604,6 +608,12 @@ def download_album(album):
         download_track(track['id'], artist + " - " + album_name + "/")
         print("\n")
 
+def download_artist_albums(artist):
+    """ Downloads albums of an artist """
+    token = SESSION.tokens().get("user-read-email")
+    albums = get_artist_albums(token, artist)
+    for name, album_id in albums:
+        download_album(album_id)
 
 def download_from_user_playlist():
     """ Downloads songs from users playlist """
