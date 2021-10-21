@@ -132,7 +132,25 @@ def client():
                 download_episode(episode_id_str)
     else:
         search_text = input("Enter search or URL: ")
-        search(search_text)
+
+        track_id_str, album_id_str, playlist_id_str, episode_id_str = regex_input_for_urls(
+            search_text)
+
+        if track_id_str is not None:
+            download_track(track_id_str)
+        elif album_id_str is not None:
+            download_album(album_id_str)
+        elif playlist_id_str is not None:
+            playlist_songs = get_playlist_songs(token, playlist_id_str)
+            name, creator = get_playlist_info(token, playlist_id_str)
+            for song in playlist_songs:
+                download_track(song['track']['id'],
+                               sanitize_data(name) + "/")
+                print("\n")
+        elif episode_id_str is not None:
+            download_episode(episode_id_str)
+        else:
+            search(search_text)
     wait()
 
 
