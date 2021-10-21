@@ -518,9 +518,8 @@ def get_artist_albums(access_token, artist_id):
     headers = {'Authorization': f'Bearer {access_token}'}
     resp = requests.get(
         f'https://api.spotify.com/v1/artists/{artist_id}/albums', headers=headers).json()
-    # Return a list of tuples that contain each album's name and id
-    return [(resp['items'][i]['name'], resp['items'][i]['id'])
-              for i in range(len(resp['items']))]
+    # Return a list each album's id
+    return [resp['items'][i]['id'] for i in range(len(resp['items']))]
 
 # Extra functions directly related to our saved tracks
 def get_saved_tracks(access_token):
