@@ -51,8 +51,8 @@ def wait(seconds: int = 3):
 
 
 def sanitize_data(value):
-    global sanitize
     """ Returns given string with problematic removed """
+    global sanitize
     for i in sanitize:
         value = value.replace(i, "")
     return value.replace("|", "-")
@@ -114,7 +114,7 @@ def client():
                     download_track(song['track']['id'], "Liked Songs/")
                 print("\n")
         else:
-            track_id_str, album_id_str, playlist_id_str, episode_id_str = regexInputForUrls(
+            track_id_str, album_id_str, playlist_id_str, episode_id_str = regex_input_for_urls(
                 sys.argv[1])
 
             if track_id_str is not None:
@@ -129,14 +129,14 @@ def client():
                                    sanitize_data(name) + "/")
                     print("\n")
             elif episode_id_str is not None:
-                downloadEpisode(episode_id_str)
+                download_episode(episode_id_str)
     else:
         search_text = input("Enter search or URL: ")
         search(search_text)
     wait()
 
 
-def regexInputForUrls(search_input):
+def regex_input_for_urls(search_input):
     track_uri_search = re.search(
         r"^spotify:track:(?P<TrackID>[0-9a-zA-Z]{22})$", search_input)
     track_url_search = re.search(
@@ -196,7 +196,7 @@ def regexInputForUrls(search_input):
     return track_id_str, album_id_str, playlist_id_str, episode_id_str
 
 
-def getEpisodeInfo(episode_id_str):
+def get_episode_info(episode_id_str):
     token = SESSION.tokens().get("user-read-email")
     info = json.loads(requests.get("https://api.spotify.com/v1/episodes/" +
                                    episode_id_str, headers={"Authorization": "Bearer %s" % token}).text)
@@ -207,14 +207,14 @@ def getEpisodeInfo(episode_id_str):
         return info["show"]["name"], info["name"]
 
 
-def downloadEpisode(episode_id_str):
+def download_episode(episode_id_str):
     global ROOT_PODCAST_PATH
 
-    podcastName, episodeName = getEpisodeInfo(episode_id_str)
-    if podcastName == None:
+    podcast_name, episode_name = get_episode_info(episode_id_str)
+    if podcast_name is None:
         print("###   SKIPPING: (EPISODE NOT FOUND)   ###")
     else:
-        filename = podcastName + " - " + episodeName + ".wav"
+        filename = podcast_name + " - " + episode_name + ".wav"
 
         episode_id = EpisodeId.from_base62(episode_id_str)
         stream = SESSION.content_feeder().load(
@@ -342,8 +342,8 @@ def get_song_info(song_id):
 
 
 def check_premium():
-    global FORCE_PREMIUM
     """ If user has spotify premium return true """
+    global FORCE_PREMIUM
     return bool((SESSION.get_user_attribute("type") == "premium") or FORCE_PREMIUM)
 
 
@@ -386,8 +386,8 @@ def set_music_thumbnail(filename, image_url):
 def conv_artist_format(artists):
     """ Returns converted artist format """
     formatted = ""
-    for x in artists:
-        formatted += x + ", "
+    for artist in artists:
+        formatted += artist + ", "
     return formatted[:-2]
 
 
@@ -575,7 +575,7 @@ def download_from_user_playlist():
 # Core functions here
 
 
-def checkRaw():
+def check_raw():
     global RAW_AUDIO_AS_IS, MUSIC_FORMAT
     if RAW_AUDIO_AS_IS:
         MUSIC_FORMAT = "wav"
@@ -583,7 +583,7 @@ def checkRaw():
 
 def main():
     """ Main function """
-    checkRaw()
+    check_raw()
     login()
     client()
 
