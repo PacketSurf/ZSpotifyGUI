@@ -51,6 +51,12 @@ Special hardcoded options:
 
 
 ## **Changelog:**
+**v1.9 (22 Oct 2021):**
+- Added Gitea mirror for when the Spotify Glowies come to DMCA the shit out of this.
+- Changed the discord server invite to a matrix server so that won't get swatted either.
+- Added option to select multiple of our saved playlists to download at once.
+- Added support for downloading an entire show at once.
+
 **v1.8 (21 Oct 2021):**
 - Improved podcast downloading a bit.
 - Simplified the code that catches crashes while downloading.
