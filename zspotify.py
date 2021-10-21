@@ -182,29 +182,35 @@ def getEpisodeInfo(episode_id_str):
     info = json.loads(requests.get("https://api.spotify.com/v1/episodes/" +
                                    episode_id_str, headers={"Authorization": "Bearer %s" % token}).text)
 
-    return info["show"]["name"], info["name"]
+    if "error" in info:
+        return None, None
+    else:
+        return info["show"]["name"], info["name"]
 
 
 def downloadEpisode(episode_id_str):
     global ROOT_PODCAST_PATH
 
     podcastName, episodeName = getEpisodeInfo(episode_id_str)
-    filename = podcastName + " - " + episodeName + ".wav"
+    if podcastName == None:
+        print("###   SKIPPING: (EPISODE NOT FOUND)   ###")
+    else:
+        filename = podcastName + " - " + episodeName + ".wav"
 
-    episode_id = EpisodeId.from_base62(episode_id_str)
-    stream = SESSION.content_feeder().load(
-        episode_id, VorbisOnlyAudioQuality(QUALITY), False, None)
-    print("###  DOWNLOADING ENTIRE PODCAST EPISODE - THIS MAY TAKE A WHILE ###")
+        episode_id = EpisodeId.from_base62(episode_id_str)
+        stream = SESSION.content_feeder().load(
+            episode_id, VorbisOnlyAudioQuality(QUALITY), False, None)
+        print("###  DOWNLOADING ENTIRE PODCAST EPISODE - THIS MAY TAKE A WHILE ###")
 
-    if not os.path.isdir(ROOT_PODCAST_PATH):
-        os.makedirs(ROOT_PODCAST_PATH)
+        if not os.path.isdir(ROOT_PODCAST_PATH):
+            os.makedirs(ROOT_PODCAST_PATH)
 
-    with open(ROOT_PODCAST_PATH + filename, 'wb') as file:
-        while True:
-            byte = stream.input_stream.stream().read(1024 * 1024)
-            if byte == b'':
-                break
-            file.write(byte)
+        with open(ROOT_PODCAST_PATH + filename, 'wb') as file:
+            while True:
+                byte = stream.input_stream.stream().read(1024 * 1024)
+                if byte == b'':
+                    break
+                file.write(byte)
 
 # related functions that do stuff with the spotify API
 
