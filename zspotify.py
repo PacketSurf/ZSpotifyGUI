@@ -31,7 +31,7 @@ ROOT_PODCAST_PATH = "ZSpotify Podcasts/"
 
 SKIP_EXISTING_FILES = True
 
-MUSIC_FORMAT = "mp3"  # or "ogg"
+MUSIC_FORMAT = "ogg"  # or "ogg"
 RAW_AUDIO_AS_IS = False  # set to True if you wish to just save the raw audio
 
 FORCE_PREMIUM = False  # set to True if not detecting your premium account automatically
@@ -619,9 +619,21 @@ def download_album(album):
         download_track(track['id'], artist + " - " + album_name + "/")
         print("\n")
 
+def download_playlist(playlists, playlist_choice):
+    """Downloads all the songs from a playlist"""
+    token = SESSION.tokens().get("user-read-email")
+
+    playlist_songs = get_playlist_songs(
+        token, playlists[int(playlist_choice) - 1]['id'])
+
+    for song in playlist_songs:
+        if song['track']['id'] is not None:
+            download_track(song['track']['id'], sanitize_data(
+                playlists[int(playlist_choice) - 1]['name'].strip()) + "/")
+        print("\n")
 
 def download_from_user_playlist():
-    """ Downloads songs from users playlist """
+    """ Select which playlist(s) to download """
     token = SESSION.tokens().get("user-read-email")
     playlists = get_all_playlists(token)
 
@@ -630,14 +642,28 @@ def download_from_user_playlist():
         print(str(count) + ": " + playlist['name'].strip())
         count += 1
 
-    playlist_choice = input("SELECT A PLAYLIST BY ID: ")
-    playlist_songs = get_playlist_songs(
-        token, playlists[int(playlist_choice) - 1]['id'])
-    for song in playlist_songs:
-        if song['track']['id'] is not None:
-            download_track(song['track']['id'], sanitize_data(
-                playlists[int(playlist_choice) - 1]['name'].strip()) + "/")
-        print("\n")
+    print("\n> SELECT A PLAYLIST BY ID")
+    print("> SELECT A RANGE BY ADDING A DASH BETWEEN BOTH ID's")
+    print("> For example, typing 10 to get one playlist or 10-20 to get\nevery playlist from 10-20 (inclusive)\n")
+
+    playlist_choices = input("ID(s): ").split("-")
+
+    if len(playlist_choices) == 1:
+        download_playlist(playlists, playlist_choices[0])
+    else:
+        start = int(playlist_choices[0])
+        end = int(playlist_choices[1])+1
+
+        print(f"Downloading from {start} to {end}...")
+
+        for playlist in range(start, end):
+            download_playlist(playlists, playlist)
+        
+        print("\n**All playlists have been downloaded**\n")
+    
+
+
+
 
 # Core functions here
 
