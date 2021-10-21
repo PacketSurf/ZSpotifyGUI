@@ -114,67 +114,86 @@ def client():
                     download_track(song['track']['id'], "Liked Songs/")
                 print("\n")
         else:
-            track_uri_search = re.search(
-                r"^spotify:track:(?P<TrackID>[0-9a-zA-Z]{22})$", sys.argv[1])
-            track_url_search = re.search(
-                r"^(https?://)?open\.spotify\.com/track/(?P<TrackID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
-                sys.argv[1],
-            )
+            track_id_str, album_id_str, playlist_id_str, episode_id_str = regexInputForUrls(
+                sys.argv[1])
 
-            album_uri_search = re.search(
-                r"^spotify:album:(?P<AlbumID>[0-9a-zA-Z]{22})$", sys.argv[1])
-            album_url_search = re.search(
-                r"^(https?://)?open\.spotify\.com/album/(?P<AlbumID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
-                sys.argv[1],
-            )
-
-            playlist_uri_search = re.search(
-                r"^spotify:playlist:(?P<PlaylistID>[0-9a-zA-Z]{22})$", sys.argv[1])
-            playlist_url_search = re.search(
-                r"^(https?://)?open\.spotify\.com/playlist/(?P<PlaylistID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
-                sys.argv[1],
-            )
-
-            episode_uri_search = re.search(
-                r"^spotify:episode:(?P<EpisodeID>[0-9a-zA-Z]{22})$", sys.argv[1])
-            episode_url_search = re.search(
-                r"^(https?://)?open\.spotify\.com/episode/(?P<EpisodeID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
-                sys.argv[1],
-            )
-
-            if track_uri_search is not None or track_url_search is not None:
-                track_id_str = (track_uri_search
-                                if track_uri_search is not None else
-                                track_url_search).group("TrackID")
-
+            if track_id_str is not None:
                 download_track(track_id_str)
-            elif album_uri_search is not None or album_url_search is not None:
-                album_id_str = (album_uri_search
-                                if album_uri_search is not None else
-                                album_url_search).group("AlbumID")
-
+            elif album_id_str is not None:
                 download_album(album_id_str)
-            elif playlist_uri_search is not None or playlist_url_search is not None:
-                playlist_id_str = (playlist_uri_search
-                                   if playlist_uri_search is not None else
-                                   playlist_url_search).group("PlaylistID")
-
+            elif playlist_id_str is not None:
                 playlist_songs = get_playlist_songs(token, playlist_id_str)
                 name, creator = get_playlist_info(token, playlist_id_str)
                 for song in playlist_songs:
                     download_track(song['track']['id'],
                                    sanitize_data(name) + "/")
                     print("\n")
-            elif episode_uri_search is not None or episode_url_search is not None:
-                episode_id_str = (episode_uri_search
-                                  if episode_uri_search is not None else
-                                  episode_url_search).group("EpisodeID")
-
+            elif episode_id_str is not None:
                 downloadEpisode(episode_id_str)
     else:
-        search_text = input("Enter search: ")
+        search_text = input("Enter search or URL: ")
         search(search_text)
     wait()
+
+
+def regexInputForUrls(search_input):
+    track_uri_search = re.search(
+        r"^spotify:track:(?P<TrackID>[0-9a-zA-Z]{22})$", search_input)
+    track_url_search = re.search(
+        r"^(https?://)?open\.spotify\.com/track/(?P<TrackID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
+        search_input,
+    )
+
+    album_uri_search = re.search(
+        r"^spotify:album:(?P<AlbumID>[0-9a-zA-Z]{22})$", search_input)
+    album_url_search = re.search(
+        r"^(https?://)?open\.spotify\.com/album/(?P<AlbumID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
+        search_input,
+    )
+
+    playlist_uri_search = re.search(
+        r"^spotify:playlist:(?P<PlaylistID>[0-9a-zA-Z]{22})$", search_input)
+    playlist_url_search = re.search(
+        r"^(https?://)?open\.spotify\.com/playlist/(?P<PlaylistID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
+        search_input,
+    )
+
+    episode_uri_search = re.search(
+        r"^spotify:episode:(?P<EpisodeID>[0-9a-zA-Z]{22})$", search_input)
+    episode_url_search = re.search(
+        r"^(https?://)?open\.spotify\.com/episode/(?P<EpisodeID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
+        search_input,
+    )
+
+    if track_uri_search is not None or track_url_search is not None:
+        track_id_str = (track_uri_search
+                        if track_uri_search is not None else
+                        track_url_search).group("TrackID")
+    else:
+        track_id_str = None
+
+    if album_uri_search is not None or album_url_search is not None:
+        album_id_str = (album_uri_search
+                        if album_uri_search is not None else
+                        album_url_search).group("AlbumID")
+    else:
+        album_id_str = None
+
+    if playlist_uri_search is not None or playlist_url_search is not None:
+        playlist_id_str = (playlist_uri_search
+                           if playlist_uri_search is not None else
+                           playlist_url_search).group("PlaylistID")
+    else:
+        playlist_id_str = None
+
+    if episode_uri_search is not None or episode_url_search is not None:
+        episode_id_str = (episode_uri_search
+                          if episode_uri_search is not None else
+                          episode_url_search).group("EpisodeID")
+    else:
+        episode_id_str = None
+
+    return track_id_str, album_id_str, playlist_id_str, episode_id_str
 
 
 def getEpisodeInfo(episode_id_str):
@@ -230,14 +249,21 @@ def search(search_term):
         headers={"Authorization": "Bearer %s" % token},
     )
 
+    # print(resp.json())
+
     i = 1
     tracks = resp.json()["tracks"]["items"]
     if len(tracks) > 0:
         print("###  TRACKS  ###")
         for track in tracks:
-            print("%d, %s | %s" % (
+            if track["explicit"]:
+                explicit = "[E]"
+            else:
+                explicit = ""
+            print("%d, %s %s | %s" % (
                 i,
                 track["name"],
+                explicit,
                 ",".join([artist["name"] for artist in track["artists"]]),
             ))
             i += 1
