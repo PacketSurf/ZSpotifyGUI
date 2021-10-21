@@ -137,6 +137,9 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# VSCode settings
+.vscode/
+
 # Spotify Credentials
 credentials.json
 
