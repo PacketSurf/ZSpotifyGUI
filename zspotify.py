@@ -31,7 +31,7 @@ ROOT_PODCAST_PATH = "ZSpotify Podcasts/"
 
 SKIP_EXISTING_FILES = True
 
-MUSIC_FORMAT = "ogg"  # or "ogg"
+MUSIC_FORMAT = "mp3"  # or "ogg"
 RAW_AUDIO_AS_IS = False  # set to True if you wish to just save the raw audio
 
 FORCE_PREMIUM = False  # set to True if not detecting your premium account automatically
@@ -619,6 +619,7 @@ def download_album(album):
         download_track(track['id'], artist + " - " + album_name + "/")
         print("\n")
 
+
 def download_playlist(playlists, playlist_choice):
     """Downloads all the songs from a playlist"""
     token = SESSION.tokens().get("user-read-email")
@@ -631,6 +632,7 @@ def download_playlist(playlists, playlist_choice):
             download_track(song['track']['id'], sanitize_data(
                 playlists[int(playlist_choice) - 1]['name'].strip()) + "/")
         print("\n")
+
 
 def download_from_user_playlist():
     """ Select which playlist(s) to download """
@@ -658,11 +660,8 @@ def download_from_user_playlist():
 
         for playlist in range(start, end):
             download_playlist(playlists, playlist)
-        
+
         print("\n**All playlists have been downloaded**\n")
-    
-
-
 
 
 # Core functions here
