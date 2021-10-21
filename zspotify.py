@@ -468,54 +468,53 @@ def get_saved_tracks(access_token):
 def download_track(track_id_str: str, extra_paths=""):
     """ Downloads raw song audio from Spotify """
     global ROOT_PATH, SKIP_EXISTING_FILES, MUSIC_FORMAT, RAW_AUDIO_AS_IS
+    try:
+        artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable = get_song_info(
+            track_id_str)
 
-    track_id = TrackId.from_base62(track_id_str)
-    artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable = get_song_info(
-        track_id_str)
-
-    song_name = artists[0] + " - " + name
-    filename = ROOT_PATH + extra_paths + song_name + '.' + MUSIC_FORMAT
-
-    if not is_playable:
-        print("###   SKIPPING:", song_name, "(SONG IS UNAVAILABLE)   ###")
+        song_name = artists[0] + " - " + name
+        filename = ROOT_PATH + extra_paths + song_name + '.' + MUSIC_FORMAT
+    except Exception as e:
+        print("###   SKIPPING SONG - FAILED TO QUERY METADATA   ###")
+        # print(e)
     else:
-        if os.path.isfile(filename) and SKIP_EXISTING_FILES:
-            print("###   SKIPPING:", song_name, "(SONG ALREADY EXISTS)   ###")
-        else:
-            if track_id_str != scraped_song_id:
-                print("###   APPLYING PATCH TO LET SONG DOWNLOAD   ###")
-                track_id_str = scraped_song_id
-                track_id = TrackId.from_base62(track_id_str)
-
-            print("###   FOUND SONG:", song_name, "   ###")
-
-            try:
-                stream = SESSION.content_feeder().load(
-                    track_id, VorbisOnlyAudioQuality(QUALITY), False, None)
-            except:
+        try:
+            if not is_playable:
                 print("###   SKIPPING:", song_name,
-                      "(GENERAL DOWNLOAD ERROR)   ###")
+                      "(SONG IS UNAVAILABLE)   ###")
             else:
-                print("###   DOWNLOADING RAW AUDIO   ###")
+                if os.path.isfile(filename) and SKIP_EXISTING_FILES:
+                    print("###   SKIPPING:", song_name,
+                          "(SONG ALREADY EXISTS)   ###")
+                else:
+                    if track_id_str != scraped_song_id:
+                        track_id_str = scraped_song_id
 
-                if not os.path.isdir(ROOT_PATH + extra_paths):
-                    os.makedirs(ROOT_PATH + extra_paths)
+                    track_id = TrackId.from_base62(track_id_str)
+                    print("###   FOUND SONG:", song_name, "   ###")
 
-                with open(filename, 'wb') as file:
-                    # Try's to download the entire track at once now to be more efficient.
-                    byte = stream.input_stream.stream().read(-1)
-                    file.write(byte)
-                if not RAW_AUDIO_AS_IS:
-                    try:
+                    stream = SESSION.content_feeder().load(
+                        track_id, VorbisOnlyAudioQuality(QUALITY), False, None)
+                    print("###   DOWNLOADING RAW AUDIO   ###")
+
+                    if not os.path.isdir(ROOT_PATH + extra_paths):
+                        os.makedirs(ROOT_PATH + extra_paths)
+
+                    with open(filename, 'wb') as file:
+                        # Try's to download the entire track at once now to be more efficient.
+                        byte = stream.input_stream.stream().read(-1)
+                        file.write(byte)
+
+                    if not RAW_AUDIO_AS_IS:
                         convert_audio_format(filename)
-                    except:
-                        os.remove(filename)
-                        print("###   SKIPPING:", song_name,
-                              "(GENERAL CONVERSION ERROR)   ###")
-                    else:
                         set_audio_tags(filename, artists, name, album_name,
                                        release_year, disc_number, track_number)
                         set_music_thumbnail(filename, image_url)
+        except:
+            print("###   SKIPPING:", song_name,
+                  "(GENERAL DOWNLOAD ERROR)   ###")
+            if os.path.exists(filename):
+                os.remove(filename)
 
 
 def download_album(album):
