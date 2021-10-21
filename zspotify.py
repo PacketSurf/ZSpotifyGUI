@@ -24,17 +24,25 @@ from pydub import AudioSegment
 SESSION: Session = None
 sanitize = ["\\", "/", ":", "*", "?", "'", "<", ">", '"']
 
+
+# Hardcoded variables that adjust the core functionality of ZSpotify
 ROOT_PATH = "ZSpotify Music/"
 ROOT_PODCAST_PATH = "ZSpotify Podcasts/"
+
 SKIP_EXISTING_FILES = True
+
 MUSIC_FORMAT = "mp3"  # or "ogg"
+RAW_AUDIO_AS_IS = False  # set to True if you wish to just save the raw audio
+
 FORCE_PREMIUM = False  # set to True if not detecting your premium account automatically
-# set to True if you wish you save the raw audio without re-encoding it.
-RAW_AUDIO_AS_IS = False
+
+# This is how many seconds ZSpotify waits between downloading tracks so spotify doesn't get out the ban hammer
+ANTI_BAN_WAIT_TIME = 1
+# Set this to True to not wait at all between tracks and just go balls to the wall
+OVERRIDE_AUTO_WAIT = False
+
 
 # miscellaneous functions for general use
-
-
 def clear():
     """ Clear the console window """
     if platform.system() == "Windows":
@@ -511,7 +519,7 @@ def get_saved_tracks(access_token):
 # Functions directly related to downloading stuff
 def download_track(track_id_str: str, extra_paths=""):
     """ Downloads raw song audio from Spotify """
-    global ROOT_PATH, SKIP_EXISTING_FILES, MUSIC_FORMAT, RAW_AUDIO_AS_IS
+    global ROOT_PATH, SKIP_EXISTING_FILES, MUSIC_FORMAT, RAW_AUDIO_AS_IS, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT
     try:
         artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable = get_song_info(
             track_id_str)
@@ -554,6 +562,9 @@ def download_track(track_id_str: str, extra_paths=""):
                         set_audio_tags(filename, artists, name, album_name,
                                        release_year, disc_number, track_number)
                         set_music_thumbnail(filename, image_url)
+
+                    if not OVERRIDE_AUTO_WAIT:
+                        time.sleep(ANTI_BAN_WAIT_TIME)
         except:
             print("###   SKIPPING:", song_name,
                   "(GENERAL DOWNLOAD ERROR)   ###")
