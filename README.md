@@ -36,13 +36,29 @@ Extra command line options:
   -ls, --liked-songs   Downloads all the liked songs from your account
 
 Special hardcoded options:
-  MUSIC_FORMAT      Set this to "ogg" if you would rather that format audio over "mp3"
-  FORCE_PREMIUM     Set this to True if ZSpotify isn't automatically detecting that you are using a premium account
-  RAW_AUDIO_AS_IS   Set this to True to only stream the audio to a file and do no re-encoding or post processing
+  ROOT_PATH           Change this path if you don't like the default directory where ZSpotify saves the music
+  ROOT_PODCAST_PATH   Change this path if you don't like the default directory where ZSpotify saves the podcasts
+
+  SKIP_EXISTING_FILES Set this to False if you want ZSpotify to overwrite files with the same name rather than skipping the song
+
+  MUSIC_FORMAT        Set this to "ogg" if you would rather that format audio over "mp3"
+  RAW_AUDIO_AS_IS     Set this to True to only stream the audio to a file and do no re-encoding or post processing
+  
+  FORCE_PREMIUM       Set this to True if ZSpotify isn't automatically detecting that you are using a premium account
+  
+  ANTI_BAN_WAIT_TIME  Change this setting if the time waited between bulk downloads is too high or low
+  OVERRIDE_AUTO_WAIT  Change this to True if you want to completely disable the wait between songs for faster downloads with the risk of instability
 ```
 
 
 ## **Changelog:**
+**v1.8 (21 Oct 2021):**
+- Improved podcast downloading a bit.
+- Simplified the code that catches crashes while downloading.
+- Cleaned up code using linter again.
+- Added option to just paste a url in the search bar to download it.
+- Added a small delay between downloading each track when downloading in bulk to help with downloading issues and potential bans.
+
 **v1.7 (21 Oct 2021):**
 - Rewrote README.md to look a lot more professional.
 - Added patch to fix edge case crash when downloading liked songs.
