@@ -141,7 +141,7 @@ def client():
     else:
         search_text = input("Enter search or URL: ")
 
-        track_id_str, album_id_str, playlist_id_str, episode_id_str = regex_input_for_urls(
+        track_id_str, album_id_str, playlist_id_str, episode_id_str, artist_id_str = regex_input_for_urls(
             search_text)
 
         if track_id_str is not None:
@@ -191,6 +191,13 @@ def regex_input_for_urls(search_input):
         search_input,
     )
 
+    artist_uri_search = re.search(
+        r"^spotify:artist:(?P<ArtistID>[0-9a-zA-Z]{22})$", search_input)
+    artist_url_search = re.search(
+        r"^(https?://)?open\.spotify\.com/artist/(?P<ArtistID>[0-9a-zA-Z]{22})(\?si=.+?)?$",
+        search_input,
+    )
+
     if track_uri_search is not None or track_url_search is not None:
         track_id_str = (track_uri_search
                         if track_uri_search is not None else
@@ -219,7 +226,14 @@ def regex_input_for_urls(search_input):
     else:
         episode_id_str = None
 
-    return track_id_str, album_id_str, playlist_id_str, episode_id_str
+    if artist_uri_search is not None or artist_url_search is not None:
+        artist_id_str = (artist_uri_search
+                          if artist_uri_search is not None else
+                          artist_url_search).group("ArtistID")
+    else:
+        artist_id_str = None
+
+    return track_id_str, album_id_str, playlist_id_str, episode_id_str, artist_id_str
 
 
 def get_episode_info(episode_id_str):
@@ -493,7 +507,6 @@ def get_album_name(access_token, album_id):
     resp = requests.get(
         f'https://api.spotify.com/v1/albums/{album_id}', headers=headers).json()
     return resp['artists'][0]['name'], sanitize_data(resp['name'])
-
 
 # Extra functions directly related to our saved tracks
 def get_saved_tracks(access_token):
