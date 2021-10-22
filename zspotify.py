@@ -588,7 +588,7 @@ def get_saved_tracks(access_token):
 
 
 # Functions directly related to downloading stuff
-def download_track(track_id_str: str, extra_paths=""):
+def download_track(track_id_str: str, extra_paths="", prefix=False, prefix_value=''):
     """ Downloads raw song audio from Spotify """
     global ROOT_PATH, SKIP_EXISTING_FILES, MUSIC_FORMAT, RAW_AUDIO_AS_IS, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT
     try:
@@ -596,6 +596,8 @@ def download_track(track_id_str: str, extra_paths=""):
             track_id_str)
 
         song_name = artists[0] + " - " + name
+        if prefix:
+            song_name = f'{prefix_value.zfill(2)}-{song_name}' if prefix_value.isdigit() else f'{prefix_value}-{song_name}'
         filename = os.path.join(ROOT_PATH, extra_paths, song_name + '.' + MUSIC_FORMAT)
     except Exception as e:
         print("###   SKIPPING SONG - FAILED TO QUERY METADATA   ###")
@@ -655,8 +657,8 @@ def download_album(album):
     token = SESSION.tokens().get("user-read-email")
     artist, album_name = get_album_name(token, album)
     tracks = get_album_tracks(token, album)
-    for track in tracks:
-        download_track(track['id'], f'{artist}/{album_name}')
+    for n, track in enumerate(tracks, start=1):
+        download_track(track['id'], f'{artist}/{album_name}', prefix=True, prefix_value=str(n))
         print("\n")
 
 
