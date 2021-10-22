@@ -27,7 +27,6 @@ from tqdm import tqdm
 SESSION: Session = None
 sanitize = ["\\", "/", ":", "*", "?", "'", "<", ">", '"']
 
-
 # Hardcoded variables that adjust the core functionality of ZSpotify
 ROOT_PATH = "ZSpotify Music/"
 ROOT_PODCAST_PATH = "ZSpotify Podcasts/"
@@ -44,6 +43,7 @@ ANTI_BAN_WAIT_TIME = 1
 # Set this to True to not wait at all between tracks and just go balls to the wall
 OVERRIDE_AUTO_WAIT = False
 CHUNK_SIZE = 50000
+
 
 # miscellaneous functions for general use
 
@@ -440,7 +440,7 @@ def get_song_info(song_id):
     token = SESSION.tokens().get("user-read-email")
 
     info = json.loads(requests.get("https://api.spotify.com/v1/tracks?ids=" + song_id +
-                      '&market=from_token', headers={"Authorization": "Bearer %s" % token}).text)
+                                   '&market=from_token', headers={"Authorization": "Bearer %s" % token}).text)
 
     artists = []
     for data in info['tracks'][0]['artists']:
@@ -615,7 +615,7 @@ def get_saved_tracks(access_token):
 
 
 # Functions directly related to downloading stuff
-def download_track(track_id_str: str, extra_paths=""):
+def download_track(track_id_str: str, extra_paths="", prefix=False, prefix_value='', disable_progressbar=False):
     """ Downloads raw song audio from Spotify """
     global ROOT_PATH, SKIP_EXISTING_FILES, MUSIC_FORMAT, RAW_AUDIO_AS_IS, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT
     try:
@@ -623,7 +623,9 @@ def download_track(track_id_str: str, extra_paths=""):
             track_id_str)
 
         song_name = artists[0] + " - " + name
-        filename = ROOT_PATH + extra_paths + song_name + '.' + MUSIC_FORMAT
+        if prefix:
+            song_name = f'{prefix_value.zfill(2)}-{song_name}' if prefix_value.isdigit() else f'{prefix_value}-{song_name}'
+        filename = os.path.join(ROOT_PATH, extra_paths, song_name + '.' + MUSIC_FORMAT)
     except Exception as e:
         print("###   SKIPPING SONG - FAILED TO QUERY METADATA   ###")
         # print(e)
@@ -656,7 +658,8 @@ def download_track(track_id_str: str, extra_paths=""):
                             total=total_size,
                             unit='B',
                             unit_scale=True,
-                            unit_divisor=1024
+                            unit_divisor=1024,
+                            disable=disable_progressbar
                     ) as bar:
                         for _ in range(int(total_size / CHUNK_SIZE) + 1):
                             bar.update(file.write(
@@ -682,9 +685,8 @@ def download_album(album):
     token = SESSION.tokens().get("user-read-email")
     artist, album_name = get_album_name(token, album)
     tracks = get_album_tracks(token, album)
-    for track in tracks:
-        download_track(track['id'], artist + " - " + album_name + "/")
-        print("\n")
+    for n, track in tqdm(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=len(tracks)):
+        download_track(track['id'], f'{artist}/{album_name}', prefix=True, prefix_value=str(n), disable_progressbar=True)
 
 def download_artist_albums(artist):
     """ Downloads albums of an artist """
@@ -727,7 +729,7 @@ def download_from_user_playlist():
         download_playlist(playlists, playlist_choices[0])
     else:
         start = int(playlist_choices[0])
-        end = int(playlist_choices[1])+1
+        end = int(playlist_choices[1]) + 1
 
         print(f"Downloading from {start} to {end}...")
 
