@@ -44,6 +44,8 @@ OVERRIDE_AUTO_WAIT = False
 CHUNK_SIZE = 50000
 
 # miscellaneous functions for general use
+
+
 def clear():
     """ Clear the console window """
     if platform.system() == "Windows":
@@ -65,6 +67,20 @@ def sanitize_data(value):
     for i in sanitize:
         value = value.replace(i, "")
     return value.replace("|", "-")
+
+
+def split_input(selection):
+    """ Returns a list of inputted strings """
+    inputs = []
+    if "-" in selection:
+        for number in range(int(selection.split("-")[0]), int(selection.split("-")[1]) + 1):
+            inputs.append(number)
+        return inputs
+    else:
+        selections = selection.split(",")
+        for i in selections:
+            inputs.append(i.strip())
+        return inputs
 
 
 def splash():
@@ -366,22 +382,25 @@ def search(search_term):
     if len(tracks) + len(albums) + len(playlists) == 0:
         print("NO RESULTS FOUND - EXITING...")
     else:
-        position = int(input("SELECT ITEM BY ID: "))
-
-        if position <= total_tracks:
-            track_id = tracks[position - 1]["id"]
-            download_track(track_id)
-        elif position <= total_albums + total_tracks:
-            download_album(albums[position - total_tracks - 1]["id"])
-        else:
-            playlist_choice = playlists[position -
-                                        total_tracks - total_albums - 1]
-            playlist_songs = get_playlist_songs(token, playlist_choice['id'])
-            for song in playlist_songs:
-                if song['track']['id'] is not None:
-                    download_track(song['track']['id'], sanitize_data(
-                        playlist_choice['name'].strip()) + "/")
-                    print("\n")
+        selection = str(input("SELECT ITEM(S) BY ID: "))
+        inputs = split_input(selection)
+        for pos in inputs:
+            position = int(pos)
+            if position <= total_tracks:
+                track_id = tracks[position - 1]["id"]
+                download_track(track_id)
+            elif position <= total_albums + total_tracks:
+                download_album(albums[position - total_tracks - 1]["id"])
+            else:
+                playlist_choice = playlists[position -
+                                            total_tracks - total_albums - 1]
+                playlist_songs = get_playlist_songs(
+                    token, playlist_choice['id'])
+                for song in playlist_songs:
+                    if song['track']['id'] is not None:
+                        download_track(song['track']['id'], sanitize_data(
+                            playlist_choice['name'].strip()) + "/")
+                        print("\n")
 
 
 def get_song_info(song_id):
@@ -600,7 +619,8 @@ def download_track(track_id_str: str, extra_paths=""):
                             unit_divisor=1024
                     ) as bar:
                         for _ in range(int(total_size / CHUNK_SIZE) + 1):
-                            bar.update(file.write(stream.input_stream.stream().read(CHUNK_SIZE)))
+                            bar.update(file.write(
+                                stream.input_stream.stream().read(CHUNK_SIZE)))
 
                     if not RAW_AUDIO_AS_IS:
                         convert_audio_format(filename)
