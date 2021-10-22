@@ -52,6 +52,12 @@ Special hardcoded options:
 
 
 ## **Changelog:**
+**v2.0 (22 Oct 2021):**
+- Added progress bar for downloads.
+- Added multi-select support for all results when searching.
+- Added GPLv3 Licence.
+- Changed welcome banner and removed unnecessary debug print statments. 
+
 **v1.9 (22 Oct 2021):**
 - Added Gitea mirror for when the Spotify Glowies come to DMCA the shit out of this.
 - Changed the discord server invite to a matrix server so that won't get swatted either.
