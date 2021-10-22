@@ -573,7 +573,7 @@ def download_track(track_id_str: str, extra_paths=""):
                 print("###   SKIPPING:", song_name,
                       "(SONG IS UNAVAILABLE)   ###")
             else:
-                if os.path.isfile(filename) and SKIP_EXISTING_FILES:
+                if os.path.isfile(filename) and os.path.getsize(filename) and SKIP_EXISTING_FILES:
                     print("###   SKIPPING:", song_name,
                           "(SONG ALREADY EXISTS)   ###")
                 else:
