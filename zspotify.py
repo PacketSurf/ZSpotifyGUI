@@ -596,7 +596,7 @@ def download_track(track_id_str: str, extra_paths=""):
             track_id_str)
 
         song_name = artists[0] + " - " + name
-        filename = ROOT_PATH + extra_paths + song_name + '.' + MUSIC_FORMAT
+        filename = os.path.join(ROOT_PATH, extra_paths, song_name + '.' + MUSIC_FORMAT)
     except Exception as e:
         print("###   SKIPPING SONG - FAILED TO QUERY METADATA   ###")
         # print(e)
@@ -656,7 +656,7 @@ def download_album(album):
     artist, album_name = get_album_name(token, album)
     tracks = get_album_tracks(token, album)
     for track in tracks:
-        download_track(track['id'], artist + " - " + album_name + "/")
+        download_track(track['id'], f'{artist}/{album_name}')
         print("\n")
 
 
@@ -694,7 +694,7 @@ def download_from_user_playlist():
         download_playlist(playlists, playlist_choices[0])
     else:
         start = int(playlist_choices[0])
-        end = int(playlist_choices[1])+1
+        end = int(playlist_choices[1]) + 1
 
         print(f"Downloading from {start} to {end}...")
 
