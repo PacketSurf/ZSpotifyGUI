@@ -44,6 +44,8 @@ OVERRIDE_AUTO_WAIT = False
 CHUNK_SIZE = 50000
 
 # miscellaneous functions for general use
+
+
 def clear():
     """ Clear the console window """
     if platform.system() == "Windows":
@@ -70,7 +72,7 @@ def sanitize_data(value):
 def splash():
     """ Displays splash screen """
     print("=================================\n"
-          "| Spotify Downloader            |\n"
+          "| ZSpotify                      |\n"
           "|                               |\n"
           "| by Footsiefat/Deathmonger     |\n"
           "=================================\n\n\n")
@@ -167,7 +169,7 @@ def client():
                 download_episode(episode)
         else:
             search(search_text)
-    wait()
+    # wait()
 
 
 def regex_input_for_urls(search_input):
@@ -278,7 +280,7 @@ def download_episode(episode_id_str):
     if podcast_name is None:
         print("###   SKIPPING: (EPISODE NOT FOUND)   ###")
     else:
-        filename = podcast_name + " - " + episode_name + ".wav"
+        filename = podcast_name + " - " + episode_name
 
         episode_id = EpisodeId.from_base62(episode_id_str)
         stream = SESSION.content_feeder().load(
@@ -289,12 +291,17 @@ def download_episode(episode_id_str):
         if not os.path.isdir(ROOT_PODCAST_PATH + extra_paths):
             os.makedirs(ROOT_PODCAST_PATH + extra_paths)
 
-        with open(ROOT_PODCAST_PATH + extra_paths + filename, 'wb') as file:
-            while True:
-                byte = stream.input_stream.stream().read(1024 * 1024)
-                if byte == b'':
-                    break
-                file.write(byte)
+        total_size = stream.input_stream.size
+        with open(ROOT_PODCAST_PATH + extra_paths + filename + ".wav", 'wb') as file, tqdm(
+                desc=filename,
+                total=total_size,
+                unit='B',
+                unit_scale=True,
+                unit_divisor=1024
+        ) as bar:
+            for _ in range(int(total_size / CHUNK_SIZE) + 1):
+                bar.update(file.write(
+                    stream.input_stream.stream().read(CHUNK_SIZE)))
 
 # related functions that do stuff with the spotify API
 
@@ -416,7 +423,7 @@ def check_premium():
 def convert_audio_format(filename):
     """ Converts raw audio into playable mp3 or ogg vorbis """
     global MUSIC_FORMAT
-    print("###   CONVERTING TO " + MUSIC_FORMAT.upper() + "   ###")
+    # print("###   CONVERTING TO " + MUSIC_FORMAT.upper() + "   ###")
     raw_audio = AudioSegment.from_file(filename, format="ogg",
                                        frame_rate=44100, channels=2, sample_width=2)
     if QUALITY == AudioQuality.VERY_HIGH:
@@ -428,7 +435,7 @@ def convert_audio_format(filename):
 
 def set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number):
     """ sets music_tag metadata """
-    print("###   SETTING MUSIC TAGS   ###")
+    # print("###   SETTING MUSIC TAGS   ###")
     tags = music_tag.load_file(filename)
     tags['artist'] = conv_artist_format(artists)
     tags['tracktitle'] = name
@@ -441,7 +448,7 @@ def set_audio_tags(filename, artists, name, album_name, release_year, disc_numbe
 
 def set_music_thumbnail(filename, image_url):
     """ Downloads cover artwork """
-    print("###   SETTING THUMBNAIL   ###")
+    # print("###   SETTING THUMBNAIL   ###")
     img = requests.get(image_url).content
     tags = music_tag.load_file(filename)
     tags['artwork'] = img
@@ -582,11 +589,11 @@ def download_track(track_id_str: str, extra_paths=""):
                         track_id_str = scraped_song_id
 
                     track_id = TrackId.from_base62(track_id_str)
-                    print("###   FOUND SONG:", song_name, "   ###")
+                    # print("###   FOUND SONG:", song_name, "   ###")
 
                     stream = SESSION.content_feeder().load(
                         track_id, VorbisOnlyAudioQuality(QUALITY), False, None)
-                    print("###   DOWNLOADING RAW AUDIO   ###")
+                    # print("###   DOWNLOADING RAW AUDIO   ###")
 
                     if not os.path.isdir(ROOT_PATH + extra_paths):
                         os.makedirs(ROOT_PATH + extra_paths)
@@ -600,7 +607,8 @@ def download_track(track_id_str: str, extra_paths=""):
                             unit_divisor=1024
                     ) as bar:
                         for _ in range(int(total_size / CHUNK_SIZE) + 1):
-                            bar.update(file.write(stream.input_stream.stream().read(CHUNK_SIZE)))
+                            bar.update(file.write(
+                                stream.input_stream.stream().read(CHUNK_SIZE)))
 
                     if not RAW_AUDIO_AS_IS:
                         convert_audio_format(filename)
