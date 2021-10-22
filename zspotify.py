@@ -3,6 +3,8 @@
 """
 ZSpotify
 It's like youtube-dl, but for Spotify.
+
+(Made by Deathmonger/Footsiefat - @doomslayer117:matrix.org)
 """
 
 import json
@@ -85,11 +87,13 @@ def split_input(selection):
 
 def splash():
     """ Displays splash screen """
-    print("=================================\n"
-          "| ZSpotify                      |\n"
-          "|                               |\n"
-          "| by Footsiefat/Deathmonger     |\n"
-          "=================================\n\n\n")
+    print("""
+███████ ███████ ██████   ██████  ████████ ██ ███████ ██    ██
+   ███  ██      ██   ██ ██    ██    ██    ██ ██       ██  ██
+  ███   ███████ ██████  ██    ██    ██    ██ █████     ████
+ ███         ██ ██      ██    ██    ██    ██ ██         ██
+███████ ███████ ██       ██████     ██    ██ ██         ██
+    """)
 
 
 # two mains functions for logging in and doing client stuff
@@ -121,10 +125,10 @@ def client():
     token = SESSION.tokens().get("user-read-email")
 
     if check_premium():
-        print("###   DETECTED PREMIUM ACCOUNT - USING VERY_HIGH QUALITY   ###")
+        print("[ DETECTED PREMIUM ACCOUNT - USING VERY_HIGH QUALITY ]\n\n")
         QUALITY = AudioQuality.VERY_HIGH
     else:
-        print("###   DETECTED FREE ACCOUNT - USING HIGH QUALITY   ###")
+        print("[ DETECTED FREE ACCOUNT - USING HIGH QUALITY ]\n\n")
         QUALITY = AudioQuality.HIGH
 
     if len(sys.argv) > 1:
@@ -268,6 +272,7 @@ def get_episode_info(episode_id_str):
     if "error" in info:
         return None, None
     else:
+        # print(info['images'][0]['url'])
         return sanitize_data(info["show"]["name"]), sanitize_data(info["name"])
 
 
@@ -285,7 +290,7 @@ def get_show_episodes(access_token, show_id_str):
 
 
 def download_episode(episode_id_str):
-    global ROOT_PODCAST_PATH
+    global ROOT_PODCAST_PATH, MUSIC_FORMAT
 
     podcast_name, episode_name = get_episode_info(episode_id_str)
 
@@ -299,8 +304,8 @@ def download_episode(episode_id_str):
         episode_id = EpisodeId.from_base62(episode_id_str)
         stream = SESSION.content_feeder().load(
             episode_id, VorbisOnlyAudioQuality(QUALITY), False, None)
-        print("###  DOWNLOADING '" + podcast_name + " - " +
-              episode_name + "' - THIS MAY TAKE A WHILE ###")
+        # print("###  DOWNLOADING '" + podcast_name + " - " +
+        #      episode_name + "' - THIS MAY TAKE A WHILE ###")
 
         if not os.path.isdir(ROOT_PODCAST_PATH + extra_paths):
             os.makedirs(ROOT_PODCAST_PATH + extra_paths)
@@ -317,7 +322,10 @@ def download_episode(episode_id_str):
                 bar.update(file.write(
                     stream.input_stream.stream().read(CHUNK_SIZE)))
 
-# related functions that do stuff with the spotify API
+        # convert_audio_format(ROOT_PODCAST_PATH +
+        #                     extra_paths + filename + ".wav")
+
+        # related functions that do stuff with the spotify API
 
 
 def search(search_term):
