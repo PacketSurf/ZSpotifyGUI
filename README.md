@@ -16,6 +16,7 @@ Binaries
 
 - Python 3.8 or greater
 - ffmpeg*
+- Git 
 
 Python packages:
 
