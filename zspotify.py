@@ -20,6 +20,7 @@ from librespot.audio.decoders import AudioQuality, VorbisOnlyAudioQuality
 from librespot.core import Session
 from librespot.metadata import TrackId, EpisodeId
 from pydub import AudioSegment
+from tqdm import tqdm
 
 SESSION: Session = None
 sanitize = ["\\", "/", ":", "*", "?", "'", "<", ">", '"']
@@ -40,7 +41,7 @@ FORCE_PREMIUM = False  # set to True if not detecting your premium account autom
 ANTI_BAN_WAIT_TIME = 1
 # Set this to True to not wait at all between tracks and just go balls to the wall
 OVERRIDE_AUTO_WAIT = False
-
+CHUNK_SIZE = 50000
 
 # miscellaneous functions for general use
 def clear():
@@ -590,10 +591,16 @@ def download_track(track_id_str: str, extra_paths=""):
                     if not os.path.isdir(ROOT_PATH + extra_paths):
                         os.makedirs(ROOT_PATH + extra_paths)
 
-                    with open(filename, 'wb') as file:
-                        # Try's to download the entire track at once now to be more efficient.
-                        byte = stream.input_stream.stream().read(-1)
-                        file.write(byte)
+                    total_size = stream.input_stream.size
+                    with open(filename, 'wb') as file, tqdm(
+                            desc=song_name,
+                            total=total_size,
+                            unit='B',
+                            unit_scale=True,
+                            unit_divisor=1024
+                    ) as bar:
+                        for _ in range(int(total_size / CHUNK_SIZE) + 1):
+                            bar.update(file.write(stream.input_stream.stream().read(CHUNK_SIZE)))
 
                     if not RAW_AUDIO_AS_IS:
                         convert_audio_format(filename)
