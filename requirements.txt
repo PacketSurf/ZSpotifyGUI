@@ -3,3 +3,4 @@ music_tag
 pydub
 Pillow
 tqdm
+tabulate
