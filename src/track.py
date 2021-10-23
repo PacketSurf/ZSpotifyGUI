@@ -73,11 +73,11 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
     else:
         try:
             if not is_playable:
-                print('###   SKIPPING:', song_name,
+                print('\n###   SKIPPING:', song_name,
                       '(SONG IS UNAVAILABLE)   ###')
             else:
                 if os.path.isfile(filename) and os.path.getsize(filename) and ZSpotify.get_config(SKIP_EXISTING_FILES):
-                    print('###   SKIPPING:', song_name,
+                    print('\n###   SKIPPING:', song_name,
                           '(SONG ALREADY EXISTS)   ###')
                 else:
                     if track_id != scraped_song_id:
@@ -107,7 +107,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
                     if not ZSpotify.get_config(OVERRIDE_AUTO_WAIT):
                         time.sleep(ZSpotify.get_config(ANTI_BAN_WAIT_TIME))
-        except Exception as e:
+        except Exception:
             print('###   SKIPPING:', song_name,
                   '(GENERAL DOWNLOAD ERROR)   ###')
             if os.path.exists(filename):

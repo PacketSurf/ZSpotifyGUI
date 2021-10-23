@@ -1,3 +1,5 @@
+from tqdm import tqdm
+
 from const import ITEMS, ID, TRACK, NAME
 from track import download_track
 from utils import sanitize_data
@@ -45,15 +47,15 @@ def get_playlist_info(playlist_id):
     return resp['name'].strip(), resp['owner']['display_name'].strip()
 
 
-def download_playlist(playlists, playlist_choice):
+def download_playlist(playlists, playlist_number):
     """Downloads all the songs from a playlist"""
-    playlist_songs = get_playlist_songs(playlists[int(playlist_choice) - 1][ID])
 
-    for song in playlist_songs:
-        if song[TRACK][ID] is not None:
-            download_track(song[TRACK][ID], sanitize_data(
-                playlists[int(playlist_choice) - 1][NAME].strip()) + '/')
-        print('\n')
+    playlist_songs = [song for song in get_playlist_songs(playlists[int(playlist_number) - 1][ID]) if song[TRACK][ID]]
+    p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
+    for song in p_bar:
+        download_track(song[TRACK][ID], sanitize_data(playlists[int(playlist_number) - 1][NAME].strip()) + '/',
+                       disable_progressbar=True)
+        p_bar.set_description(song[TRACK][NAME])
 
 
 def download_from_user_playlist():
@@ -79,7 +81,7 @@ def download_from_user_playlist():
 
         print(f'Downloading from {start} to {end}...')
 
-        for playlist in range(start, end):
-            download_playlist(playlists, playlist)
+        for playlist_number in range(start, end):
+            download_playlist(playlists, playlist_number)
 
         print('\n**All playlists have been downloaded**\n')

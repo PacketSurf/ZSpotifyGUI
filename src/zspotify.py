@@ -17,7 +17,8 @@ from librespot.audio.decoders import VorbisOnlyAudioQuality
 from librespot.core import Session
 
 from const import CREDENTIALS_JSON, TYPE, \
-    PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, RAW_AUDIO_AS_IS
+    PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, RAW_AUDIO_AS_IS, \
+    PLAYLIST_READ_PRIVATE
 from utils import MusicFormat
 
 
@@ -69,12 +70,17 @@ class ZSpotify:
         return cls.SESSION.content_feeder().load(content_id, VorbisOnlyAudioQuality(quality), False, None)
 
     @classmethod
+    def __get_auth_token(cls):
+        return cls.SESSION.tokens().get_token(USER_READ_EMAIL, PLAYLIST_READ_PRIVATE).access_token
+
+    @classmethod
     def get_auth_header(cls):
-        return {AUTHORIZATION: f'Bearer {cls.SESSION.tokens().get(USER_READ_EMAIL)}'}
+        return {
+            AUTHORIZATION: f'Bearer {cls.__get_auth_token()}'}
 
     @classmethod
     def get_auth_header_and_params(cls, limit, offset):
-        return {AUTHORIZATION: f'Bearer {cls.SESSION.tokens().get(USER_READ_EMAIL)}'}, {LIMIT: limit, OFFSET: offset}
+        return {AUTHORIZATION: f'Bearer {cls.__get_auth_token()}'}, {LIMIT: limit, OFFSET: offset}
 
     @classmethod
     def invoke_url_with_params(cls, url, limit, offset, **kwargs):

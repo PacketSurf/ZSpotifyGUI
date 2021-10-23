@@ -6,7 +6,7 @@ from tabulate import tabulate
 from album import download_album, download_artist_albums
 from const import TRACK, NAME, ID, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUMS, OWNER, \
     PLAYLISTS, DISPLAY_NAME
-from playlist import get_playlist_songs, get_playlist_info, download_from_user_playlist
+from playlist import get_playlist_songs, get_playlist_info, download_from_user_playlist, download_playlist
 from podcast import download_episode, get_show_episodes
 from track import download_track, get_saved_tracks
 from utils import sanitize_data, splash, split_input, regex_input_for_urls
@@ -126,14 +126,14 @@ def search(search_term):
 
     artists = resp[ARTISTS][ITEMS]
     if len(artists) > 0:
-        print("###  ARTISTS  ###")
+        print('###  ARTISTS  ###')
         artist_data = []
         for artist in artists:
             artist_data.append([counter, artist[NAME]])
             counter += 1
         total_artists = counter - total_tracks - total_albums - 1
         print(tabulate(artist_data, headers=['S.NO', 'Name'], tablefmt='pretty'))
-        print("\n")
+        print('\n')
     else:
         total_artists = 0
 
@@ -161,14 +161,7 @@ def search(search_term):
             elif position <= total_artists + total_tracks + total_albums:
                 download_artist_albums(artists[position - total_tracks - total_albums - 1][ID])
             else:
-                playlist_choice = playlists[position -
-                                            total_tracks - total_albums - total_artists - 1]
-                playlist_songs = get_playlist_songs(playlist_choice[ID])
-                for song in playlist_songs:
-                    if song[TRACK][ID] is not None:
-                        download_track(song[TRACK][ID], sanitize_data(playlist_choice[NAME].strip()) + "/",
-                                       disable_progressbar=True)
-                        print("\n")
+                download_playlist(playlists, position - total_tracks - total_albums - total_artists)
 
 
 if __name__ == '__main__':
