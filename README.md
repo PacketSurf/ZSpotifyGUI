@@ -28,8 +28,9 @@ Python packages:
 
 ```
 Command line usage:
-  python zspotify.py                              Loads search prompt to find then download a specific track, album or playlist
+  python zspotify.py                                      Loads search prompt to find then download a specific track, album or playlist
   python zspotify.py <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
+  python zspotify.py <artist url>                         Downloads all albums by specified artist
 
 Extra command line options:
   -p, --playlist       Downloads a saved playlist from your account
@@ -49,7 +50,10 @@ Special hardcoded options:
   ANTI_BAN_WAIT_TIME  Change this setting if the time waited between bulk downloads is too high or low
   OVERRIDE_AUTO_WAIT  Change this to True if you want to completely disable the wait between songs for faster downloads with the risk of instability
 ```
-
+### Will my account get banned if I use this tool?
+Currently no user has reported their account getting banned after using ZSpotify.
+This isn't to say _you_ won't get banned as it is technically againt Spotify's TOS.
+**Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
 
 ## **Changelog:**
 **v2.0 (22 Oct 2021):**
