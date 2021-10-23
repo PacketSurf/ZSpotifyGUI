@@ -354,10 +354,55 @@ def search(search_term):
     params = {
         "limit" : "10",
         "q" : search_term,
-        "type" : ["track","album","playlist"]
+        "type" : set(),
     }
 
-    # ADD BLOCK FOR READING OPTIONS AND CLEAN SEARCH_TERM
+    # Block for parsing passed arguments
+    splits = search_term.split()
+    for split in splits:
+        index = splits.index(split)
+
+        if split[0] == "-" and len(split) > 1:
+            if len(splits)-1 == index:
+                raise IndexError("No parameters passed after option: {}\n".
+                                 format(split))
+
+        if split == "-l" or split == "-limit":
+            try:
+                int(splits[index+1])
+            except ValueError:
+                raise ValueError("Paramater passed after {} option must be an integer.\n".
+                                 format(split))
+            if int(splits[index+1]) > 50:
+                raise ValueError("Invalid limit passed. Max is 50.\n")
+            params["limit"] = splits[index+1]
+
+
+        if split == "-t" or split == "-type":
+
+            allowed_types = ["track", "playlist", "album"]
+            for i in range(index+1, len(splits)):
+                if splits[i][0] == "-":
+                    break
+
+                if splits[i] not in allowed_types:
+                    raise ValueError("Parameters passed after {} option must be from this list:\n{}".
+                                     format(split, '\n'.join(allowed_types)))
+
+                params["type"].add(splits[i])
+
+    if len(params["type"]) == 0:
+        params["type"] = {"track", "album", "playlist"}
+
+    # Clean search term
+    search_term_list = []
+    for split in splits:
+        if split[0] == "-":
+            break
+        search_term_list.append(split)
+    if not search_term_list:
+        raise ValueError("Invalid query.")
+    params["q"] = ' '.join(search_term_list)
 
     resp = requests.get(
         "https://api.spotify.com/v1/search",
@@ -437,8 +482,8 @@ def search(search_term):
 
     if "playlist" in params["type"]:
         playlists = resp.json()["playlists"]["items"]
-        print("###  PLAYLISTS  ###")
         if len(playlists) > 0:
+            print("###  PLAYLISTS  ###")
             for playlist in playlists:
                 # collect needed data
                 dic = {
