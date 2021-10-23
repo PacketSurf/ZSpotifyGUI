@@ -27,22 +27,9 @@ from tqdm import tqdm
 SESSION: Session = None
 sanitize = ["\\", "/", ":", "*", "?", "'", "<", ">", '"']
 
-# Hardcoded variables that adjust the core functionality of ZSpotify
-ROOT_PATH = "ZSpotify Music/"
-ROOT_PODCAST_PATH = "ZSpotify Podcasts/"
-
-SKIP_EXISTING_FILES = True
-
-MUSIC_FORMAT = "mp3"  # or "ogg"
-RAW_AUDIO_AS_IS = False  # set to True if you wish to just save the raw audio
-
-FORCE_PREMIUM = False  # set to True if not detecting your premium account automatically
-
-# This is how many seconds ZSpotify waits between downloading tracks so spotify doesn't get out the ban hammer
-ANTI_BAN_WAIT_TIME = 1
-# Set this to True to not wait at all between tracks and just go balls to the wall
-OVERRIDE_AUTO_WAIT = False
-CHUNK_SIZE = 50000
+# user-customizable variables that adjust the core functionality of ZSpotify
+with open('zs_config.json') as config_file:
+    ZS_CONFIG = json.load(config_file)
 
 
 # miscellaneous functions for general use
@@ -308,8 +295,6 @@ def get_show_episodes(access_token, show_id_str):
 
 
 def download_episode(episode_id_str):
-    global ROOT_PODCAST_PATH, MUSIC_FORMAT
-
     podcast_name, episode_name = get_episode_info(episode_id_str)
 
     extra_paths = podcast_name + "/"
@@ -325,22 +310,21 @@ def download_episode(episode_id_str):
         # print("###  DOWNLOADING '" + podcast_name + " - " +
         #      episode_name + "' - THIS MAY TAKE A WHILE ###")
 
-        if not os.path.isdir(ROOT_PODCAST_PATH + extra_paths):
-            os.makedirs(ROOT_PODCAST_PATH + extra_paths)
+        os.makedirs(ZS_CONFIG["ROOT_PODCAST_PATH"] + extra_paths, exist_ok=True)
 
         total_size = stream.input_stream.size
-        with open(ROOT_PODCAST_PATH + extra_paths + filename + ".wav", 'wb') as file, tqdm(
+        with open(ZS_CONFIG["ROOT_PODCAST_PATH"] + extra_paths + filename + ".wav", 'wb') as file, tqdm(
                 desc=filename,
                 total=total_size,
                 unit='B',
                 unit_scale=True,
                 unit_divisor=1024
         ) as bar:
-            for _ in range(int(total_size / CHUNK_SIZE) + 1):
+            for _ in range(int(total_size / ZS_CONFIG["CHUNK_SIZE"]) + 1):
                 bar.update(file.write(
-                    stream.input_stream.stream().read(CHUNK_SIZE)))
+                    stream.input_stream.stream().read(ZS_CONFIG["CHUNK_SIZE"])))
 
-        # convert_audio_format(ROOT_PODCAST_PATH +
+        # convert_audio_format(ZS_CONFIG["ROOT_PODCAST_PATH"] +
         #                     extra_paths + filename + ".wav")
 
         # related functions that do stuff with the spotify API
@@ -458,22 +442,20 @@ def get_song_info(song_id):
 
 def check_premium():
     """ If user has spotify premium return true """
-    global FORCE_PREMIUM
-    return bool((SESSION.get_user_attribute("type") == "premium") or FORCE_PREMIUM)
+    return bool((SESSION.get_user_attribute("type") == "premium") or ZS_CONFIG["FORCE_PREMIUM"])
 
 
 # Functions directly related to modifying the downloaded audio and its metadata
 def convert_audio_format(filename):
     """ Converts raw audio into playable mp3 or ogg vorbis """
-    global MUSIC_FORMAT
-    # print("###   CONVERTING TO " + MUSIC_FORMAT.upper() + "   ###")
+    # print("###   CONVERTING TO " + ZS_CONFIG["MUSIC_FORMAT"].upper() + "   ###")
     raw_audio = AudioSegment.from_file(filename, format="ogg",
                                        frame_rate=44100, channels=2, sample_width=2)
     if QUALITY == AudioQuality.VERY_HIGH:
         bitrate = "320k"
     else:
         bitrate = "160k"
-    raw_audio.export(filename, format=MUSIC_FORMAT, bitrate=bitrate)
+    raw_audio.export(filename, format=ZS_CONFIG["MUSIC_FORMAT"], bitrate=bitrate)
 
 
 def set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number):
@@ -620,7 +602,6 @@ def get_saved_tracks(access_token):
 # Functions directly related to downloading stuff
 def download_track(track_id_str: str, extra_paths="", prefix=False, prefix_value='', disable_progressbar=False):
     """ Downloads raw song audio from Spotify """
-    global ROOT_PATH, SKIP_EXISTING_FILES, MUSIC_FORMAT, RAW_AUDIO_AS_IS, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT
     try:
         artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable = get_song_info(
             track_id_str)
@@ -629,8 +610,8 @@ def download_track(track_id_str: str, extra_paths="", prefix=False, prefix_value
         if prefix:
             song_name = f'{prefix_value.zfill(2)}-{song_name}' if prefix_value.isdigit(
             ) else f'{prefix_value}-{song_name}'
-        filename = os.path.join(ROOT_PATH, extra_paths,
-                                song_name + '.' + MUSIC_FORMAT)
+        filename = os.path.join(ZS_CONFIG["ROOT_PATH"], extra_paths,
+                                song_name + '.' + ZS_CONFIG["MUSIC_FORMAT"])
     except Exception as e:
         print("###   SKIPPING SONG - FAILED TO QUERY METADATA   ###")
         # print(e)
@@ -640,7 +621,7 @@ def download_track(track_id_str: str, extra_paths="", prefix=False, prefix_value
                 print("###   SKIPPING:", song_name,
                       "(SONG IS UNAVAILABLE)   ###")
             else:
-                if os.path.isfile(filename) and os.path.getsize(filename) and SKIP_EXISTING_FILES:
+                if os.path.isfile(filename) and os.path.getsize(filename) and ZS_CONFIG["SKIP_EXISTING_FILES"]:
                     print("###   SKIPPING:", song_name,
                           "(SONG ALREADY EXISTS)   ###")
                 else:
@@ -654,8 +635,7 @@ def download_track(track_id_str: str, extra_paths="", prefix=False, prefix_value
                         track_id, VorbisOnlyAudioQuality(QUALITY), False, None)
                     # print("###   DOWNLOADING RAW AUDIO   ###")
 
-                    if not os.path.isdir(ROOT_PATH + extra_paths):
-                        os.makedirs(ROOT_PATH + extra_paths)
+                    os.makedirs(ZS_CONFIG["ROOT_PATH"] + extra_paths, exist_ok=True)
 
                     total_size = stream.input_stream.size
                     with open(filename, 'wb') as file, tqdm(
@@ -666,18 +646,18 @@ def download_track(track_id_str: str, extra_paths="", prefix=False, prefix_value
                             unit_divisor=1024,
                             disable=disable_progressbar
                     ) as bar:
-                        for _ in range(int(total_size / CHUNK_SIZE) + 1):
+                        for _ in range(int(total_size / ZS_CONFIG["CHUNK_SIZE"]) + 1):
                             bar.update(file.write(
-                                stream.input_stream.stream().read(CHUNK_SIZE)))
+                                stream.input_stream.stream().read(ZS_CONFIG["CHUNK_SIZE"])))
 
-                    if not RAW_AUDIO_AS_IS:
+                    if not ZS_CONFIG["RAW_AUDIO_AS_IS"]:
                         convert_audio_format(filename)
                         set_audio_tags(filename, artists, name, album_name,
                                        release_year, disc_number, track_number)
                         set_music_thumbnail(filename, image_url)
 
-                    if not OVERRIDE_AUTO_WAIT:
-                        time.sleep(ANTI_BAN_WAIT_TIME)
+                    if not ZS_CONFIG["OVERRIDE_AUTO_WAIT"]:
+                        time.sleep(ZS_CONFIG["ANTI_BAN_WAIT_TIME"])
         except:
             print("###   SKIPPING:", song_name,
                   "(GENERAL DOWNLOAD ERROR)   ###")
@@ -751,9 +731,8 @@ def download_from_user_playlist():
 
 
 def check_raw():
-    global RAW_AUDIO_AS_IS, MUSIC_FORMAT
-    if RAW_AUDIO_AS_IS:
-        MUSIC_FORMAT = "wav"
+    if ZS_CONFIG["RAW_AUDIO_AS_IS"]:
+        ZS_CONFIG["MUSIC_FORMAT"] = "wav"
 
 
 def main():

@@ -36,19 +36,19 @@ Extra command line options:
   -p, --playlist       Downloads a saved playlist from your account
   -ls, --liked-songs   Downloads all the liked songs from your account
 
-Special hardcoded options:
+Options that can be configured in zs_config.json:
   ROOT_PATH           Change this path if you don't like the default directory where ZSpotify saves the music
   ROOT_PODCAST_PATH   Change this path if you don't like the default directory where ZSpotify saves the podcasts
 
-  SKIP_EXISTING_FILES Set this to False if you want ZSpotify to overwrite files with the same name rather than skipping the song
+  SKIP_EXISTING_FILES Set this to false if you want ZSpotify to overwrite files with the same name rather than skipping the song
 
   MUSIC_FORMAT        Set this to "ogg" if you would rather that format audio over "mp3"
-  RAW_AUDIO_AS_IS     Set this to True to only stream the audio to a file and do no re-encoding or post processing
-  
-  FORCE_PREMIUM       Set this to True if ZSpotify isn't automatically detecting that you are using a premium account
-  
+  RAW_AUDIO_AS_IS     Set this to true to only stream the audio to a file and do no re-encoding or post processing
+
+  FORCE_PREMIUM       Set this to true if ZSpotify isn't automatically detecting that you are using a premium account
+
   ANTI_BAN_WAIT_TIME  Change this setting if the time waited between bulk downloads is too high or low
-  OVERRIDE_AUTO_WAIT  Change this to True if you want to completely disable the wait between songs for faster downloads with the risk of instability
+  OVERRIDE_AUTO_WAIT  Change this to true if you want to completely disable the wait between songs for faster downloads with the risk of instability
 ```
 ### Will my account get banned if I use this tool?
 Currently no user has reported their account getting banned after using ZSpotify.
@@ -56,11 +56,14 @@ This isn't to say _you_ won't get banned as it is technically againt Spotify's T
 **Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
 
 ## **Changelog:**
+**v2.1 (Oct 2021):**
+- Moved configuration from hard-coded values to separate zs_config.json file
+
 **v2.0 (22 Oct 2021):**
 - Added progress bar for downloads.
 - Added multi-select support for all results when searching.
 - Added GPLv3 Licence.
-- Changed welcome banner and removed unnecessary debug print statments. 
+- Changed welcome banner and removed unnecessary debug print statements.
 
 **v1.9 (22 Oct 2021):**
 - Added Gitea mirror for when the Spotify Glowies come to DMCA the shit out of this.
