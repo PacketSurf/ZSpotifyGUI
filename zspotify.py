@@ -351,88 +351,143 @@ def search(search_term):
     """ Searches Spotify's API for relevant data """
     token = SESSION.tokens().get("user-read-email")
 
+    params = {
+        "limit" : "10",
+        "q" : search_term,
+        "type" : ["track","album","playlist"]
+    }
+
+    # ADD BLOCK FOR READING OPTIONS AND CLEAN SEARCH_TERM
+
     resp = requests.get(
         "https://api.spotify.com/v1/search",
         {
-            "limit": "10",
+            "limit": params["limit"],
             "offset": "0",
-            "q": search_term,
-            "type": "track,album,playlist"
+            "q": params["q"],
+            "type": ",".join(params["type"])
         },
         headers={"Authorization": "Bearer %s" % token},
     )
 
     # print(resp.json())
 
-    i = 1
-    tracks = resp.json()["tracks"]["items"]
-    if len(tracks) > 0:
-        print("###  TRACKS  ###")
-        for track in tracks:
-            if track["explicit"]:
-                explicit = "[E]"
-            else:
-                explicit = ""
-            print("%d, %s %s | %s" % (
-                i,
-                track["name"],
-                explicit,
-                ",".join([artist["name"] for artist in track["artists"]]),
-            ))
-            i += 1
-        total_tracks = i - 1
+    enum = 1
+    dics = []
+
+    # add all returned tracks to dics
+    if "track" in params["type"]:
+        tracks = resp.json()["tracks"]["items"]
+        if len(tracks) > 0:
+            print("###  TRACKS  ###")
+            for track in tracks:
+                if track["explicit"]:
+                    explicit = "[E]"
+                else:
+                    explicit = ""
+                # collect needed data
+                dic = {
+                    "id" : track["id"],
+                    "name" : track["name"],
+                    "artists/owner" : [artist["name"] for artist in track["artists"]],
+                    "type" : "track",
+                }
+                dics.append(dic)
+
+                print("{}, {} {} | {}".format(
+                    enum,
+                    dic["name"],
+                    explicit,
+                    ",".join(dic["artists/owner"]),
+                ))
+                enum += 1
+        total_tracks = enum - 1
         print("\n")
+        # free up memory
+        del tracks
     else:
         total_tracks = 0
 
-    albums = resp.json()["albums"]["items"]
-    if len(albums) > 0:
-        print("###  ALBUMS  ###")
-        for album in albums:
-            print("%d, %s | %s" % (
-                i,
-                album["name"],
-                ",".join([artist["name"] for artist in album["artists"]]),
-            ))
-            i += 1
-        total_albums = i - total_tracks - 1
+    if "album" in params["type"]:
+        albums = resp.json()["albums"]["items"]
+        if len(albums) > 0:
+            print("###  ALBUMS  ###")
+            for album in albums:
+                # collect needed data
+                dic = {
+                    "id" : album["id"],
+                    "name" : album["name"],
+                    "artists/owner" : [artist["name"] for artist in album["artists"]],
+                    "type" : "album",
+                }
+                dics.append(dic)
+
+                print("{}, {} | {}".format(
+                    enum,
+                    dic["name"],
+                    ",".join(dic["artists/owner"]),
+                ))
+                enum += 1
+        total_albums = enum - total_tracks - 1
         print("\n")
+        # free up memory
+        del albums
     else:
         total_albums = 0
 
-    playlists = resp.json()["playlists"]["items"]
-    print("###  PLAYLISTS  ###")
-    for playlist in playlists:
-        print("%d, %s | %s" % (
-            i,
-            playlist["name"],
-            playlist['owner']['display_name'],
-        ))
-        i += 1
-    print("\n")
+    if "playlist" in params["type"]:
+        playlists = resp.json()["playlists"]["items"]
+        print("###  PLAYLISTS  ###")
+        if len(playlists) > 0:
+            for playlist in playlists:
+                # collect needed data
+                dic = {
+                    "id" : playlist["id"],
+                    "name" : playlist["name"],
+                    "artists/owner" : [playlist["owner"]["display_name"]],
+                    "type" : "playlist",
+                }
+                dics.append(dic)
 
-    if len(tracks) + len(albums) + len(playlists) == 0:
+                print("{}, {} | {}".format(
+                    enum,
+                    dic["name"],
+                    ",".join(dic['artists/owner']),
+                ))
+
+                enum += 1
+        total_playlists = enum - total_tracks - total_albums - 1
+        print("\n")
+        # free up memory
+        del playlists
+    else:
+        total_playlists = 0
+
+    if total_tracks + total_albums + total_playlists == 0:
         print("NO RESULTS FOUND - EXITING...")
     else:
         selection = str(input("SELECT ITEM(S) BY ID: "))
         inputs = split_input(selection)
         for pos in inputs:
             position = int(pos)
-            if position <= total_tracks:
-                track_id = tracks[position - 1]["id"]
-                download_track(track_id)
-            elif position <= total_albums + total_tracks:
-                download_album(albums[position - total_tracks - 1]["id"])
-            else:
-                playlist_choice = playlists[position -
-                                            total_tracks - total_albums - 1]
-                playlist_songs = get_playlist_songs(
-                    token, playlist_choice['id'])
-                for song in playlist_songs:
-                    if song['track']['id'] is not None:
-                        download_track(song['track']['id'], sanitize_data(
-                            playlist_choice['name'].strip()) + "/")
-                        print("\n")
+            for dic in dics:
+                # find dictionary
+                print_pos = dics.index(dic) + 1
+                if print_pos == position:
+                    # if request is for track
+                    if dic["type"] == "track":
+                        download_track(dic["id"])
+                    # if request is for album
+                    if dic["type"] == "album":
+                        download_album(dic["id"])
+                    # if request is for playlist
+                    if dic["type"] == "playlist":
+                        playlist_songs = get_playlist_songs(token, dic["id"])
+                        for song in playlist_songs:
+                            if song["track"]["id"] is not None:
+                                download_track(song["track"]["id"],
+                                               sanitize_data(dic["name"].strip()) + "/")
+                                print("\n")
 
 
 def get_song_info(song_id):
