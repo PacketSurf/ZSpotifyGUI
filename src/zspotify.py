@@ -43,7 +43,9 @@ class ZSpotify:
             except RuntimeError:
                 pass
         while True:
-            user_name = input('Username: ')
+            user_name = ''
+            while len(user_name) == 0:
+                user_name = input('Username: ')
             password = getpass()
             try:
                 cls.SESSION = Session.Builder().user_pass(user_name, password).create()

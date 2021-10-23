@@ -61,7 +61,9 @@ def client() -> None:
                         download_episode(episode)
 
         else:
-            search_text = input('Enter search or URL: ')
+            search_text = ''
+            while len(search_text) == 0:
+                search_text = input('Enter search or URL: ')
 
             track_id, album_id, playlist_id, episode_id, show_id, artist_id = regex_input_for_urls(search_text)
 
@@ -149,7 +151,9 @@ def search(search_term):
     if len(tracks) + len(albums) + len(playlists) == 0:
         print('NO RESULTS FOUND - EXITING...')
     else:
-        selection = str(input('SELECT ITEM(S) BY S.NO: '))
+        selection = ''
+        while len(selection) == 0:
+            selection = str(input('SELECT ITEM(S) BY S.NO: '))
         inputs = split_input(selection)
         for pos in inputs:
             position = int(pos)
