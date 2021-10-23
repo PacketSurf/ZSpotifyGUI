@@ -81,7 +81,7 @@ def set_audio_tags(filename, artists, name, album_name, release_year, disc_numbe
 
 def conv_artist_format(artists) -> str:
     """ Returns converted artist format """
-    return ', '.join(artists)[:-2]
+    return ', '.join(artists)
 
 
 def set_music_thumbnail(filename, image_url) -> None:

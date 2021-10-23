@@ -59,8 +59,8 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
         song_name = artists[0] + ' - ' + name
         if prefix:
-            song_name = f'{prefix_value.zfill(2)}-{song_name}' if prefix_value.isdigit(
-            ) else f'{prefix_value}-{song_name}'
+            song_name = f'{prefix_value.zfill(2)} - {song_name}' if prefix_value.isdigit(
+            ) else f'{prefix_value} - {song_name}'
 
         if ZSpotify.get_config(SPLIT_ALBUM_DISCS):
             filename = os.path.join(ZSpotify.get_config(ROOT_PATH), extra_paths, 'Disc ' + str(

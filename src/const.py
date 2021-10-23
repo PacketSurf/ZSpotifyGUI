@@ -72,7 +72,7 @@ PLAYLIST_READ_PRIVATE = 'playlist-read-private'
 
 WINDOWS_SYSTEM = 'Windows'
 
-CREDENTIALS_JSON = '../credentials.json'
+CREDENTIALS_JSON = 'credentials.json'
 
 CONFIG_FILE_PATH = '../zs_config.json'
 
