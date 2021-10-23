@@ -11,7 +11,6 @@ import json
 import os
 import os.path
 import platform
-import posixpath
 import re
 import sys
 import time
@@ -348,7 +347,7 @@ def search(search_term):
         headers={"Authorization": "Bearer %s" % token},
     )
 
-    print(resp.json())
+    # print(resp.json())
 
     i = 1
     tracks = resp.json()["tracks"]["items"]
