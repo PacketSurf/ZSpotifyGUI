@@ -7,5 +7,6 @@
     "FORCE_PREMIUM": false,
     "ANTI_BAN_WAIT_TIME": 1,
     "OVERRIDE_AUTO_WAIT": false,
-    "CHUNK_SIZE": 50000
+    "CHUNK_SIZE": 50000,
+    "SPLIT_ALBUM_DISCS": false
 }

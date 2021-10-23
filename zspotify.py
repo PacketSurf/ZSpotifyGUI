@@ -118,20 +118,46 @@ def client():
         print("[ DETECTED FREE ACCOUNT - USING HIGH QUALITY ]\n\n")
         QUALITY = AudioQuality.HIGH
 
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "-p" or sys.argv[1] == "--playlist":
-            download_from_user_playlist()
-        elif sys.argv[1] == "-ls" or sys.argv[1] == "--liked-songs":
-            for song in get_saved_tracks(token):
-                if not song['track']['name']:
-                    print(
-                        "###   SKIPPING:  SONG DOES NOT EXISTS ON SPOTIFY ANYMORE   ###")
-                else:
-                    download_track(song['track']['id'], "Liked Songs/")
-                print("\n")
+    while True:
+        if len(sys.argv) > 1:
+            if sys.argv[1] == "-p" or sys.argv[1] == "--playlist":
+                download_from_user_playlist()
+            elif sys.argv[1] == "-ls" or sys.argv[1] == "--liked-songs":
+                for song in get_saved_tracks(token):
+                    if not song['track']['name']:
+                        print(
+                            "###   SKIPPING:  SONG DOES NOT EXISTS ON SPOTIFY ANYMORE   ###")
+                    else:
+                        download_track(song['track']['id'], "Liked Songs/")
+                    print("\n")
+            else:
+                track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str, artist_id_str = regex_input_for_urls(
+                    sys.argv[1])
+
+                if track_id_str is not None:
+                    download_track(track_id_str)
+                elif artist_id_str is not None:
+                    download_artist_albums(artist_id_str)
+                elif album_id_str is not None:
+                    download_album(album_id_str)
+                elif playlist_id_str is not None:
+                    playlist_songs = get_playlist_songs(token, playlist_id_str)
+                    name, creator = get_playlist_info(token, playlist_id_str)
+                    for song in playlist_songs:
+                        download_track(song['track']['id'],
+                                       sanitize_data(name) + "/")
+                        print("\n")
+                elif episode_id_str is not None:
+                    download_episode(episode_id_str)
+                elif show_id_str is not None:
+                    for episode in get_show_episodes(token, show_id_str):
+                        download_episode(episode)
+
         else:
+            search_text = input("Enter search or URL: ")
+
             track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str, artist_id_str = regex_input_for_urls(
-                sys.argv[1])
+                search_text)
 
             if track_id_str is not None:
                 download_track(track_id_str)
@@ -151,34 +177,9 @@ def client():
             elif show_id_str is not None:
                 for episode in get_show_episodes(token, show_id_str):
                     download_episode(episode)
-
-    else:
-        search_text = input("Enter search or URL: ")
-
-        track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str, artist_id_str = regex_input_for_urls(
-            search_text)
-
-        if track_id_str is not None:
-            download_track(track_id_str)
-        elif artist_id_str is not None:
-            download_artist_albums(artist_id_str)
-        elif album_id_str is not None:
-            download_album(album_id_str)
-        elif playlist_id_str is not None:
-            playlist_songs = get_playlist_songs(token, playlist_id_str)
-            name, creator = get_playlist_info(token, playlist_id_str)
-            for song in playlist_songs:
-                download_track(song['track']['id'],
-                               sanitize_data(name) + "/")
-                print("\n")
-        elif episode_id_str is not None:
-            download_episode(episode_id_str)
-        elif show_id_str is not None:
-            for episode in get_show_episodes(token, show_id_str):
-                download_episode(episode)
-        else:
-            search(search_text)
-    # wait()
+            else:
+                search(search_text)
+        # wait()
 
 
 def regex_input_for_urls(search_input):
@@ -310,7 +311,8 @@ def download_episode(episode_id_str):
         # print("###  DOWNLOADING '" + podcast_name + " - " +
         #      episode_name + "' - THIS MAY TAKE A WHILE ###")
 
-        os.makedirs(ZS_CONFIG["ROOT_PODCAST_PATH"] + extra_paths, exist_ok=True)
+        os.makedirs(ZS_CONFIG["ROOT_PODCAST_PATH"] +
+                    extra_paths, exist_ok=True)
 
         total_size = stream.input_stream.size
         with open(ZS_CONFIG["ROOT_PODCAST_PATH"] + extra_paths + filename + ".wav", 'wb') as file, tqdm(
@@ -455,7 +457,8 @@ def convert_audio_format(filename):
         bitrate = "320k"
     else:
         bitrate = "160k"
-    raw_audio.export(filename, format=ZS_CONFIG["MUSIC_FORMAT"], bitrate=bitrate)
+    raw_audio.export(
+        filename, format=ZS_CONFIG["MUSIC_FORMAT"], bitrate=bitrate)
 
 
 def set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number):
@@ -608,10 +611,15 @@ def download_track(track_id_str: str, extra_paths="", prefix=False, prefix_value
 
         song_name = artists[0] + " - " + name
         if prefix:
-            song_name = f'{prefix_value.zfill(2)}-{song_name}' if prefix_value.isdigit(
-            ) else f'{prefix_value}-{song_name}'
-        filename = os.path.join(ZS_CONFIG["ROOT_PATH"], extra_paths,
-                                song_name + '.' + ZS_CONFIG["MUSIC_FORMAT"])
+            song_name = f'{prefix_value.zfill(2)} - {song_name}' if prefix_value.isdigit(
+            ) else f'{prefix_value} - {song_name}'
+
+        if ZS_CONFIG["SPLIT_ALBUM_DISCS"]:
+            filename = os.path.join(ZS_CONFIG["ROOT_PATH"], extra_paths, "Disc " + str(
+                disc_number) + '/' + song_name + '.' + ZS_CONFIG["MUSIC_FORMAT"])
+        else:
+            filename = os.path.join(ZS_CONFIG["ROOT_PATH"], extra_paths,
+                                    song_name + '.' + ZS_CONFIG["MUSIC_FORMAT"])
     except Exception as e:
         print("###   SKIPPING SONG - FAILED TO QUERY METADATA   ###")
         # print(e)
@@ -635,7 +643,12 @@ def download_track(track_id_str: str, extra_paths="", prefix=False, prefix_value
                         track_id, VorbisOnlyAudioQuality(QUALITY), False, None)
                     # print("###   DOWNLOADING RAW AUDIO   ###")
 
-                    os.makedirs(ZS_CONFIG["ROOT_PATH"] + extra_paths, exist_ok=True)
+                    if ZS_CONFIG["SPLIT_ALBUM_DISCS"]:
+                        os.makedirs(
+                            ZS_CONFIG["ROOT_PATH"] + extra_paths + "/Disc " + str(disc_number) + '/', exist_ok=True)
+                    else:
+                        os.makedirs(ZS_CONFIG["ROOT_PATH"] +
+                                    extra_paths, exist_ok=True)
 
                     total_size = stream.input_stream.size
                     with open(filename, 'wb') as file, tqdm(
