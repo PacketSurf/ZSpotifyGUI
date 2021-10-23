@@ -363,7 +363,7 @@ def search(search_term):  # pylint: disable=too-many-locals,too-many-branches
 
         if split == "-t" or split == "-type":
 
-            allowed_types = ["track", "playlist", "album"]
+            allowed_types = ["track", "playlist", "album", "artist"]
             for i in range(index+1, len(splits)):
                 if splits[i][0] == "-":
                     break
@@ -375,7 +375,7 @@ def search(search_term):  # pylint: disable=too-many-locals,too-many-branches
                 params["type"].add(splits[i])
 
     if len(params["type"]) == 0:
-        params["type"] = {"track", "album", "playlist"}
+        params["type"] = {"track", "album", "playlist", "artist"}
 
     # Clean search term
     search_term_list = []
@@ -491,7 +491,31 @@ def search(search_term):  # pylint: disable=too-many-locals,too-many-branches
     else:
         total_playlists = 0
 
-    if total_tracks + total_albums + total_playlists == 0:
+    if "artist" in params["type"]:
+        artists = resp.json()["artists"]["items"]
+        if len(artists) > 0:
+            print("###  ARTISTS  ###")
+            for artist in artists:
+                # collect needed data
+                dic = {
+                    "id" : artist["id"],
+                    "name" : artist["name"],
+                    "type" : "artist",
+                }
+                dics.append(dic)
+
+                print("{}, {}".format(
+                    enum,
+                    dic["name"],
+                ))
+
+                enum += 1
+            total_artists = enum - total_tracks - total_albums - total_playlists - 1
+            print("\n")
+        else:
+            total_artists = 0
+
+    if total_tracks + total_albums + total_playlists + total_artists == 0:
         print("NO RESULTS FOUND - EXITING...")
     else:
         selection = str(input("SELECT ITEM(S) BY ID: "))
@@ -508,6 +532,9 @@ def search(search_term):  # pylint: disable=too-many-locals,too-many-branches
                     # if request is for album
                     if dic["type"] == "album":
                         download_album(dic["id"])
+                    # if request is for artist
+                    if dic["type"] == "artist":
+                        download_artist_albums(dic["id"])
                     # if request is for playlist
                     if dic["type"] == "playlist":
                         playlist_songs = get_playlist_songs(token, dic["id"])
