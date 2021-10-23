@@ -143,7 +143,7 @@ def client():
                     download_track(song['track']['id'], "Liked Songs/")
                 print("\n")
         else:
-            track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str = regex_input_for_urls(
+            track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str, artist_id_str = regex_input_for_urls(
                 sys.argv[1])
 
             if track_id_str is not None:
@@ -237,7 +237,6 @@ def regex_input_for_urls(search_input):
         search_input,
     )
 
-
     if track_uri_search is not None or track_url_search is not None:
         track_id_str = (track_uri_search
                         if track_uri_search is not None else
@@ -275,8 +274,8 @@ def regex_input_for_urls(search_input):
 
     if artist_uri_search is not None or artist_url_search is not None:
         artist_id_str = (artist_uri_search
-                          if artist_uri_search is not None else
-                          artist_url_search).group("ArtistID")
+                         if artist_uri_search is not None else
+                         artist_url_search).group("ArtistID")
     else:
         artist_id_str = None
 
@@ -585,6 +584,8 @@ def get_album_name(access_token, album_id):
     return resp['artists'][0]['name'], sanitize_data(resp['name'])
 
 # Extra functions directly related to spotify artists
+
+
 def get_artist_albums(access_token, artist_id):
     """ Returns artist's albums """
     headers = {'Authorization': f'Bearer {access_token}'}
@@ -594,6 +595,8 @@ def get_artist_albums(access_token, artist_id):
     return [resp['items'][i]['id'] for i in range(len(resp['items']))]
 
 # Extra functions directly related to our saved tracks
+
+
 def get_saved_tracks(access_token):
     """ Returns user's saved tracks """
     songs = []
@@ -624,8 +627,10 @@ def download_track(track_id_str: str, extra_paths="", prefix=False, prefix_value
 
         song_name = artists[0] + " - " + name
         if prefix:
-            song_name = f'{prefix_value.zfill(2)}-{song_name}' if prefix_value.isdigit() else f'{prefix_value}-{song_name}'
-        filename = os.path.join(ROOT_PATH, extra_paths, song_name + '.' + MUSIC_FORMAT)
+            song_name = f'{prefix_value.zfill(2)}-{song_name}' if prefix_value.isdigit(
+            ) else f'{prefix_value}-{song_name}'
+        filename = os.path.join(ROOT_PATH, extra_paths,
+                                song_name + '.' + MUSIC_FORMAT)
     except Exception as e:
         print("###   SKIPPING SONG - FAILED TO QUERY METADATA   ###")
         # print(e)
@@ -686,7 +691,9 @@ def download_album(album):
     artist, album_name = get_album_name(token, album)
     tracks = get_album_tracks(token, album)
     for n, track in tqdm(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=len(tracks)):
-        download_track(track['id'], f'{artist}/{album_name}', prefix=True, prefix_value=str(n), disable_progressbar=True)
+        download_track(track['id'], f'{artist}/{album_name}',
+                       prefix=True, prefix_value=str(n), disable_progressbar=True)
+
 
 def download_artist_albums(artist):
     """ Downloads albums of an artist """
@@ -694,6 +701,7 @@ def download_artist_albums(artist):
     albums = get_artist_albums(token, artist)
     for album_id in albums:
         download_album(album_id)
+
 
 def download_playlist(playlists, playlist_choice):
     """Downloads all the songs from a playlist"""
