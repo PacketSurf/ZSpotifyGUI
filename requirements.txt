@@ -1,4 +1,4 @@
-https://github.com/kokarare1212/librespot-python/archive/main.zip
+git+https://github.com/kokarare1212/librespot-python
 music_tag
 pydub
 Pillow
