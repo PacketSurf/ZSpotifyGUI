@@ -16,7 +16,7 @@ Binaries
 
 - Python 3.8 or greater
 - ffmpeg*
-- Git 
+- Git**
 
 Python packages:
 
@@ -26,6 +26,7 @@ Python packages:
 
 \*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows.
 
+\*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 ```
 Command line usage:
   python zspotify.py                                      Loads search prompt to find then download a specific track, album or playlist
