@@ -515,7 +515,7 @@ def search(search_term):  # pylint: disable=too-many-locals,too-many-branches
         else:
             total_artists = 0
 
-    if total_tracks + total_albums + total_playlists == 0:
+    if total_tracks + total_albums + total_playlists + total_artists == 0:
         print("NO RESULTS FOUND - EXITING...")
     else:
         selection = str(input("SELECT ITEM(S) BY ID: "))
