@@ -52,8 +52,11 @@ Options that can be configured in zs_config.json:
 ```
 ### Will my account get banned if I use this tool?
 Currently no user has reported their account getting banned after using ZSpotify.
-This isn't to say _you_ won't get banned as it is technically againt Spotify's TOS.
+This isn't to say _you_ won't get banned as it is technically against Spotify's TOS.
 **Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
+
+### Contributing
+Please be sure to lint your code with pylint before issuing a pull-request, thanks!
 
 ## **Changelog:**
 **v2.1 (23 Oct 2021):**
