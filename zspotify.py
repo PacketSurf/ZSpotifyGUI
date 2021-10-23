@@ -11,6 +11,7 @@ import json
 import os
 import os.path
 import platform
+import posixpath
 import re
 import sys
 import time
@@ -342,12 +343,12 @@ def search(search_term):
             "limit": "10",
             "offset": "0",
             "q": search_term,
-            "type": "track,album,playlist"
+            "type": "track,album,artist,playlist"
         },
         headers={"Authorization": "Bearer %s" % token},
     )
 
-    # print(resp.json())
+    print(resp.json())
 
     i = 1
     tracks = resp.json()["tracks"]["items"]
@@ -385,6 +386,20 @@ def search(search_term):
     else:
         total_albums = 0
 
+    artists = resp.json()["artists"]["items"]
+    if len(artists) > 0:
+        print("###  ARTISTS  ###")
+        for artist in artists:
+            print("%d, %s" % (
+                i,
+                artist["name"],
+            ))
+            i += 1
+        total_artists = i - total_tracks - total_albums - 1
+        print("\n")
+    else:
+        total_artists = 0
+
     playlists = resp.json()["playlists"]["items"]
     print("###  PLAYLISTS  ###")
     for playlist in playlists:
@@ -408,9 +423,11 @@ def search(search_term):
                 download_track(track_id)
             elif position <= total_albums + total_tracks:
                 download_album(albums[position - total_tracks - 1]["id"])
+            elif position <= total_artists + total_tracks + total_albums:
+                download_artist_albums(artists[position - total_tracks - total_albums -1]["id"])
             else:
                 playlist_choice = playlists[position -
-                                            total_tracks - total_albums - 1]
+                                            total_tracks - total_albums - total_artists - 1]
                 playlist_songs = get_playlist_songs(
                     token, playlist_choice['id'])
                 for song in playlist_songs:
