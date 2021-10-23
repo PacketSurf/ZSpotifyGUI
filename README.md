@@ -56,8 +56,12 @@ This isn't to say _you_ won't get banned as it is technically againt Spotify's T
 **Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
 
 ## **Changelog:**
-**v2.1 (Oct 2021):**
-- Moved configuration from hard-coded values to separate zs_config.json file
+**v2.1 (23 Oct 2021):**
+- Moved configuration from hard-coded values to separate zs_config.json file.
+- Add subfolders for each disc.
+- Can now search and download all songs by artist.
+- Show single progress bar for entire album.
+- Added song number at start of track name in albums.
 
 **v2.0 (22 Oct 2021):**
 - Added progress bar for downloads.
