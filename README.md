@@ -56,6 +56,9 @@ Currently no user has reported their account getting banned after using ZSpotify
 This isn't to say _you_ won't get banned as it is technically against Spotify's TOS.
 **Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
 
+### What do I do if I see "Your session has been terminated"?
+If you see this, don't worry! Just try logging back in. If you see the incorrect username or password error, reset your password and you should be able to log back in and continue using Spotify.
+
 ### Contributing
 Please be sure to lint your code with pylint before issuing a pull-request, thanks!
 
