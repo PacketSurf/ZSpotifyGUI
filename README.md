@@ -24,9 +24,9 @@ Python packages:
 
 ```
 
-\*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows.
+\*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can intall it using [Homebrew](https://brew.sh).
 
-\*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
+\*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows. Mac users can intall it using [Homebrew](https://brew.sh).
 ```
 Command line usage:
   python app.py                                      Loads search prompt to find then download a specific track, album or playlist
@@ -43,7 +43,7 @@ Options that can be configured in zs_config.json:
 
   SKIP_EXISTING_FILES Set this to false if you want ZSpotify to overwrite files with the same name rather than skipping the song
 
-  MUSIC_FORMAT        Can be "mp3" or "ogg", mp3 is required for track metadata however ogg is slightly higer quality as it is not trsnacoded.
+  MUSIC_FORMAT        Can be "mp3" or "ogg", mp3 is required for track metadata however ogg is slightly higer quality as it is not transcoded.
 
   FORCE_PREMIUM       Set this to true if ZSpotify isn't automatically detecting that you are using a premium account
 
