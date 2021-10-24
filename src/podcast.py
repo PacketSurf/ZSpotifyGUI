@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 from librespot.audio.decoders import VorbisOnlyAudioQuality
@@ -49,10 +50,11 @@ def download_episode(episode_id) -> None:
         episode_id = EpisodeId.from_base62(episode_id)
         stream = ZSpotify.get_content_stream(episode_id, ZSpotify.DOWNLOAD_QUALITY)
 
-        create_download_directory(ZSpotify.get_config(ROOT_PODCAST_PATH) + extra_paths)
+        download_directory = os.path.dirname(__file__) + ZSpotify.get_config(ROOT_PODCAST_PATH) + extra_paths
+        create_download_directory(download_directory)
 
         total_size = stream.input_stream.size
-        with open(ZSpotify.get_config(ROOT_PODCAST_PATH) + extra_paths + filename + MusicFormat.OGG.value,
+        with open(download_directory + filename + MusicFormat.OGG.value,
                   'wb') as file, tqdm(
                 desc=filename,
                 total=total_size,
@@ -66,5 +68,3 @@ def download_episode(episode_id) -> None:
 
         # convert_audio_format(ROOT_PODCAST_PATH +
         #                     extra_paths + filename + '.ogg')
-
-        # related functions that do stuff with the spotify API
