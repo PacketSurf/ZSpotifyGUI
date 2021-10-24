@@ -43,7 +43,7 @@ Options that can be configured in zs_config.json:
 
   SKIP_EXISTING_FILES Set this to false if you want ZSpotify to overwrite files with the same name rather than skipping the song
 
-  MUSIC_FORMAT        Can be "mp3" or "ogg", mp3 is required for track metadata however ogg is slightly higer quality as it is not transcoded.
+  MUSIC_FORMAT        Can be "mp3" or "ogg", mp3 is required for track metadata however ogg is slightly higher quality as it is not transcoded.
 
   FORCE_PREMIUM       Set this to true if ZSpotify isn't automatically detecting that you are using a premium account
 
