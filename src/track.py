@@ -37,9 +37,9 @@ def get_song_info(song_id) -> tuple[list[str], str, str, Any, Any, Any, Any, Any
 
     artists = []
     for data in info[TRACKS][0][ARTISTS]:
-        artists.append(data[NAME])
-    album_name = info[TRACKS][0][ALBUM][NAME]
-    name = info[TRACKS][0][NAME]
+        artists.append(sanitize_data(data[NAME]))
+    album_name = sanitize_data(info[TRACKS][0][ALBUM][NAME])
+    name = sanitize_data(info[TRACKS][0][NAME])
     image_url = info[TRACKS][0][ALBUM][IMAGES][0][URL]
     release_year = info[TRACKS][0][ALBUM][RELEASE_DATE].split('-')[0]
     disc_number = info[TRACKS][0][DISC_NUMBER]
@@ -57,7 +57,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
         (artists, album_name, name, image_url, release_year, disc_number,
          track_number, scraped_song_id, is_playable) = get_song_info(track_id)
 
-        song_name = sanitize_data(artists[0]) + ' - ' + sanitize_data(name)
+        song_name = artists[0] + ' - ' + name
         if prefix:
             song_name = f'{prefix_value.zfill(2)} - {song_name}' if prefix_value.isdigit(
             ) else f'{prefix_value} - {song_name}'

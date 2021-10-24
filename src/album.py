@@ -28,7 +28,7 @@ def get_album_tracks(album_id):
 def get_album_name(album_id):
     """ Returns album name """
     resp = ZSpotify.invoke_url(f'{ALBUM_URL}/{album_id}')
-    return sanitize_data(resp[ARTISTS][0][NAME]), sanitize_data(resp[NAME])
+    return resp[ARTISTS][0][NAME], sanitize_data(resp[NAME])
 
 
 def get_artist_albums(artist_id):
