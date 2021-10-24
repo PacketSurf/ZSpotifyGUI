@@ -24,9 +24,9 @@ Python packages:
 
 ```
 
-\*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can intall it using [Homebrew](https://brew.sh).
+\*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it using [Homebrew](https://brew.sh).
 
-\*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows. Mac users can intall it using [Homebrew](https://brew.sh).
+\*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows. Mac users can install it using [Homebrew](https://brew.sh).
 ```
 Command line usage:
   python src/app.py                                      Loads search prompt to find then download a specific track, album or playlist
