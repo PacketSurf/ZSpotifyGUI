@@ -14,7 +14,7 @@ Requirements:
 
 Binaries
 
-- Python 3.8 or greater
+- Python 3.9 or greater
 - ffmpeg*
 - Git**
 
