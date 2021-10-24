@@ -53,6 +53,7 @@ def get_song_info(song_id) -> tuple[list[str], str, str, Any, Any, Any, Any, Any
 # noinspection PyBroadException
 def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='', disable_progressbar=False) -> None:
     """ Downloads raw song audio from Spotify """
+    download_directory = os.path.join(os.path.dirname(__file__), ZSpotify.get_config(ROOT_PATH), extra_paths)
     try:
         (artists, album_name, name, image_url, release_year, disc_number,
          track_number, scraped_song_id, is_playable) = get_song_info(track_id)
@@ -63,11 +64,11 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
             ) else f'{prefix_value} - {song_name}'
 
         if ZSpotify.get_config(SPLIT_ALBUM_DISCS):
-            filename = os.path.join(ZSpotify.get_config(ROOT_PATH), extra_paths, 'Disc ' + str(
-                disc_number) + '/' + song_name + '.' + ZSpotify.get_config(DOWNLOAD_FORMAT))
+            filename = os.path.join(download_directory, f'Disc {disc_number}',
+                                    f'{song_name}.{ZSpotify.get_config(DOWNLOAD_FORMAT)}')
         else:
-            filename = os.path.join(ZSpotify.get_config(ROOT_PATH), extra_paths,
-                                    song_name + '.' + ZSpotify.get_config(DOWNLOAD_FORMAT))
+            filename = os.path.join(download_directory,
+                                    f'{song_name}.{ZSpotify.get_config(DOWNLOAD_FORMAT)}')
     except Exception:
         print('###   SKIPPING SONG - FAILED TO QUERY METADATA   ###')
     else:
@@ -84,7 +85,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                         track_id = scraped_song_id
                     track_id = TrackId.from_base62(track_id)
                     stream = ZSpotify.get_content_stream(track_id, ZSpotify.DOWNLOAD_QUALITY)
-                    create_download_directory(ZSpotify.get_config(ROOT_PATH) + extra_paths)
+                    create_download_directory(download_directory)
                     total_size = stream.input_stream.size
 
                     with open(filename, 'wb') as file, tqdm(
@@ -102,7 +103,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                     if ZSpotify.get_config(DOWNLOAD_FORMAT) == 'mp3':
                         convert_audio_format(filename)
                         set_audio_tags(filename, artists, name, album_name,
-                                        release_year, disc_number, track_number)
+                                       release_year, disc_number, track_number)
                         set_music_thumbnail(filename, image_url)
 
                     if not ZSpotify.get_config(OVERRIDE_AUTO_WAIT):
