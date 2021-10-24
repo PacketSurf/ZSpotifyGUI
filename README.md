@@ -59,7 +59,7 @@ This isn't to say _you_ won't get banned as it is technically against Spotify's 
 If you see this, don't worry! Just try logging back in. If you see the incorrect username or password error, reset your password and you should be able to log back in and continue using Spotify.
 
 ### Contributing
-Please refer to [CONTRIBUTING.md](CONTRIBUTING.md)
+Please refer to [CONTRIBUTING](CONTRIBUTING.md)
 
 ### Changelog
 Please refer to [CHANGELOG](CHANGELOG.md)
