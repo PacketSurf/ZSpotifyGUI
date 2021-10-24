@@ -50,6 +50,13 @@ Options that can be configured in zs_config.json:
   ANTI_BAN_WAIT_TIME  Change this setting if the time waited between bulk downloads is too high or low
   OVERRIDE_AUTO_WAIT  Change this to true if you want to completely disable the wait between songs for faster downloads with the risk of instability
 ```
+
+```
+Docker usage:
+  docker build -t zspotify .                    Builds the docker image from the Dockerfile
+  docker run --name zspotify zspotify           Creates and runs a container from the image
+```
+
 ### Will my account get banned if I use this tool?
 Currently no user has reported their account getting banned after using ZSpotify.
 This isn't to say _you_ won't get banned as it is technically against Spotify's TOS.
