@@ -24,14 +24,14 @@ Python packages:
 
 ```
 
-\*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows.
+\*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it with [Homebrew](https://brew.sh) by running `brew install ffmpeg`.
 
 \*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 ```
 Command line usage:
-  python app.py                                      Loads search prompt to find then download a specific track, album or playlist
-  python app.py <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
-  python app.py <artist url>                         Downloads all albums by specified artist
+  python src                                      Loads search prompt to find then download a specific track, album or playlist
+  python src <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
+  python src <artist url>                         Downloads all albums by specified artist
 
 Extra command line options:
   -p, --playlist       Downloads a saved playlist from your account
@@ -43,7 +43,7 @@ Options that can be configured in zs_config.json:
 
   SKIP_EXISTING_FILES Set this to false if you want ZSpotify to overwrite files with the same name rather than skipping the song
 
-  MUSIC_FORMAT        Can be "mp3" or "ogg", mp3 is required for track metadata however ogg is slightly higer quality as it is not trsnacoded.
+  MUSIC_FORMAT        Can be "mp3" or "ogg", mp3 is required for track metadata however ogg is slightly higher quality as it is not transcoded.
 
   FORCE_PREMIUM       Set this to true if ZSpotify isn't automatically detecting that you are using a premium account
 
