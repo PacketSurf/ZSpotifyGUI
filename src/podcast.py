@@ -8,6 +8,7 @@ from const import NAME, ERROR, SHOW, ITEMS, ID, ROOT_PODCAST_PATH, CHUNK_SIZE
 from utils import sanitize_data, create_download_directory, MusicFormat
 from zspotify import ZSpotify
 
+
 EPISODE_INFO_URL = 'https://api.spotify.com/v1/episodes'
 SHOWS_URL = 'https://api.spotify.com/v1/shows'
 
@@ -21,11 +22,16 @@ def get_episode_info(episode_id_str) -> tuple[Optional[str], Optional[str]]:
 
 def get_show_episodes(show_id_str) -> list:
     episodes = []
+    offset = 0
+    limit = 50
 
-    resp = ZSpotify.invoke_url(f'{SHOWS_URL}/{show_id_str}/episodes')
-
-    for episode in resp[ITEMS]:
-        episodes.append(episode[ID])
+    while True:
+        resp = ZSpotify.invoke_url_with_params(f'{SHOWS_URL}/{show_id_str}/episodes', limit=limit, offset=offset)
+        offset += limit
+        for episode in resp[ITEMS]:
+            episodes.append(episode[ID])
+        if len(resp[ITEMS]) < limit:
+            break
 
     return episodes
 
