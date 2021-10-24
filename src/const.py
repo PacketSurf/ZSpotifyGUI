@@ -54,6 +54,8 @@ ERROR = 'error'
 
 EXPLICIT = 'explicit'
 
+PLAYLIST = 'playlist'
+
 PLAYLISTS = 'playlists'
 
 OWNER = 'owner'
