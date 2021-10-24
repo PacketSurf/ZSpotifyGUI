@@ -47,13 +47,13 @@ def get_playlist_info(playlist_id):
     return resp['name'].strip(), resp['owner']['display_name'].strip()
 
 
-def download_playlist(playlists, playlist_number):
+def download_playlist(playlist):
     """Downloads all the songs from a playlist"""
 
-    playlist_songs = [song for song in get_playlist_songs(playlists[int(playlist_number) - 1][ID]) if song[TRACK][ID]]
+    playlist_songs = [song for song in get_playlist_songs(playlist[ID]) if song[TRACK][ID]]
     p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
     for song in p_bar:
-        download_track(song[TRACK][ID], sanitize_data(playlists[int(playlist_number) - 1][NAME].strip()) + '/',
+        download_track(song[TRACK][ID], sanitize_data(playlist[NAME].strip()) + '/',
                        disable_progressbar=True)
         p_bar.set_description(song[TRACK][NAME])
 

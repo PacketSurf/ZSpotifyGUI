@@ -4,8 +4,8 @@ from librespot.audio.decoders import AudioQuality
 from tabulate import tabulate
 
 from album import download_album, download_artist_albums
-from const import TRACK, NAME, ID, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUMS, OWNER, \
-    PLAYLISTS, DISPLAY_NAME
+from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME
 from playlist import get_playlist_songs, get_playlist_info, download_from_user_playlist, download_playlist
 from podcast import download_episode, get_show_episodes
 from track import download_track, get_saved_tracks
@@ -89,64 +89,159 @@ def client() -> None:
 
 def search(search_term):
     """ Searches Spotify's API for relevant data """
-    params = {'limit': '10', 'offset': '0', 'q': search_term, 'type': 'track,album,artist,playlist'}
+    params = {'limit': '10',
+              'offset': '0',
+              'q': search_term,
+              'type': 'track,album,artist,playlist'}
+
+    # Parse args
+    splits = search_term.split()
+    for split in splits:
+        index = splits.index(split)
+
+        if split[0] == '-' and len(split) > 1:
+            if len(splits)-1 == index:
+                raise IndexError('No parameters passed after option: {}\n'.
+                                 format(split))
+
+        if split == '-l' or split == '-limit':
+            try:
+                int(splits[index+1])
+            except ValueError:
+                raise ValueError('Paramater passed after {} option must be an integer.\n'.
+                                 format(split))
+            if int(splits[index+1]) > 50:
+                raise ValueError('Invalid limit passed. Max is 50.\n')
+            params['limit'] = splits[index+1]
+
+
+        if split == '-t' or split == '-type':
+
+            allowed_types = ['track', 'playlist', 'album', 'artist']
+            passed_types = []
+            for i in range(index+1, len(splits)):
+                if splits[i][0] == '-':
+                    break
+
+                if splits[i] not in allowed_types:
+                    raise ValueError('Parameters passed after {} option must be from this list:\n{}'.
+                                     format(split, '\n'.join(allowed_types)))
+
+                passed_types.append(splits[i])
+            params['type'] = ','.join(passed_types)
+
+    if len(params['type']) == 0:
+        params['type'] = 'track,album,artist,playlist'
+
+    # Clean search term
+    search_term_list = []
+    for split in splits:
+        if split[0] == "-":
+            break
+        search_term_list.append(split)
+    if not search_term_list:
+        raise ValueError("Invalid query.")
+    params["q"] = ' '.join(search_term_list)
+
     resp = ZSpotify.invoke_url_with_params(SEARCH_URL, **params)
 
     counter = 1
-    tracks = resp[TRACKS][ITEMS]
-    if len(tracks) > 0:
-        print('###  TRACKS  ###')
-        track_data = []
-        for track in tracks:
-            if track[EXPLICIT]:
-                explicit = '[E]'
-            else:
-                explicit = ''
-            track_data.append([counter, f'{track[NAME]} {explicit}',
-                               ','.join([artist[NAME] for artist in track[ARTISTS]])])
-            counter += 1
-        total_tracks = counter - 1
-        print(tabulate(track_data, headers=['S.NO', 'Name', 'Artists'], tablefmt='pretty'))
-        print('\n')
+    dics = []
+
+    if TRACK in params['type'].split(','):
+        tracks = resp[TRACKS][ITEMS]
+        if len(tracks) > 0:
+            print('###  TRACKS  ###')
+            track_data = []
+            for track in tracks:
+                if track[EXPLICIT]:
+                    explicit = '[E]'
+                else:
+                    explicit = ''
+
+                track_data.append([counter, f'{track[NAME]} {explicit}',
+                                  ','.join([artist[NAME] for artist in track[ARTISTS]])])
+                dics.append({
+                    ID : track[ID],
+                    NAME : track[NAME],
+                    'type' : TRACK,
+                })
+
+                counter += 1
+            total_tracks = counter - 1
+            print(tabulate(track_data, headers=['S.NO', 'Name', 'Artists'], tablefmt='pretty'))
+            print('\n')
+            del tracks
+            del track_data
     else:
         total_tracks = 0
 
-    albums = resp[ALBUMS][ITEMS]
-    if len(albums) > 0:
-        print('###  ALBUMS  ###')
-        album_data = []
-        for album in albums:
-            album_data.append([counter, album[NAME], ','.join([artist[NAME] for artist in album[ARTISTS]])])
-            counter += 1
-        total_albums = counter - total_tracks - 1
-        print(tabulate(album_data, headers=['S.NO', 'Album', 'Artists'], tablefmt='pretty'))
-        print('\n')
+    if ALBUM in params['type'].split(','):
+        albums = resp[ALBUMS][ITEMS]
+        if len(albums) > 0:
+            print('###  ALBUMS  ###')
+            album_data = []
+            for album in albums:
+                album_data.append([counter, album[NAME],
+                                  ','.join([artist[NAME] for artist in album[ARTISTS]])])
+                dics.append({
+                  ID : album[ID],
+                  NAME : album[NAME],
+                  'type' : ALBUM,
+                })
+
+                counter += 1
+            total_albums = counter - total_tracks - 1
+            print(tabulate(album_data, headers=['S.NO', 'Album', 'Artists'], tablefmt='pretty'))
+            print('\n')
+            del albums
+            del album_data
     else:
         total_albums = 0
 
-    artists = resp[ARTISTS][ITEMS]
-    if len(artists) > 0:
-        print('###  ARTISTS  ###')
-        artist_data = []
-        for artist in artists:
-            artist_data.append([counter, artist[NAME]])
-            counter += 1
-        total_artists = counter - total_tracks - total_albums - 1
-        print(tabulate(artist_data, headers=['S.NO', 'Name'], tablefmt='pretty'))
-        print('\n')
+    if ARTIST in params['type'].split(','):
+        artists = resp[ARTISTS][ITEMS]
+        if len(artists) > 0:
+            print('###  ARTISTS  ###')
+            artist_data = []
+            for artist in artists:
+                artist_data.append([counter, artist[NAME]])
+                dics.append({
+                    ID : artist[ID],
+                    NAME : artist[NAME],
+                    'type' : ARTIST,
+                })
+                counter += 1
+            total_artists = counter - total_tracks - total_albums - 1
+            print(tabulate(artist_data, headers=['S.NO', 'Name'], tablefmt='pretty'))
+            print('\n')
+            del artists
+            del artist_data
     else:
         total_artists = 0
 
-    playlists = resp[PLAYLISTS][ITEMS]
-    print('###  PLAYLISTS  ###')
-    playlist_data = []
-    for playlist in playlists:
-        playlist_data.append([counter, playlist[NAME], playlist[OWNER][DISPLAY_NAME]])
-        counter += 1
-    print(tabulate(playlist_data, headers=['S.NO', 'Name', 'Owner'], tablefmt='pretty'))
-    print('\n')
+    if PLAYLIST in params['type'].split(','):
+        playlists = resp[PLAYLISTS][ITEMS]
+        if len(playlists) > 0:
+            print('###  PLAYLISTS  ###')
+            playlist_data = []
+            for playlist in playlists:
+                playlist_data.append([counter, playlist[NAME], playlist[OWNER][DISPLAY_NAME]])
+                dics.append({
+                    ID : playlist[ID],
+                    NAME : playlist[NAME],
+                    'type' : PLAYLIST,
+                })
+                counter += 1
+            total_playlists = counter - total_artists - total_tracks - total_albums - 1
+            print(tabulate(playlist_data, headers=['S.NO', 'Name', 'Owner'], tablefmt='pretty'))
+            print('\n')
+            del playlists
+            del playlist_data
+    else:
+        total_playlists = 0
 
-    if len(tracks) + len(albums) + len(playlists) == 0:
+    if total_tracks + total_albums + total_artists + total_playlists == 0:
         print('NO RESULTS FOUND - EXITING...')
     else:
         selection = ''
@@ -155,13 +250,15 @@ def search(search_term):
         inputs = split_input(selection)
         for pos in inputs:
             position = int(pos)
-            if position <= total_tracks:
-                track_id = tracks[position - 1][ID]
-                download_track(track_id)
-            elif position <= total_albums + total_tracks:
-                download_album(albums[position - total_tracks - 1][ID])
-            elif position <= total_artists + total_tracks + total_albums:
-                download_artist_albums(artists[position - total_tracks - total_albums - 1][ID])
-            else:
-                download_playlist(playlists, position - total_tracks - total_albums - total_artists)
+            for dic in dics:
+                print_pos = dics.index(dic) + 1
+                if print_pos == position:
+                    if dic['type'] == TRACK:
+                        download_track(dic[ID])
+                    elif dic['type'] == ALBUM:
+                        download_album(dic[ID])
+                    elif dic['type'] == ARTIST:
+                        download_artist_albums(dic[ID])
+                    else:
+                        download_playlist(dic)
 
