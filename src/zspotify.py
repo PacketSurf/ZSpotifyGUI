@@ -54,7 +54,8 @@ class ZSpotify:
 
     @classmethod
     def load_config(cls) -> None:
-        with open(CONFIG_FILE_PATH, encoding='utf-8') as config_file:
+        app_dir = os.path.dirname(__file__)
+        with open(os.path.join(app_dir, CONFIG_FILE_PATH), encoding='utf-8') as config_file:
             cls.CONFIG = json.load(config_file)
 
     @classmethod
