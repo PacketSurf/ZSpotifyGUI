@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, SPLIT_ALBUM_DISCS, ROOT_PATH, DOWNLOAD_FORMAT, CHUNK_SIZE, \
-    SKIP_EXISTING_FILES, RAW_AUDIO_AS_IS, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT
+    SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT
 from utils import sanitize_data, set_audio_tags, set_music_thumbnail, create_download_directory, \
     MusicFormat
 from zspotify import ZSpotify
@@ -99,23 +99,24 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                             p_bar.update(file.write(
                                 stream.input_stream.stream().read(ZSpotify.get_config(CHUNK_SIZE))))
 
-                    if not ZSpotify.get_config(RAW_AUDIO_AS_IS):
+                    if ZSpotify.get_config(DOWNLOAD_FORMAT) == 'mp3':
                         convert_audio_format(filename)
                         set_audio_tags(filename, artists, name, album_name,
-                                       release_year, disc_number, track_number)
+                                        release_year, disc_number, track_number)
                         set_music_thumbnail(filename, image_url)
 
                     if not ZSpotify.get_config(OVERRIDE_AUTO_WAIT):
                         time.sleep(ZSpotify.get_config(ANTI_BAN_WAIT_TIME))
-        except Exception:
+        except Exception as e:
             print('###   SKIPPING:', song_name,
                   '(GENERAL DOWNLOAD ERROR)   ###')
+            print(e)
             if os.path.exists(filename):
                 os.remove(filename)
 
 
 def convert_audio_format(filename) -> None:
-    """ Converts raw audio into playable mp3 or ogg vorbis """
+    """ Converts raw audio into playable mp3 """
     # print('###   CONVERTING TO ' + MUSIC_FORMAT.upper() + '   ###')
     raw_audio = AudioSegment.from_file(filename, format=MusicFormat.OGG.value,
                                        frame_rate=44100, channels=2, sample_width=2)

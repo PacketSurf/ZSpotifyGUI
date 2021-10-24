@@ -3,7 +3,6 @@
     "ROOT_PODCAST_PATH": "../ZSpotify Podcasts/",
     "SKIP_EXISTING_FILES": true,
     "DOWNLOAD_FORMAT": "mp3",
-    "RAW_AUDIO_AS_IS": false,
     "FORCE_PREMIUM": false,
     "ANTI_BAN_WAIT_TIME": 1,
     "OVERRIDE_AUTO_WAIT": false,

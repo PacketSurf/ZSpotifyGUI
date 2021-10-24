@@ -14,8 +14,7 @@ from const import SANITIZE, ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNU
 class MusicFormat(str, Enum):
     MP3 = 'mp3',
     OGG = 'ogg',
-    WAV = 'wav'
-
+    
 
 def create_download_directory(download_path: str) -> None:
     os.makedirs(download_path, exist_ok=True)

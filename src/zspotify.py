@@ -17,7 +17,7 @@ from librespot.audio.decoders import VorbisOnlyAudioQuality
 from librespot.core import Session
 
 from const import CREDENTIALS_JSON, TYPE, \
-    PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, RAW_AUDIO_AS_IS, \
+    PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, \
     PLAYLIST_READ_PRIVATE
 from utils import MusicFormat
 
@@ -29,7 +29,6 @@ class ZSpotify:
 
     def __init__(self):
         ZSpotify.load_config()
-        ZSpotify.check_raw()
         ZSpotify.login()
 
     @classmethod
@@ -61,11 +60,6 @@ class ZSpotify:
     @classmethod
     def get_config(cls, key) -> Any:
         return cls.CONFIG.get(key)
-
-    @classmethod
-    def check_raw(cls) -> None:
-        if cls.get_config(RAW_AUDIO_AS_IS):
-            cls.DOWNLOAD_FORMAT = MusicFormat.WAV
 
     @classmethod
     def get_content_stream(cls, content_id, quality):

@@ -52,7 +52,7 @@ def download_episode(episode_id) -> None:
         create_download_directory(ZSpotify.get_config(ROOT_PODCAST_PATH) + extra_paths)
 
         total_size = stream.input_stream.size
-        with open(ZSpotify.get_config(ROOT_PODCAST_PATH) + extra_paths + filename + MusicFormat.WAV.value,
+        with open(ZSpotify.get_config(ROOT_PODCAST_PATH) + extra_paths + filename + MusicFormat.OGG.value,
                   'wb') as file, tqdm(
                 desc=filename,
                 total=total_size,
@@ -65,6 +65,6 @@ def download_episode(episode_id) -> None:
                     stream.input_stream.stream().read(ZSpotify.get_config(CHUNK_SIZE))))
 
         # convert_audio_format(ROOT_PODCAST_PATH +
-        #                     extra_paths + filename + '.wav')
+        #                     extra_paths + filename + '.ogg')
 
         # related functions that do stuff with the spotify API
