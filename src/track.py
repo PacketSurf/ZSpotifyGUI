@@ -1,6 +1,6 @@
 import os
 import time
-from typing import Any
+from typing import Any, Tuple, List
 
 from librespot.audio.decoders import AudioQuality
 from librespot.metadata import TrackId
@@ -31,7 +31,7 @@ def get_saved_tracks() -> list:
     return songs
 
 
-def get_song_info(song_id) -> tuple[list[str], str, str, Any, Any, Any, Any, Any, Any]:
+def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any, Any]:
     """ Retrieves metadata for downloaded songs """
     info = ZSpotify.invoke_url(f'{TRACKS_URL}?ids={song_id}&market=from_token')
 

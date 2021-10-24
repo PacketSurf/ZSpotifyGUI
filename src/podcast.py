@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, Tuple
 
 from librespot.audio.decoders import VorbisOnlyAudioQuality
 from librespot.metadata import EpisodeId
@@ -14,7 +14,7 @@ EPISODE_INFO_URL = 'https://api.spotify.com/v1/episodes'
 SHOWS_URL = 'https://api.spotify.com/v1/shows'
 
 
-def get_episode_info(episode_id_str) -> tuple[Optional[str], Optional[str]]:
+def get_episode_info(episode_id_str) -> Tuple[Optional[str], Optional[str]]:
     info = ZSpotify.invoke_url(f'{EPISODE_INFO_URL}/{episode_id_str}')
     if ERROR in info:
         return None, None
