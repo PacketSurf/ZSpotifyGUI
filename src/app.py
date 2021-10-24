@@ -167,6 +167,3 @@ def search(search_term):
             else:
                 download_playlist(playlists, position - total_tracks - total_albums - total_artists)
 
-
-if __name__ == '__main__':
-    client()
