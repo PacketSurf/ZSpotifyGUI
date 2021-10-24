@@ -29,7 +29,7 @@ Python packages:
 \*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 ```
 Command line usage:
-  python app.py                                     Loads search prompt to find then download a specific track, album or playlist
+  python app.py                                      Loads search prompt to find then download a specific track, album or playlist
   python app.py <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
   python app.py <artist url>                         Downloads all albums by specified artist
 
