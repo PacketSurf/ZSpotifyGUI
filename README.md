@@ -14,7 +14,7 @@ Requirements:
 
 Binaries
 
-- Python 3.8 or greater
+- Python 3.9 or greater
 - ffmpeg*
 - Git**
 
@@ -29,9 +29,9 @@ Python packages:
 \*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 ```
 Command line usage:
-  python zspotify.py                                      Loads search prompt to find then download a specific track, album or playlist
-  python zspotify.py <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
-  python zspotify.py <artist url>                         Downloads all albums by specified artist
+  python app.py                                      Loads search prompt to find then download a specific track, album or playlist
+  python app.py <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
+  python app.py <artist url>                         Downloads all albums by specified artist
 
 Extra command line options:
   -p, --playlist       Downloads a saved playlist from your account
@@ -43,8 +43,7 @@ Options that can be configured in zs_config.json:
 
   SKIP_EXISTING_FILES Set this to false if you want ZSpotify to overwrite files with the same name rather than skipping the song
 
-  MUSIC_FORMAT        Set this to "ogg" if you would rather that format audio over "mp3"
-  RAW_AUDIO_AS_IS     Set this to true to only stream the audio to a file and do no re-encoding or post processing
+  MUSIC_FORMAT        Can be "mp3" or "ogg", mp3 is required for track metadata however ogg is slightly higer quality as it is not trsnacoded.
 
   FORCE_PREMIUM       Set this to true if ZSpotify isn't automatically detecting that you are using a premium account
 
@@ -56,10 +55,24 @@ Currently no user has reported their account getting banned after using ZSpotify
 This isn't to say _you_ won't get banned as it is technically against Spotify's TOS.
 **Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
 
+### What do I do if I see "Your session has been terminated"?
+If you see this, don't worry! Just try logging back in. If you see the incorrect username or password error, reset your password and you should be able to log back in and continue using Spotify.
+
 ### Contributing
-Please be sure to lint your code with pylint before issuing a pull-request, thanks!
+Please refer to CONTRIBUTING.md
 
 ## **Changelog:**
+**v2.2 (24 Oct 2021):**
+- Added basic support for downloading an entire podcast series.
+- Split code into multiple files for easier maintenance.
+- Changed initial launch script to app.py
+- Simplified audio formats.
+- Added prebuild exe for Windows users.
+- Added Docker file.
+- Added CONTRIBUTING.md.
+- Fixed artist names getting cutoff in metadata.
+- Removed data sanitization of metadata tags. 
+
 **v2.1 (23 Oct 2021):**
 - Moved configuration from hard-coded values to separate zs_config.json file.
 - Add subfolders for each disc.
