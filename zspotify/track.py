@@ -1,7 +1,7 @@
 import math
 import os
 import time
-from typing import Any
+from typing import Any, Tuple, List
 
 from librespot.audio.decoders import AudioQuality
 from librespot.metadata import TrackId
@@ -23,7 +23,8 @@ def get_saved_tracks() -> list:
     limit = 50
 
     while True:
-        resp = ZSpotify.invoke_url_with_params(SAVED_TRACKS_URL, limit=limit, offset=offset)
+        resp = ZSpotify.invoke_url_with_params(
+            SAVED_TRACKS_URL, limit=limit, offset=offset)
         offset += limit
         songs.extend(resp[ITEMS])
         if len(resp[ITEMS]) < limit:
@@ -32,15 +33,15 @@ def get_saved_tracks() -> list:
     return songs
 
 
-def get_song_info(song_id) -> tuple[list[str], str, str, Any, Any, Any, Any, Any, Any, Any]:
+def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any, Any, Any]:
     """ Retrieves metadata for downloaded songs """
     info = ZSpotify.invoke_url(f'{TRACKS_URL}?ids={song_id}&market=from_token')
 
     artists = []
     for data in info[TRACKS][0][ARTISTS]:
-        artists.append(data[NAME])
-    album_name = info[TRACKS][0][ALBUM][NAME]
-    name = info[TRACKS][0][NAME]
+        artists.append(sanitize_data(data[NAME]))
+    album_name = sanitize_data(info[TRACKS][0][ALBUM][NAME])
+    name = sanitize_data(info[TRACKS][0][NAME])
     image_url = info[TRACKS][0][ALBUM][IMAGES][0][URL]
     release_year = info[TRACKS][0][ALBUM][RELEASE_DATE].split('-')[0]
     disc_number = info[TRACKS][0][DISC_NUMBER]
@@ -84,18 +85,23 @@ def process_track_metadata(artists: list, name: str, disc_number: Any, extra_pat
                            create_m3u_file: bool):
     m3u_filename = None
 
-    song_name = sanitize_data(artists[0]) + ' - ' + sanitize_data(name)
+    if create_m3u_file:
+        download_directory = os.path.join(os.path.dirname(
+            __file__), ZSpotify.get_config(ROOT_PATH), extra_paths, extra_paths[:-1])
+        m3u_filename = f'{download_directory}.m3u'
+    if ZSpotify.get_config(SPLIT_ALBUM_DISCS):
+        download_directory = os.path.join(os.path.dirname(
+            __file__), ZSpotify.get_config(ROOT_PATH), extra_paths, f'Disc {disc_number}')
+    else:
+        download_directory = os.path.join(os.path.dirname(
+            __file__), ZSpotify.get_config(ROOT_PATH), extra_paths)
+    song_name = artists[0] + ' - ' + name
     if prefix:
         song_name = f'{prefix_value.zfill(2)} - {song_name}' if prefix_value.isdigit(
         ) else f'{prefix_value} - {song_name}'
-    if create_m3u_file:
-        m3u_filename = f'{os.path.join(ZSpotify.get_config(ROOT_PATH), extra_paths, extra_paths)[:-1]}.m3u'
-    if ZSpotify.get_config(SPLIT_ALBUM_DISCS):
-        filename = os.path.join(ZSpotify.get_config(ROOT_PATH), extra_paths, 'Disc ' + str(
-            disc_number) + '/' + song_name + '.' + ZSpotify.get_config(DOWNLOAD_FORMAT))
-    else:
-        filename = os.path.join(ZSpotify.get_config(ROOT_PATH), extra_paths,
-                                song_name + '.' + ZSpotify.get_config(DOWNLOAD_FORMAT))
+
+    filename = os.path.join(
+        download_directory, f'{song_name}.{ZSpotify.get_config(DOWNLOAD_FORMAT)}')
     return song_name, filename, m3u_filename
 
 

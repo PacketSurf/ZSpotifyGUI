@@ -162,6 +162,3 @@ def perform_action(tracks: list, albums: list, playlists: list, artists: list,
             else:
                 download_playlist(playlists, position - total_tracks - total_albums - total_artists)
 
-
-if __name__ == '__main__':
-    client()

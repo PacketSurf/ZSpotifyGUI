@@ -55,6 +55,8 @@ ERROR = 'error'
 
 EXPLICIT = 'explicit'
 
+PLAYLIST = 'playlist'
+
 PLAYLISTS = 'playlists'
 
 OWNER = 'owner'
@@ -110,3 +112,14 @@ ALBUM_ID = 'AlbumID'
 TRACK_ID = 'TrackID'
 
 S_NO = 'S.NO'
+CONFIG_DEFAULT_SETTINGS = {
+    'ROOT_PATH': '../ZSpotify Music/',
+    'ROOT_PODCAST_PATH': '../ZSpotify Podcasts/',
+    'SKIP_EXISTING_FILES': True,
+    'DOWNLOAD_FORMAT': 'mp3',
+    'FORCE_PREMIUM': False,
+    'ANTI_BAN_WAIT_TIME': 1,
+    'OVERRIDE_AUTO_WAIT': False,
+    'CHUNK_SIZE': 50000,
+    'SPLIT_ALBUM_DISCS': False
+}

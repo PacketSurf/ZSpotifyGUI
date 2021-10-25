@@ -18,7 +18,7 @@ from librespot.core import Session
 
 from const import CREDENTIALS_JSON, TYPE, \
     PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, \
-    PLAYLIST_READ_PRIVATE
+    PLAYLIST_READ_PRIVATE, CONFIG_DEFAULT_SETTINGS
 from utils import MusicFormat
 
 
@@ -55,8 +55,14 @@ class ZSpotify:
     @classmethod
     def load_config(cls) -> None:
         app_dir = os.path.dirname(__file__)
-        with open(os.path.join(app_dir, CONFIG_FILE_PATH), encoding='utf-8') as config_file:
-            cls.CONFIG = json.load(config_file)
+        true_config_file_path = os.path.join(app_dir, CONFIG_FILE_PATH)
+        if not os.path.exists(true_config_file_path):
+            with open(true_config_file_path, 'w', encoding='utf-8') as config_file:
+                json.dump(CONFIG_DEFAULT_SETTINGS, config_file, indent=4)
+            cls.CONFIG = CONFIG_DEFAULT_SETTINGS
+        else:
+            with open(true_config_file_path, encoding='utf-8') as config_file:
+                cls.CONFIG = json.load(config_file)
 
     @classmethod
     def get_config(cls, key) -> Any:

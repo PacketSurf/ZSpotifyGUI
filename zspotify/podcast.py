@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, Tuple
 
 from librespot.metadata import EpisodeId
 from tqdm import tqdm
@@ -12,7 +12,7 @@ EPISODE_INFO_URL = 'https://api.spotify.com/v1/episodes'
 SHOWS_URL = 'https://api.spotify.com/v1/shows'
 
 
-def get_episode_info(episode_id) -> tuple[Optional[str], Optional[str]]:
+def get_episode_info(episode_id) -> Tuple[Optional[str], Optional[str]]:
     info = ZSpotify.invoke_url(f'{EPISODE_INFO_URL}/{episode_id}')
     if ERROR in info:
         return None, None

@@ -14,7 +14,8 @@ ZSpotify is a community-driven project. There are many different ways to contrib
 
 ### What we aren't looking for
 
-Please don't use the issues section to request help installing or setting up the project. It should be reserved for bugs when running the code, and feature requqests. Instead use the support channel in either our Discord or Matrix server.
+Please don't use the issues section to request help installing or setting up the project. It should be reserved for bugs when running the code, and feature requests. Instead use the support channel in either our Discord or Matrix server.
+Please do not make a new pull request just to fix a typo or any small issue like that. We'd rather you just make an issue reporting it and we will fix it in the next commit. This helps to prevent commit spamming.
 
 # Ground rules
 
