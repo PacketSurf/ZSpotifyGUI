@@ -29,9 +29,9 @@ Python packages:
 \*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 ```
 Command line usage:
-  python src                                      Loads search prompt to find then download a specific track, album or playlist
-  python src <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
-  python src <artist url>                         Downloads all albums by specified artist
+  python zspotify                                      Loads search prompt to find then download a specific track, album or playlist
+  python zspotify <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
+  python zspotify <artist url>                         Downloads all albums by specified artist
 
 Extra command line options:
   -p, --playlist       Downloads a saved playlist from your account
