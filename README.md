@@ -1,14 +1,17 @@
 ![Stars](https://img.shields.io/github/stars/Footsiefat/zspotify.svg)
 ![Forks](https://img.shields.io/github/forks/Footsiefat/zspotify.svg)
 ![Size](https://img.shields.io/github/repo-size/Footsiefat/zspotify)
+
 # ZSpotify
 
 ### A Spotify downloader needing only a python interpreter and ffmpeg.
+
 <p align="center">
   <img src="https://user-images.githubusercontent.com/12180913/138040605-c9d46e45-3830-4a4b-a7ac-c56bb0d76335.png">
 </p>
 
 [Discord Server](https://discord.gg/skVNQKtyFq) - [Matrix Server](https://matrix.to/#/#zspotify:matrix.org) - [Gitea Mirror](https://git.robinsmediateam.dev/Footsiefat/zspotify) - [Main Site](https://footsiefat.github.io/)
+
 ```
 Requirements:
 
@@ -29,6 +32,7 @@ Python packages:
 \*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 
 ### Command line usage:
+
 ```
 Basic usage:
   python zspotify                                      Loads search prompt to find then download a specific track, album or playlist
@@ -55,7 +59,7 @@ Options that can be configured in zs_config.json:
 
 ### Docker Usage
 
-``` 
+```
 Build the docker image from the Dockerfile:
   docker build -t zspotify .
 Create and run a container from the image:
@@ -63,15 +67,23 @@ Create and run a container from the image:
 ```
 
 ### Will my account get banned if I use this tool?
+
 Currently no user has reported their account getting banned after using ZSpotify.
 This isn't to say _you_ won't get banned as it is technically against Spotify's TOS.
 **Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
 
 ### What do I do if I see "Your session has been terminated"?
+
 If you see this, don't worry! Just try logging back in. If you see the incorrect username or password error, reset your password and you should be able to log back in and continue using Spotify.
 
 ### Contributing
+
 Please refer to [CONTRIBUTING](CONTRIBUTING.md)
 
 ### Changelog
+
 Please refer to [CHANGELOG](CHANGELOG.md)
+
+### Common Errors
+
+Please refer to [COMMON_ERRORS](COMMON_ERRORS.md)
