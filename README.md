@@ -53,7 +53,7 @@ Options that can be configured in zs_config.json:
 
 ### Docker Usage
 
-``` 
+```
 Build the docker image from the Dockerfile:
   docker build -t zspotify .
 Create and run a container from the image:
