@@ -3,6 +3,7 @@ import platform
 import re
 import time
 from enum import Enum
+from typing import List, Tuple
 
 import music_tag
 import requests
@@ -27,7 +28,7 @@ def wait(seconds: int = 3) -> None:
         time.sleep(1)
 
 
-def split_input(selection) -> list[str]:
+def split_input(selection) -> List[str]:
     """ Returns a list of inputted strings """
     inputs = []
     if '-' in selection:
@@ -91,7 +92,7 @@ def set_music_thumbnail(filename, image_url) -> None:
     tags.save()
 
 
-def regex_input_for_urls(search_input) -> tuple[str, str, str, str, str, str]:
+def regex_input_for_urls(search_input) -> Tuple[str, str, str, str, str, str]:
     """ Since many kinds of search may be passed at the command line, process them all here. """
     track_uri_search = re.search(
         r'^spotify:track:(?P<TrackID>[0-9a-zA-Z]{22})$', search_input)
