@@ -154,3 +154,6 @@ ZSpotify\ Podcasts/
 
 # Config file
 zs_config.json
+
+# MacOS file
+.DS_Store
