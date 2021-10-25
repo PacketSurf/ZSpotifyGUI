@@ -1,3 +1,4 @@
+""" provides commonly used string across different modules"""
 SANITIZE = ('\\', '/', ':', '*', '?', '\'', '<', '>', '"')
 
 SAVED_TRACKS_URL = 'https://api.spotify.com/v1/me/tracks'
@@ -107,3 +108,5 @@ PLAYLIST_ID = 'PlaylistID'
 ALBUM_ID = 'AlbumID'
 
 TRACK_ID = 'TrackID'
+
+S_NO = 'S.NO'

@@ -1,3 +1,4 @@
+"""Entrypoint of ZSpotify app. It provides functions for searching"""
 import sys
 
 from librespot.audio.decoders import AudioQuality
@@ -5,7 +6,7 @@ from tabulate import tabulate
 
 from album import download_album, download_artist_albums
 from const import TRACK, NAME, ID, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUMS, OWNER, \
-    PLAYLISTS, DISPLAY_NAME
+    PLAYLISTS, DISPLAY_NAME, LIMIT, OFFSET, TYPE, S_NO, ALBUM
 from playlist import download_from_user_playlist, download_playlist, \
     download_playlist_with_id
 from podcast import download_episode, get_show_episodes
@@ -40,6 +41,9 @@ def client() -> None:
 
 
 def process_args_input():
+    """
+        process the sys args
+    """
     if sys.argv[1] == '-p' or sys.argv[1] == '--playlist':
         download_from_user_playlist()
     elif sys.argv[1] == '-ls' or sys.argv[1] == '--liked-songs':
@@ -54,6 +58,11 @@ def process_args_input():
 
 
 def process_url_input(url, call_search=False):
+    """
+    process the input and calls appropriate download method
+    @param url: input url
+    @param call_search: boolean variable to notify calling search method
+    """
     track_id, album_id, playlist_id, episode_id, show_id, artist_id = regex_input_for_urls(url)
 
     if track_id:
@@ -75,7 +84,7 @@ def process_url_input(url, call_search=False):
 
 def search(search_term):
     """ Searches Spotify's API for relevant data """
-    params = {'limit': '10', 'offset': '0', 'q': search_term, 'type': 'track,album,artist,playlist'}
+    params = {LIMIT: '10', OFFSET: '0', 'q': search_term, TYPE: 'track,album,artist,playlist'}
     resp = ZSpotify.invoke_url_with_params(SEARCH_URL, **params)
 
     total_tracks = total_albums = total_artists = 0
@@ -90,7 +99,8 @@ def search(search_term):
                                ','.join([artist[NAME] for artist in track[ARTISTS]])])
             counter += 1
         total_tracks = counter - 1
-        print(tabulate(track_data, headers=['S.NO', 'Name', 'Artists'], tablefmt='pretty'))
+        print(tabulate(track_data, headers=[S_NO, NAME.title(), ARTISTS.title()],
+                       tablefmt='pretty'))
         print('\n')
 
     albums = resp[ALBUMS][ITEMS]
@@ -98,10 +108,12 @@ def search(search_term):
         print('###  ALBUMS  ###')
         album_data = []
         for album in albums:
-            album_data.append([counter, album[NAME], ','.join([artist[NAME] for artist in album[ARTISTS]])])
+            album_data.append([counter, album[NAME], ','.join([artist[NAME]
+                                                               for artist in album[ARTISTS]])])
             counter += 1
         total_albums = counter - total_tracks - 1
-        print(tabulate(album_data, headers=['S.NO', 'Album', 'Artists'], tablefmt='pretty'))
+        print(tabulate(album_data, headers=[S_NO, ALBUM.title(), ARTISTS.title()],
+                       tablefmt='pretty'))
         print('\n')
 
     artists = resp[ARTISTS][ITEMS]
@@ -112,7 +124,7 @@ def search(search_term):
             artist_data.append([counter, artist[NAME]])
             counter += 1
         total_artists = counter - total_tracks - total_albums - 1
-        print(tabulate(artist_data, headers=['S.NO', 'Name'], tablefmt='pretty'))
+        print(tabulate(artist_data, headers=[S_NO, NAME.title()], tablefmt='pretty'))
         print('\n')
 
     playlists = resp[PLAYLISTS][ITEMS]
@@ -121,13 +133,16 @@ def search(search_term):
     for playlist in playlists:
         playlist_data.append([counter, playlist[NAME], playlist[OWNER][DISPLAY_NAME]])
         counter += 1
-    print(tabulate(playlist_data, headers=['S.NO', 'Name', 'Owner'], tablefmt='pretty'))
+    print(tabulate(playlist_data, headers=[S_NO, NAME.title(), OWNER.title()], tablefmt='pretty'))
     print('\n')
     perform_action(tracks, albums, playlists, artists, total_tracks, total_albums, total_artists)
 
 
-def perform_action(tracks: list, albums: list, playlists: list, artists: list, total_tracks: int, total_albums: int,
-                   total_artists: int):
+def perform_action(tracks: list, albums: list, playlists: list, artists: list,
+                   total_tracks: int, total_albums: int, total_artists: int):
+    """
+    process and downloads the user selection
+    """
     if len(tracks) + len(albums) + len(playlists) == 0:
         print('NO RESULTS FOUND - EXITING...')
     else:

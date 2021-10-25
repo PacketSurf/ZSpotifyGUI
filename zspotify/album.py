@@ -1,3 +1,4 @@
+"""It's provides functions for downloading the albums"""
 from tqdm import tqdm
 
 from const import ITEMS, ARTISTS, NAME, ID
@@ -16,7 +17,8 @@ def get_album_tracks(album_id):
     limit = 50
 
     while True:
-        resp = ZSpotify.invoke_url_with_params(f'{ALBUM_URL}/{album_id}/tracks', limit=limit, offset=offset)
+        resp = ZSpotify.invoke_url_with_params(f'{ALBUM_URL}/{album_id}/tracks',
+                                               limit=limit, offset=offset)
         offset += limit
         songs.extend(resp[ITEMS])
         if len(resp[ITEMS]) < limit:
@@ -42,9 +44,10 @@ def download_album(album):
     """ Downloads songs from an album """
     artist, album_name = get_album_name(album)
     tracks = get_album_tracks(album)
-    for n, track in tqdm(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=len(tracks)):
+    for album_number, track in tqdm(enumerate(tracks, start=1), unit_scale=True,
+                                    unit='Song', total=len(tracks)):
         download_track(track[ID], f'{artist}/{album_name}',
-                       prefix=True, prefix_value=str(n), disable_progressbar=True)
+                       prefix=True, prefix_value=str(album_number), disable_progressbar=True)
 
 
 def download_artist_albums(artist):
