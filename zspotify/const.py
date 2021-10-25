@@ -1,4 +1,3 @@
-""" provides commonly used string across different modules"""
 SANITIZE = ('\\', '/', ':', '*', '?', '\'', '<', '>', '"')
 
 SAVED_TRACKS_URL = 'https://api.spotify.com/v1/me/tracks'
@@ -97,21 +96,6 @@ CHUNK_SIZE = 'CHUNK_SIZE'
 
 SPLIT_ALBUM_DISCS = 'SPLIT_ALBUM_DISCS'
 
-DURATION_MS = 'duration_ms'
-
-ARTIST_ID = 'ArtistID'
-
-SHOW_ID = 'ShowID'
-
-EPISODE_ID = 'EpisodeID'
-
-PLAYLIST_ID = 'PlaylistID'
-
-ALBUM_ID = 'AlbumID'
-
-TRACK_ID = 'TrackID'
-
-S_NO = 'S.NO'
 CONFIG_DEFAULT_SETTINGS = {
     'ROOT_PATH': '../ZSpotify Music/',
     'ROOT_PODCAST_PATH': '../ZSpotify Podcasts/',
