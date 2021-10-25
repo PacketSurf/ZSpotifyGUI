@@ -9,6 +9,7 @@
 - Changed it so you can just run zspotify from the root folder again.
 - Added function to auto generate config file if it doesnt exist.
 - Fixed issue where if you enabled splitting discs into seperate folders downloading would fail.
+- Added playlist file(m3u) creation for playlist download.
 
 **v2.2 (24 Oct 2021):**
 - Added basic support for downloading an entire podcast series.
