@@ -33,7 +33,7 @@ def client() -> None:
         elif sys.argv[1] == '-ls' or sys.argv[1] == '--liked-songs':
             for song in get_saved_tracks():
                 if not song[TRACK][NAME]:
-                    print('###   SKIPPING:  SONG DOES NOT EXISTS ON SPOTIFY ANYMORE   ###')
+                    print('###   SKIPPING:  SONG DOES NOT EXIST ON SPOTIFY ANYMORE   ###')
                 else:
                     download_track(song[TRACK][ID], 'Liked Songs/')
                 print('\n')
