@@ -32,8 +32,7 @@ def get_playlist_songs(playlist_id):
     limit = 100
 
     while True:
-        resp = ZSpotify.invoke_url_with_params(f'{PLAYLISTS_URL}/{playlist_id}/tracks',
-                                               limit=limit, offset=offset)
+        resp = ZSpotify.invoke_url_with_params(f'{PLAYLISTS_URL}/{playlist_id}/tracks', limit=limit, offset=offset)
         offset += limit
         songs.extend(resp[ITEMS])
         if len(resp[ITEMS]) < limit:
@@ -48,19 +47,15 @@ def get_playlist_info(playlist_id):
     return resp['name'].strip(), resp['owner']['display_name'].strip()
 
 
-def download_playlist_with_id(playlist_id):
-    name, _ = get_playlist_info(playlist_id)
-    playlist_songs = [song for song in get_playlist_songs(playlist_id) if song[TRACK][ID]]
+def download_playlist(playlist):
+    """Downloads all the songs from a playlist"""
+
+    playlist_songs = [song for song in get_playlist_songs(playlist[ID]) if song[TRACK][ID]]
     p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
     for song in p_bar:
-        download_track(song[TRACK][ID], sanitize_data(name.strip()) + '/', disable_progressbar=True,
-                       create_m3u_file=True)
+        download_track(song[TRACK][ID], sanitize_data(playlist[NAME].strip()) + '/',
+                       disable_progressbar=True)
         p_bar.set_description(song[TRACK][NAME])
-
-
-def download_playlist(playlists, playlist_number):
-    """Downloads all the songs from a playlist"""
-    download_playlist_with_id(playlists[int(playlist_number) - 1][ID])
 
 
 def download_from_user_playlist():
