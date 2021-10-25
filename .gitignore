@@ -151,3 +151,6 @@ ZSpotify\ Podcasts/
 
 # Intellij
 .idea
+
+#Configuration json file
+zs_config.json
