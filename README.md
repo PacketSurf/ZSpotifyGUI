@@ -60,7 +60,9 @@ Options that can be configured in zs_config.json:
 ### Docker Usage
 
 ```
-Build the docker image from the Dockerfile:
+Pull the official docker image (automatically updates):
+  docker pull cooper7692/zspotify-docker
+Or build the docker image yourself from the Dockerfile:
   docker build -t zspotify .
 Create and run a container from the image:
   docker run --rm -v "$PWD/ZSpotify Music:/ZSpotify Music" -v "$PWD/ZSpotify Podcasts:/ZSpotify Podcasts" -it zspotify
