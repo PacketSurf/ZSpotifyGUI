@@ -3,19 +3,19 @@ import platform
 import re
 import time
 from enum import Enum
-from typing import List, Tuple
+from typing import List, Tuple, Match
 
 import music_tag
 import requests
 
 from const import SANITIZE, ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
-    WINDOWS_SYSTEM
+    WINDOWS_SYSTEM, TRACK_ID, ALBUM_ID, PLAYLIST_ID, EPISODE_ID, SHOW_ID, ARTIST_ID
 
 
 class MusicFormat(str, Enum):
     MP3 = 'mp3',
     OGG = 'ogg',
-    
+
 
 def create_download_directory(download_path: str) -> None:
     os.makedirs(download_path, exist_ok=True)
@@ -136,46 +136,23 @@ def regex_input_for_urls(search_input) -> Tuple[str, str, str, str, str, str]:
         search_input,
     )
 
-    if track_uri_search is not None or track_url_search is not None:
-        track_id_str = (track_uri_search
-                        if track_uri_search is not None else
-                        track_url_search).group('TrackID')
-    else:
-        track_id_str = None
+    return (
+        extract_info_from_regex_response(TRACK_ID, track_uri_search, track_url_search),
 
-    if album_uri_search is not None or album_url_search is not None:
-        album_id_str = (album_uri_search
-                        if album_uri_search is not None else
-                        album_url_search).group('AlbumID')
-    else:
-        album_id_str = None
+        extract_info_from_regex_response(ALBUM_ID, album_uri_search, album_url_search),
 
-    if playlist_uri_search is not None or playlist_url_search is not None:
-        playlist_id_str = (playlist_uri_search
-                           if playlist_uri_search is not None else
-                           playlist_url_search).group('PlaylistID')
-    else:
-        playlist_id_str = None
+        extract_info_from_regex_response(PLAYLIST_ID, playlist_uri_search, playlist_url_search),
 
-    if episode_uri_search is not None or episode_url_search is not None:
-        episode_id_str = (episode_uri_search
-                          if episode_uri_search is not None else
-                          episode_url_search).group('EpisodeID')
-    else:
-        episode_id_str = None
+        extract_info_from_regex_response(EPISODE_ID, episode_uri_search, episode_url_search),
 
-    if show_uri_search is not None or show_url_search is not None:
-        show_id_str = (show_uri_search
-                       if show_uri_search is not None else
-                       show_url_search).group('ShowID')
-    else:
-        show_id_str = None
+        extract_info_from_regex_response(SHOW_ID, show_uri_search, show_url_search),
 
-    if artist_uri_search is not None or artist_url_search is not None:
-        artist_id_str = (artist_uri_search
-                         if artist_uri_search is not None else
-                         artist_url_search).group('ArtistID')
-    else:
-        artist_id_str = None
+        extract_info_from_regex_response(ARTIST_ID, artist_uri_search, artist_url_search)
+    )
 
-    return track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str, artist_id_str
+
+def extract_info_from_regex_response(key, uri_data: Match[str], url_data: Match[str]):
+    if uri_data or url_data:
+        return (uri_data if uri_data else url_data).group(key)
+    else:
+        return None
