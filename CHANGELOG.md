@@ -1,4 +1,15 @@
 ## **Changelog:**
+**v2.3 (25 Oct 2021):**
+- Moved changelog to seperate file.
+- Added argument parsing in search function (query results limit and query result types).
+- Fixed spelling errors.
+- Added mac specific install guide stuff.
+- Fixed infinite loop.
+- Fixed issue where zspotify could'nt run on python 3.8/3.9.
+- Changed it so you can just run zspotify from the root folder again.
+- Added function to auto generate config file if it doesnt exist.
+- Fixed issue where if you enabled splitting discs into seperate folders downloading would fail.
+
 **v2.2 (24 Oct 2021):**
 - Added basic support for downloading an entire podcast series.
 - Split code into multiple files for easier maintenance.
