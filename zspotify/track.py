@@ -22,7 +22,8 @@ def get_saved_tracks() -> list:
     limit = 50
 
     while True:
-        resp = ZSpotify.invoke_url_with_params(SAVED_TRACKS_URL, limit=limit, offset=offset)
+        resp = ZSpotify.invoke_url_with_params(
+            SAVED_TRACKS_URL, limit=limit, offset=offset)
         offset += limit
         songs.extend(resp[ITEMS])
         if len(resp[ITEMS]) < limit:
@@ -53,24 +54,29 @@ def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any
 # noinspection PyBroadException
 def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='', disable_progressbar=False) -> None:
     """ Downloads raw song audio from Spotify """
-    download_directory = os.path.join(os.path.dirname(__file__), ZSpotify.get_config(ROOT_PATH), extra_paths)
+
     try:
         (artists, album_name, name, image_url, release_year, disc_number,
          track_number, scraped_song_id, is_playable) = get_song_info(track_id)
+
+        if ZSpotify.get_config(SPLIT_ALBUM_DISCS):
+            download_directory = os.path.join(os.path.dirname(
+                __file__), ZSpotify.get_config(ROOT_PATH), extra_paths, f'Disc {disc_number}')
+        else:
+            download_directory = os.path.join(os.path.dirname(
+                __file__), ZSpotify.get_config(ROOT_PATH), extra_paths)
 
         song_name = artists[0] + ' - ' + name
         if prefix:
             song_name = f'{prefix_value.zfill(2)} - {song_name}' if prefix_value.isdigit(
             ) else f'{prefix_value} - {song_name}'
 
-        if ZSpotify.get_config(SPLIT_ALBUM_DISCS):
-            filename = os.path.join(download_directory, f'Disc {disc_number}',
-                                    f'{song_name}.{ZSpotify.get_config(DOWNLOAD_FORMAT)}')
-        else:
-            filename = os.path.join(download_directory,
-                                    f'{song_name}.{ZSpotify.get_config(DOWNLOAD_FORMAT)}')
-    except Exception:
+        filename = os.path.join(
+            download_directory, f'{song_name}.{ZSpotify.get_config(DOWNLOAD_FORMAT)}')
+
+    except Exception as e:
         print('###   SKIPPING SONG - FAILED TO QUERY METADATA   ###')
+        print(e)
     else:
         try:
             if not is_playable:
@@ -84,7 +90,8 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                     if track_id != scraped_song_id:
                         track_id = scraped_song_id
                     track_id = TrackId.from_base62(track_id)
-                    stream = ZSpotify.get_content_stream(track_id, ZSpotify.DOWNLOAD_QUALITY)
+                    stream = ZSpotify.get_content_stream(
+                        track_id, ZSpotify.DOWNLOAD_QUALITY)
                     create_download_directory(download_directory)
                     total_size = stream.input_stream.size
 
@@ -125,4 +132,5 @@ def convert_audio_format(filename) -> None:
         bitrate = '320k'
     else:
         bitrate = '160k'
-    raw_audio.export(filename, format=ZSpotify.get_config(DOWNLOAD_FORMAT), bitrate=bitrate)
+    raw_audio.export(filename, format=ZSpotify.get_config(
+        DOWNLOAD_FORMAT), bitrate=bitrate)
