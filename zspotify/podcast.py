@@ -50,11 +50,15 @@ def download_episode(episode_id) -> None:
         episode_id = EpisodeId.from_base62(episode_id)
         stream = ZSpotify.get_content_stream(episode_id, ZSpotify.DOWNLOAD_QUALITY)
 
-        download_directory = os.path.dirname(__file__) + ZSpotify.get_config(ROOT_PODCAST_PATH) + extra_paths
+        download_directory = os.path.join(
+            os.path.dirname(__file__),
+            ZSpotify.get_config(ROOT_PODCAST_PATH),
+            extra_paths,
+        )
         create_download_directory(download_directory)
 
         total_size = stream.input_stream.size
-        with open(download_directory + filename + MusicFormat.OGG.value,
+        with open(os.path.join(download_directory, f"{filename}.ogg"),
                   'wb') as file, tqdm(
                 desc=filename,
                 total=total_size,
