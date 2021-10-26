@@ -2,6 +2,7 @@ import os
 import time
 from typing import Any, Tuple, List
 
+from librespot.audio.decoders import AudioQuality
 from librespot.metadata import TrackId
 from ffmpy import FFmpeg
 from tqdm import tqdm
@@ -129,13 +130,22 @@ def convert_audio_format(filename) -> None:
     file_codec = CODEC_MAP.get(download_format, "copy")
     if file_codec != 'copy':
         bitrate = ZSpotify.get_config(BITRATE)
+        if not bitrate:
+            if ZSpotify.DOWNLOAD_QUALITY == AudioQuality.VERY_HIGH:
+                bitrate = '320k'
+            else:
+                bitrate = '160k'
     else:
         bitrate = None
+
+    output_params = ['-c:a', file_codec]
+    if bitrate:
+        output_params += ['-b:a', bitrate]
 
     ff_m = FFmpeg(
         global_options=['-y', '-hide_banner', '-loglevel error'],
         inputs={temp_filename: None},
-        outputs={filename: ['-c:a', file_codec] + ['-b:a', bitrate] if bitrate else []}
+        outputs={filename: output_params}
     )
     ff_m.run()
     if os.path.exists(temp_filename):
