@@ -70,8 +70,13 @@ Create and run a container from the image:
 
 ### Will my account get banned if I use this tool?
 
-Currently no user has reported their account getting banned after using ZSpotify.
-This isn't to say _you_ won't get banned as it is technically against Spotify's TOS.
+~~Currently no user has reported their account getting banned after using ZSpotify.~~
+
+**There have been 2-3 reports from users who received account bans from Spotify for using this tool**.
+
+We are working on making it less likely for your account to get banned, please be patient.
+We suggest you wait till this fix has been made to avoid ban, or if you are in a hurry, make sure to not use your primary account.
+
 **Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
 
 ### What do I do if I see "Your session has been terminated"?
