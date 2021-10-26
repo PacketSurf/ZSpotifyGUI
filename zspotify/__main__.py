@@ -5,7 +5,8 @@ from app import client
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog='zspotify', description='A Spotify downloader needing only a python interpreter and ffmpeg.')
+    parser = argparse.ArgumentParser(prog='zspotify',
+        description='A Spotify downloader needing only a python interpreter and ffmpeg.')
     parser.add_argument('-ns', '--no-splash',
                         action='store_true',
                         help='Suppress the splash screen when loading.')
@@ -14,7 +15,7 @@ if __name__ == '__main__':
                        type=str,
                        default='',
                        nargs='?',
-                       help='Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded.')
+                       help='Downloads the track, album, playlist, podcast episode, or all albums by an artist from a url.')
     group.add_argument('-ls', '--liked-songs',
                        dest='liked_songs',
                        action='store_true',
