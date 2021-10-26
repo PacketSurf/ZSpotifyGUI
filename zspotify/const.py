@@ -96,11 +96,34 @@ CHUNK_SIZE = 'CHUNK_SIZE'
 
 SPLIT_ALBUM_DISCS = 'SPLIT_ALBUM_DISCS'
 
+BITRATE = 'BITRATE'
+
+CODEC_MAP = {
+    'aac': 'aac',
+    'fdk_aac': 'libfdk_aac',
+    'm4a': 'aac',
+    'mp3': 'libmp3lame',
+    'ogg': 'copy',
+    'opus': 'libopus',
+    'vorbis': 'copy',
+}
+
+EXT_MAP = {
+    'aac': 'm4a',
+    'fdk_aac': 'm4a',
+    'm4a': 'm4a',
+    'mp3': 'mp3',
+    'ogg': 'ogg',
+    'opus': 'ogg',
+    'vorbis': 'ogg',
+}
+
 CONFIG_DEFAULT_SETTINGS = {
     'ROOT_PATH': '../ZSpotify Music/',
     'ROOT_PODCAST_PATH': '../ZSpotify Podcasts/',
     'SKIP_EXISTING_FILES': True,
     'DOWNLOAD_FORMAT': 'mp3',
+    'BITRATE': '160k',
     'FORCE_PREMIUM': False,
     'ANTI_BAN_WAIT_TIME': 1,
     'OVERRIDE_AUTO_WAIT': False,
