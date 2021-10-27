@@ -5,10 +5,10 @@ from librespot.audio.decoders import VorbisOnlyAudioQuality
 from librespot.metadata import EpisodeId
 from tqdm import tqdm
 
-from const import NAME, ERROR, SHOW, ITEMS, ID, ROOT_PODCAST_PATH, CHUNK_SIZE
-from utils import sanitize_data, create_download_directory, MusicFormat
+from const import (CHUNK_SIZE, ERROR, ID, ITEMS, NAME, ROOT_PODCAST_PATH, SHOW,
+                   SKIP_EXISTING_FILES)
+from utils import create_download_directory, sanitize_data
 from zspotify import ZSpotify
-
 
 EPISODE_INFO_URL = 'https://api.spotify.com/v1/episodes'
 SHOWS_URL = 'https://api.spotify.com/v1/shows'
@@ -55,16 +55,32 @@ def download_episode(episode_id) -> None:
             ZSpotify.get_config(ROOT_PODCAST_PATH),
             extra_paths,
         )
+        download_directory = os.path.realpath(download_directory)
         create_download_directory(download_directory)
 
         total_size = stream.input_stream.size
-        with open(os.path.join(download_directory, f"{filename}.ogg"),
-                  'wb') as file, tqdm(
-                desc=filename,
-                total=total_size,
-                unit='B',
-                unit_scale=True,
-                unit_divisor=1024
+
+        filepath = os.path.join(download_directory, f"{filename}.ogg")
+        if (
+            os.path.isfile(filepath)
+            and os.path.getsize(filepath) == total_size
+            and ZSpotify.get_config(SKIP_EXISTING_FILES)
+        ):
+            print(
+                "\n###   SKIPPING:",
+                podcast_name,
+                "-",
+                episode_name,
+                "(EPISODE ALREADY EXISTS)   ###",
+            )
+            return
+
+        with open(filepath, 'wb') as file, tqdm(
+            desc=filename,
+            total=total_size,
+            unit='B',
+            unit_scale=True,
+            unit_divisor=1024
         ) as bar:
             for _ in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
                 bar.update(file.write(
