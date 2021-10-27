@@ -71,17 +71,14 @@ def download_from_user_playlist():
     print('> SELECT A RANGE BY ADDING A DASH BETWEEN BOTH ID\'s')
     print('> For example, typing 10 to get one playlist or 10-20 to get\nevery playlist from 10-20 (inclusive)\n')
 
-    playlist_choices = input('ID(s): ').split('-')
+    playlist_choices = map(int, input('ID(s): ').split('-'))
 
-    if len(playlist_choices) == 1:
-        download_playlist(playlists, playlist_choices[0])
-    else:
-        start = int(playlist_choices[0])
-        end = int(playlist_choices[1]) + 1
+    start = next(playlist_choices) - 1
+    end = next(playlist_choices, start + 1)
 
-        print(f'Downloading from {start} to {end}...')
+    for playlist_number in range(start, end):
+        playlist = playlists[playlist_number]
+        print(f'Downloading {playlist[NAME].strip()}')
+        download_playlist(playlist)
 
-        for playlist_number in range(start, end):
-            download_playlist(playlists, playlist_number)
-
-        print('\n**All playlists have been downloaded**\n')
+    print('\n**All playlists have been downloaded**\n')
