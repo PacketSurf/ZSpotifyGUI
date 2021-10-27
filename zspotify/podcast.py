@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from const import (CHUNK_SIZE, ERROR, ID, ITEMS, NAME, ROOT_PODCAST_PATH, SHOW,
                    SKIP_EXISTING_FILES)
-from utils import MusicFormat, create_download_directory, sanitize_data
+from utils import create_download_directory, sanitize_data
 from zspotify import ZSpotify
 
 EPISODE_INFO_URL = 'https://api.spotify.com/v1/episodes'
