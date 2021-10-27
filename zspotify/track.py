@@ -5,11 +5,12 @@ from typing import Any, Tuple, List
 from librespot.audio.decoders import AudioQuality
 from librespot.metadata import TrackId
 from ffmpy import FFmpeg
+from pydub import AudioSegment
 from tqdm import tqdm
 
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, SPLIT_ALBUM_DISCS, ROOT_PATH, DOWNLOAD_FORMAT, CHUNK_SIZE, \
-    SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP
+    SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME
 from utils import sanitize_data, set_audio_tags, set_music_thumbnail, create_download_directory
 from zspotify import ZSpotify
 
@@ -80,11 +81,11 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
         try:
             if not is_playable:
                 print('\n###   SKIPPING:', song_name,
-                      '(SONG IS UNAVAILABLE)   ###')
+                    '(SONG IS UNAVAILABLE)   ###')
             else:
                 if os.path.isfile(filename) and os.path.getsize(filename) and ZSpotify.get_config(SKIP_EXISTING_FILES):
                     print('\n###   SKIPPING:', song_name,
-                          '(SONG ALREADY EXISTS)   ###')
+                        '(SONG ALREADY EXISTS)   ###')
                 else:
                     if track_id != scraped_song_id:
                         track_id = scraped_song_id
@@ -102,13 +103,20 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                             unit_divisor=1024,
                             disable=disable_progressbar
                     ) as p_bar:
-                        for _ in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
-                            p_bar.update(file.write(
-                                stream.input_stream.stream().read(ZSpotify.get_config(CHUNK_SIZE))))
+                        for chunk in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
+                            data = stream.input_stream.stream().read(ZSpotify.get_config(CHUNK_SIZE))
+                            if data == b'':
+                                break
+                            p_bar.update(file.write(data))
+                            if ZSpotify.get_config(DOWNLOAD_REAL_TIME):
+                                if chunk == 0:
+                                    pause = get_segment_duration(p_bar)
+                                if pause:
+                                    time.sleep(pause)
 
                     convert_audio_format(filename)
                     set_audio_tags(filename, artists, name, album_name,
-                                   release_year, disc_number, track_number)
+                                release_year, disc_number, track_number)
                     set_music_thumbnail(filename, image_url)
 
                     if not ZSpotify.get_config(OVERRIDE_AUTO_WAIT):
@@ -119,6 +127,18 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
             print(e)
             if os.path.exists(filename):
                 os.remove(filename)
+
+
+def get_segment_duration(segment):
+    """ Returns playback duration of given audio segment """
+    sound = AudioSegment(
+        data = segment,
+        sample_width = 2,
+        frame_rate = 44100,
+        channels = 2
+    )
+    duration = len(sound) / 5000
+    return duration
 
 
 def convert_audio_format(filename) -> None:
