@@ -52,10 +52,12 @@ def download_playlist(playlist):
 
     playlist_songs = [song for song in get_playlist_songs(playlist[ID]) if song[TRACK][ID]]
     p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
+    enum = 1
     for song in p_bar:
         download_track(song[TRACK][ID], sanitize_data(playlist[NAME].strip()) + '/',
-                       disable_progressbar=True)
+                       prefix=True, prefix_value=str(enum) ,disable_progressbar=True)
         p_bar.set_description(song[TRACK][NAME])
+        enum += 1
 
 
 def download_from_user_playlist():
