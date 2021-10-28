@@ -72,6 +72,8 @@ USER_READ_EMAIL = 'user-read-email'
 
 PLAYLIST_READ_PRIVATE = 'playlist-read-private'
 
+USER_LIBRARY_READ = 'user-library-read'
+
 WINDOWS_SYSTEM = 'Windows'
 
 CREDENTIALS_JSON = 'credentials.json'
