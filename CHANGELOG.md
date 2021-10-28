@@ -1,4 +1,10 @@
 ## **Changelog:**
+**v2.4 (27 Oct 20212):**
+- Added realtime downloading support to avoid account suspensions.
+- Fix for downloading by artist.
+- Replace audio conversion method for better quality.
+- Fix bug when automatically setting audio bitrate.
+
 **v2.3 (25 Oct 2021):**
 - Moved changelog to seperate file.
 - Added argument parsing in search function (query results limit and query result types).
