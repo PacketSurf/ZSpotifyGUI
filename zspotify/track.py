@@ -72,7 +72,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
             ) else f'{prefix_value} - {song_name}'
 
         filename = os.path.join(
-            download_directory, f'{song_name}.{EXT_MAP.get(ZSpotify.get_config(DOWNLOAD_FORMAT))}')
+            download_directory, f'{song_name}.{EXT_MAP.get(ZSpotify.get_config(DOWNLOAD_FORMAT).lower())}')
 
     except Exception as e:
         print('###   SKIPPING SONG - FAILED TO QUERY METADATA   ###')
@@ -146,7 +146,7 @@ def convert_audio_format(filename) -> None:
     temp_filename = f'{os.path.splitext(filename)[0]}.tmp'
     os.replace(filename, temp_filename)
 
-    download_format = ZSpotify.get_config(DOWNLOAD_FORMAT)
+    download_format = ZSpotify.get_config(DOWNLOAD_FORMAT).lower()
     file_codec = CODEC_MAP.get(download_format, "copy")
     if file_codec != 'copy':
         bitrate = ZSpotify.get_config(BITRATE)
