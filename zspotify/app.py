@@ -29,28 +29,29 @@ def client(args) -> None:
             print('[ DETECTED FREE ACCOUNT - USING HIGH QUALITY ]\n\n')
         ZSpotify.DOWNLOAD_QUALITY = AudioQuality.HIGH
 
-    if args.url:
-        track_id, album_id, playlist_id, episode_id, show_id, artist_id = regex_input_for_urls(
-            args.url)
+    if args.urls:
+        for spotify_url in args.urls:
+            track_id, album_id, playlist_id, episode_id, show_id, artist_id = regex_input_for_urls(
+                spotify_url)
 
-        if track_id is not None:
-            download_track(track_id)
-        elif artist_id is not None:
-            download_artist_albums(artist_id)
-        elif album_id is not None:
-            download_album(album_id)
-        elif playlist_id is not None:
-            playlist_songs = get_playlist_songs(playlist_id)
-            name, _ = get_playlist_info(playlist_id)
-            for song in playlist_songs:
-                download_track(song[TRACK][ID],
-                               sanitize_data(name) + '/')
-                print('\n')
-        elif episode_id is not None:
-            download_episode(episode_id)
-        elif show_id is not None:
-            for episode in get_show_episodes(show_id):
-                download_episode(episode)
+            if track_id is not None:
+                download_track(track_id)
+            elif artist_id is not None:
+                download_artist_albums(artist_id)
+            elif album_id is not None:
+                download_album(album_id)
+            elif playlist_id is not None:
+                playlist_songs = get_playlist_songs(playlist_id)
+                name, _ = get_playlist_info(playlist_id)
+                for song in playlist_songs:
+                    download_track(song[TRACK][ID],
+                                   sanitize_data(name) + '/')
+                    print('\n')
+            elif episode_id is not None:
+                download_episode(episode_id)
+            elif show_id is not None:
+                for episode in get_show_episodes(show_id):
+                    download_episode(episode)
 
     if args.playlist:
         download_from_user_playlist()

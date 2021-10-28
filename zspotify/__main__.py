@@ -11,11 +11,12 @@ if __name__ == '__main__':
                         action='store_true',
                         help='Suppress the splash screen when loading.')
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('url',
+    group.add_argument('urls',
                        type=str,
+                       # action='extend',
                        default='',
-                       nargs='?',
-                       help='Downloads the track, album, playlist, podcast episode, or all albums by an artist from a url.')
+                       nargs='*',
+                       help='Downloads the track, album, playlist, podcast episode, or all albums by an artist from a url. Can take multiple urls.')
     group.add_argument('-ls', '--liked-songs',
                        dest='liked_songs',
                        action='store_true',
@@ -32,3 +33,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     args.func(args)
+
+    # print(args)

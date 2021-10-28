@@ -35,7 +35,7 @@ Python packages:
 
 ```
 Basic command line usage:
-  python zspotify <track/album/playlist/episode/artist url>   Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded.
+  python zspotify <track/album/playlist/episode/artist url>   Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded. Can take multiple urls.
 
 Extra command line options:
   -p, --playlist       Downloads a saved playlist from your account
