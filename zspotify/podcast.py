@@ -5,10 +5,10 @@ from librespot.audio.decoders import VorbisOnlyAudioQuality
 from librespot.metadata import EpisodeId
 from tqdm import tqdm
 
-from const import (CHUNK_SIZE, ERROR, ID, ITEMS, NAME, ROOT_PODCAST_PATH, SHOW,
-                   SKIP_EXISTING_FILES)
-from utils import create_download_directory, sanitize_data
+from const import NAME, ERROR, SHOW, ITEMS, ID, ROOT_PODCAST_PATH, CHUNK_SIZE
+from utils import sanitize_data, create_download_directory, MusicFormat
 from zspotify import ZSpotify
+
 
 EPISODE_INFO_URL = 'https://api.spotify.com/v1/episodes'
 SHOWS_URL = 'https://api.spotify.com/v1/shows'
@@ -50,37 +50,17 @@ def download_episode(episode_id) -> None:
         episode_id = EpisodeId.from_base62(episode_id)
         stream = ZSpotify.get_content_stream(episode_id, ZSpotify.DOWNLOAD_QUALITY)
 
-        download_directory = os.path.join(
-            os.path.dirname(__file__),
-            ZSpotify.get_config(ROOT_PODCAST_PATH),
-            extra_paths,
-        )
-        download_directory = os.path.realpath(download_directory)
+        download_directory = os.path.dirname(__file__) + ZSpotify.get_config(ROOT_PODCAST_PATH) + extra_paths
         create_download_directory(download_directory)
 
         total_size = stream.input_stream.size
-
-        filepath = os.path.join(download_directory, f"{filename}.ogg")
-        if (
-            os.path.isfile(filepath)
-            and os.path.getsize(filepath) == total_size
-            and ZSpotify.get_config(SKIP_EXISTING_FILES)
-        ):
-            print(
-                "\n###   SKIPPING:",
-                podcast_name,
-                "-",
-                episode_name,
-                "(EPISODE ALREADY EXISTS)   ###",
-            )
-            return
-
-        with open(filepath, 'wb') as file, tqdm(
-            desc=filename,
-            total=total_size,
-            unit='B',
-            unit_scale=True,
-            unit_divisor=1024
+        with open(download_directory + filename + MusicFormat.OGG.value,
+                  'wb') as file, tqdm(
+                desc=filename,
+                total=total_size,
+                unit='B',
+                unit_scale=True,
+                unit_divisor=1024
         ) as bar:
             for _ in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
                 bar.update(file.write(

@@ -66,8 +66,7 @@ Create and run a container from the image:
 
 **There have been 2-3 reports from users who received account bans from Spotify for using this tool**.
 
-We recommend using ZSpotify with a burner account. 
-
+We recommend using ZSpotify with a burner account.
 Alternatively, there is a configuration option labled ```DOWNLOAD_REAL_TIME```, this limits the download speed to the duration of the song being downloaded thus not appearing suspicious to Spotify.
 This option is much slower and is only recommended for premium users who wish to download songs in 320kbps without buying premium on a burner account.
 
