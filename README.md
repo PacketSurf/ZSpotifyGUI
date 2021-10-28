@@ -28,14 +28,14 @@ Python packages:
 
 \*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 ```
-Command line usage:
-  python zspotify                                      Loads search prompt to find then download a specific track, album or playlist
-  python zspotify <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
-  python zspotify <artist url>                         Downloads all albums by specified artist
+Basic command line usage:
+  python zspotify <track/album/playlist/episode/artist url>   Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded.
 
 Extra command line options:
   -p, --playlist       Downloads a saved playlist from your account
   -ls, --liked-songs   Downloads all the liked songs from your account
+  -s, --search         Loads search prompt to find then download a specific track, album or playlist
+  -ns, --no-splash     Suppress the splash screen when loading.
 
 Options that can be configured in zs_config.json:
   ROOT_PATH           Change this path if you don't like the default directory where ZSpotify saves the music

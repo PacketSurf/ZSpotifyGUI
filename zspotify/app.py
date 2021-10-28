@@ -1,5 +1,3 @@
-import sys
-
 from librespot.audio.decoders import AudioQuality
 from tabulate import tabulate
 
@@ -15,51 +13,56 @@ from zspotify import ZSpotify
 SEARCH_URL = 'https://api.spotify.com/v1/search'
 
 
-def client() -> None:
+def client(args) -> None:
     """ Connects to spotify to perform query's and get songs to download """
     ZSpotify()
-    splash()
+
+    if not args.no_splash:
+        splash()
 
     if ZSpotify.check_premium():
-        print('[ DETECTED PREMIUM ACCOUNT - USING VERY_HIGH QUALITY ]\n\n')
+        if not args.no_splash:
+            print('[ DETECTED PREMIUM ACCOUNT - USING VERY_HIGH QUALITY ]\n\n')
         ZSpotify.DOWNLOAD_QUALITY = AudioQuality.VERY_HIGH
     else:
-        print('[ DETECTED FREE ACCOUNT - USING HIGH QUALITY ]\n\n')
+        if not args.no_splash:
+            print('[ DETECTED FREE ACCOUNT - USING HIGH QUALITY ]\n\n')
         ZSpotify.DOWNLOAD_QUALITY = AudioQuality.HIGH
 
-    if len(sys.argv) > 1:
-        if sys.argv[1] == '-p' or sys.argv[1] == '--playlist':
-            download_from_user_playlist()
-        elif sys.argv[1] == '-ls' or sys.argv[1] == '--liked-songs':
-            for song in get_saved_tracks():
-                if not song[TRACK][NAME]:
-                    print('###   SKIPPING:  SONG DOES NOT EXIST ON SPOTIFY ANYMORE   ###')
-                else:
-                    download_track(song[TRACK][ID], 'Liked Songs/')
+    if args.url:
+        track_id, album_id, playlist_id, episode_id, show_id, artist_id = regex_input_for_urls(args.url)
+
+        if track_id is not None:
+            download_track(track_id)
+        elif artist_id is not None:
+            download_artist_albums(artist_id)
+        elif album_id is not None:
+            download_album(album_id)
+        elif playlist_id is not None:
+            playlist_songs = get_playlist_songs(playlist_id)
+            name, _ = get_playlist_info(playlist_id)
+            for song in playlist_songs:
+                download_track(song[TRACK][ID],
+                                sanitize_data(name) + '/')
                 print('\n')
-        else:
-            track_id, album_id, playlist_id, episode_id, show_id, artist_id = regex_input_for_urls(sys.argv[1])
+        elif episode_id is not None:
+            download_episode(episode_id)
+        elif show_id is not None:
+            for episode in get_show_episodes(show_id):
+                download_episode(episode)
 
-            if track_id is not None:
-                download_track(track_id)
-            elif artist_id is not None:
-                download_artist_albums(artist_id)
-            elif album_id is not None:
-                download_album(album_id)
-            elif playlist_id is not None:
-                playlist_songs = get_playlist_songs(playlist_id)
-                name, _ = get_playlist_info(playlist_id)
-                for song in playlist_songs:
-                    download_track(song[TRACK][ID],
-                                    sanitize_data(name) + '/')
-                    print('\n')
-            elif episode_id is not None:
-                download_episode(episode_id)
-            elif show_id is not None:
-                for episode in get_show_episodes(show_id):
-                    download_episode(episode)
+    if args.playlist:
+        download_from_user_playlist()
 
-    else:
+    if args.liked_songs:
+        for song in get_saved_tracks():
+            if not song[TRACK][NAME]:
+                print('###   SKIPPING:  SONG DOES NOT EXIST ON SPOTIFY ANYMORE   ###')
+            else:
+                download_track(song[TRACK][ID], 'Liked Songs/')
+            print('\n')
+
+    if args.search_spotify:
         search_text = ''
         while len(search_text) == 0:
             search_text = input('Enter search or URL: ')
@@ -261,4 +264,3 @@ def search(search_term):
                         download_artist_albums(dic[ID])
                     else:
                         download_playlist(dic)
-
