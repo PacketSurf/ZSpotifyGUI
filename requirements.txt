@@ -1,6 +1,8 @@
+ffmpy
 git+https://github.com/kokarare1212/librespot-python
 music_tag
-pydub
 Pillow
-tqdm
+protobuf
+pydub
 tabulate
+tqdm
