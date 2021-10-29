@@ -68,6 +68,9 @@ Create and run a container from the image:
   docker run --rm -v "$PWD/ZSpotify Music:/ZSpotify Music" -v "$PWD/ZSpotify Podcasts:/ZSpotify Podcasts" -it zspotify
 ```
 
+### Google Colab
+There is a community maintained repo for Google Colab at [Ori5000/zspotifycolab](https://github.com/Ori5000/zspotifycolab) designed to make it easier to add songs to Google Drive or orther cloud services.
+
 ### Will my account get banned if I use this tool?
 
 ~~Currently no user has reported their account getting banned after using ZSpotify.~~

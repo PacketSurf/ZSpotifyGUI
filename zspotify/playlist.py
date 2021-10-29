@@ -76,7 +76,7 @@ def download_from_user_playlist():
     playlist_choices = input('ID(s): ').split('-')
 
     if len(playlist_choices) == 1:
-        download_playlist(playlists, playlist_choices[0])
+        download_playlist(playlists[0])
     else:
         start = int(playlist_choices[0])
         end = int(playlist_choices[1]) + 1
