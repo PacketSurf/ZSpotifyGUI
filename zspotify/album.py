@@ -44,16 +44,20 @@ def get_artist_albums(artist_id):
     return album_ids
 
 
-def download_album(album):
+def download_album(album, progress_callback=None):
     """ Downloads songs from an album """
     artist, album_name = get_album_name(album)
     tracks = get_album_tracks(album)
+    downloaded = 0
     for n, track in tqdm(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=len(tracks)):
         download_track(track[ID], f'{artist}/{album_name}',
                        prefix=True, prefix_value=str(n), disable_progressbar=True)
+        downloaded += 1
+        if progress_callback:
+            progress_callback(downloaded/len(tracks))
 
 
-def download_artist_albums(artist):
+def download_artist_albums(artist, progress_callback=None):
     """ Downloads albums of an artist """
     albums = get_artist_albums(artist)
     for album_id in albums:

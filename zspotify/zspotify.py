@@ -9,48 +9,53 @@ It's like youtube-dl, but for Spotify.
 import json
 import os
 import os.path
-from getpass import getpass
 from typing import Any
 
 import requests
-from librespot.audio.decoders import VorbisOnlyAudioQuality
+from librespot.audio.decoders import VorbisOnlyAudioQuality, AudioQuality
 from librespot.core import Session
 
 from const import CREDENTIALS_JSON, TYPE, \
     PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, \
-    PLAYLIST_READ_PRIVATE, CONFIG_DEFAULT_SETTINGS
+    PLAYLIST_READ_PRIVATE, CONFIG_DEFAULT_SETTINGS,TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE
 from utils import MusicFormat
+from search_results import Track, Album, Artist, Playlist
+
 
 
 class ZSpotify:
     SESSION: Session = None
     DOWNLOAD_QUALITY = None
+    IS_PREMIUM = False
     CONFIG = {}
+    SEARCH_URL = 'https://api.spotify.com/v1/search'
 
-    def __init__(self):
-        ZSpotify.load_config()
-        ZSpotify.login()
 
     @classmethod
-    def login(cls):
+    def login(cls, username="", password=""):
         """ Authenticates with Spotify and saves credentials to a file """
 
         if os.path.isfile(CREDENTIALS_JSON):
             try:
                 cls.SESSION = Session.Builder().stored_file().create()
-                return
-            except RuntimeError:
-                pass
-        while True:
-            user_name = ''
-            while len(user_name) == 0:
-                user_name = input('Username: ')
-            password = getpass()
+                print(cls.SESSION.connection)
+            except:
+                return False
+        elif username != "" and password != "":
             try:
-                cls.SESSION = Session.Builder().user_pass(user_name, password).create()
-                return
-            except RuntimeError:
-                pass
+                cls.SESSION = Session.Builder().user_pass(username, password).create();
+
+
+            except Exception:
+                return False
+        else: return
+        if ZSpotify.check_premium():
+            ZSpotify.DOWNLOAD_QUALITY = AudioQuality.VERY_HIGH
+        else:
+            ZSpotify.DOWNLOAD_QUALITY = AudioQuality.HIGH
+        return True
+
 
     @classmethod
     def load_config(cls) -> None:
@@ -63,6 +68,75 @@ class ZSpotify:
         else:
             with open(true_config_file_path, encoding='utf-8') as config_file:
                 cls.CONFIG = json.load(config_file)
+
+    @classmethod
+    def search(cls, search_terms):
+        # Clean search term
+        """ Searches Spotify's API for relevant data """
+        params = {'limit': '50',
+                  'offset': '0',
+                  'q': search_terms,
+                  'type': 'track,album,artist,playlist'}
+
+        splits = search_terms.split()
+        search_term_list = []
+        for split in splits:
+            if split[0] == "-":
+                break
+            search_term_list.append(split)
+        if not search_term_list:
+            raise ValueError("Invalid query.")
+        search_term = ' '.join(search_term_list)
+
+        resp = cls.invoke_url_with_params(cls.SEARCH_URL, **params)
+
+
+        dics = []
+        results = {TRACKS:[], ARTISTS:[],ALBUMS:[], PLAYLISTS:[]}
+        counter = 1
+        if resp[TRACKS] != None:
+            for t in resp[TRACKS][ITEMS]:
+                artists = ' & '.join([artist[NAME] for artist in t[ARTISTS]])
+                url = t[ALBUM][IMAGES][1][URL]
+                track = Track(counter, t[ID], str(t[NAME]), artists, str(t[ALBUM][NAME]), release_date=t[ALBUM][RELEASE_DATE],img=url)
+                results[TRACKS].append(track)
+                counter += 1
+        counter = 1
+        if resp[ALBUMS] != None:
+            for a in resp[ALBUMS][ITEMS]:
+                url = a[IMAGES][1][URL]
+                artists = ' & '.join([artist[NAME] for artist in a[ARTISTS]])
+                album = Album(counter, a[ID], a[NAME], artists, a[TOTAL_TRACKS], release_date=a[RELEASE_DATE], img=url)
+                results[ALBUMS].append(album)
+                counter += 1
+        counter = 1
+        if resp[ARTISTS] != None:
+            for ar in resp[ARTISTS][ITEMS]:
+                if len(ar[IMAGES]) >= 1:
+                    url = ar[IMAGES][1][URL]
+                else: url = ""
+                artist = Artist(counter, ar[ID], ar[NAME], img=url)
+                results[ARTISTS].append(artist)
+                counter += 1
+        counter = 1
+        if resp[ARTISTS] != None:
+            for playlist in resp[PLAYLISTS][ITEMS]:
+                if len(playlist[IMAGES]) > 0: url = playlist[IMAGES][0][URL]
+                print(url)
+                playlist = Playlist(counter, playlist[ID], playlist[NAME], playlist[OWNER][DISPLAY_NAME], playlist[TRACKS][TOTAL], img=url)
+                results[PLAYLISTS].append(playlist)
+                counter += 1
+
+
+        return results
+
+    @classmethod
+    def set_config(cls, key, value):
+        cls.CONFIG[key] = value
+        app_dir = os.path.dirname(__file__)
+        true_config_file_path = os.path.join(app_dir, CONFIG_FILE_PATH)
+        with open(true_config_file_path, 'w', encoding='utf-8') as config_file:
+            json.dump(cls.CONFIG, config_file, indent=4)
 
     @classmethod
     def get_config(cls, key) -> Any:
@@ -99,4 +173,5 @@ class ZSpotify:
     @classmethod
     def check_premium(cls) -> bool:
         """ If user has spotify premium return true """
-        return (cls.SESSION.get_user_attribute(TYPE) == PREMIUM) or cls.get_config(FORCE_PREMIUM)
+        cls.IS_PREMIUM = (cls.SESSION.get_user_attribute(TYPE) == PREMIUM) or cls.get_config(FORCE_PREMIUM)
+        return cls.IS_PREMIUM

@@ -2,7 +2,7 @@ import sys
 
 from librespot.audio.decoders import AudioQuality
 from tabulate import tabulate
-
+from getpass import getpass
 from album import download_album, download_artist_albums
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
     OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME
@@ -17,7 +17,16 @@ SEARCH_URL = 'https://api.spotify.com/v1/search'
 
 def client() -> None:
     """ Connects to spotify to perform query's and get songs to download """
-    ZSpotify()
+    ZSpotify.load_config()
+    if not ZSpotify.login():
+        while True:
+            user_name = ''
+            while len(user_name) == 0:
+                user_name = input('Username: ')
+            password = getpass()
+            if ZSpotify.login(user_name, password):
+                break
+
     splash()
 
     if ZSpotify.check_premium():
@@ -88,6 +97,7 @@ def client() -> None:
                 download_episode(episode)
         else:
             search(search_text)
+
 
 
 def search(search_term):
@@ -264,3 +274,6 @@ def search(search_term):
                         download_artist_albums(dic[ID])
                     else:
                         download_playlist(dic)
+
+if __name__ == '__main__':
+    client()

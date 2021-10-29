@@ -8,6 +8,10 @@ TRACKNUMBER = 'tracknumber'
 
 DISCNUMBER = 'discnumber'
 
+TOTAL_TRACKS = 'total_tracks'
+
+TOTAL = 'total'
+
 YEAR = 'year'
 
 ALBUM = 'album'
@@ -93,6 +97,8 @@ ANTI_BAN_WAIT_TIME = 'ANTI_BAN_WAIT_TIME'
 OVERRIDE_AUTO_WAIT = 'OVERRIDE_AUTO_WAIT'
 
 CHUNK_SIZE = 'CHUNK_SIZE'
+
+COVER_DEFAULT = '"../resources/cover_default.jpg"'
 
 SPLIT_ALBUM_DISCS = 'SPLIT_ALBUM_DISCS'
 
