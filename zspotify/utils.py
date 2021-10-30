@@ -179,3 +179,22 @@ def regex_input_for_urls(search_input) -> Tuple[str, str, str, str, str, str]:
         artist_id_str = None
 
     return track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str, artist_id_str
+
+
+def fix_filename(name):
+    """
+    Replace invalid characters on Linux/Windows/MacOS with underscores.
+    List from https://stackoverflow.com/a/31976060/819417
+    Trailing spaces & periods are ignored on Windows.
+    >>> fix_filename("  COM1  ")
+    '_ COM1 _'
+    >>> fix_filename("COM10")
+    'COM10'
+    >>> fix_filename("COM1,")
+    'COM1,'
+    >>> fix_filename("COM1.txt")
+    '_.txt'
+    >>> all('_' == fix_filename(chr(i)) for i in list(range(32)))
+    True
+    """
+    return re.sub(r'[/\\:|<>"?*\0-\x1f]|^(AUX|COM[1-9]|CON|LPT[1-9]|NUL|PRN)(?![^.])|^\s|[\s.]$', "_", name, flags=re.IGNORECASE)
