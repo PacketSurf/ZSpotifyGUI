@@ -8,7 +8,7 @@ from typing import List, Tuple
 import music_tag
 import requests
 
-from const import SANITIZE, ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
+from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
     WINDOWS_SYSTEM
 
 
