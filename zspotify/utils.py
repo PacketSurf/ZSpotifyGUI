@@ -27,7 +27,7 @@ def create_download_directory(download_path: str) -> None:
         with open(hidden_file_path, 'w', encoding='utf-8') as f:
             pass
 
-def get_directory_song_ids(download_path: str) -> list[str]:
+def get_directory_song_ids(download_path: str) -> List[str]:
     """ Gets song ids of songs in directory """
 
     song_ids = []

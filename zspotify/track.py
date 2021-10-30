@@ -1,4 +1,5 @@
 import os
+import re
 import time
 from typing import Any, Tuple, List
 
@@ -80,9 +81,11 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
         # a song with the same name is installed
         if not check_id and check_name:
-            # TODO: count songs with the same name but different id and add prefix based on that
+            c = len([file for file in os.listdir(download_directory)
+                     if re.search(f'^{song_name}_', file)]) + 1
+
             filename = os.path.join(
-                download_directory, f'{song_name}_1.{EXT_MAP.get(ZSpotify.get_config(DOWNLOAD_FORMAT))}')
+                download_directory, f'{song_name}_{c}.{EXT_MAP.get(ZSpotify.get_config(DOWNLOAD_FORMAT))}')
 
 
     except Exception as e:
