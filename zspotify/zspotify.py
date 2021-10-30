@@ -18,7 +18,7 @@ from librespot.core import Session
 
 from const import CREDENTIALS_JSON, TYPE, \
     PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, \
-    PLAYLIST_READ_PRIVATE, CONFIG_DEFAULT_SETTINGS
+    PLAYLIST_READ_PRIVATE, USER_LIBRARY_READ, CONFIG_DEFAULT_SETTINGS
 from utils import MusicFormat
 
 
@@ -74,7 +74,7 @@ class ZSpotify:
 
     @classmethod
     def __get_auth_token(cls):
-        return cls.SESSION.tokens().get_token(USER_READ_EMAIL, PLAYLIST_READ_PRIVATE).access_token
+        return cls.SESSION.tokens().get_token(USER_READ_EMAIL, PLAYLIST_READ_PRIVATE, USER_LIBRARY_READ).access_token
 
     @classmethod
     def get_auth_header(cls):

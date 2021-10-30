@@ -34,14 +34,14 @@ Python packages:
 ### Command line usage:
 
 ```
-Basic usage:
-  python zspotify                                      Loads search prompt to find then download a specific track, album or playlist
-  python zspotify <track/album/playlist/episode url>   Downloads the track, album, playlist or podcast episode specified as a command line argument
-  python zspotify <artist url>                         Downloads all albums by specified artist
+Basic command line usage:
+  python zspotify <track/album/playlist/episode/artist url>   Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded. Can take multiple urls.
 
 Extra command line options:
   -p, --playlist       Downloads a saved playlist from your account
   -ls, --liked-songs   Downloads all the liked songs from your account
+  -s, --search         Loads search prompt to find then download a specific track, album or playlist
+  -ns, --no-splash     Suppress the splash screen when loading.
 
 Options that can be configured in zs_config.json:
   ROOT_PATH           Change this path if you don't like the default directory where ZSpotify saves the music
@@ -68,14 +68,18 @@ Create and run a container from the image:
   docker run --rm -v "$PWD/ZSpotify Music:/ZSpotify Music" -v "$PWD/ZSpotify Podcasts:/ZSpotify Podcasts" -it zspotify
 ```
 
+### Google Colab
+There is a community maintained repo for Google Colab at [Ori5000/zspotifycolab](https://github.com/Ori5000/zspotifycolab) designed to make it easier to add songs to Google Drive or orther cloud services.
+
 ### Will my account get banned if I use this tool?
 
 ~~Currently no user has reported their account getting banned after using ZSpotify.~~
 
 **There have been 2-3 reports from users who received account bans from Spotify for using this tool**.
 
-We are working on making it less likely for your account to get banned, please be patient.
-We suggest you wait till this fix has been made to avoid ban, or if you are in a hurry, make sure to not use your primary account.
+We recommend using ZSpotify with a burner account.
+Alternatively, there is a configuration option labled ```DOWNLOAD_REAL_TIME```, this limits the download speed to the duration of the song being downloaded thus not appearing suspicious to Spotify.
+This option is much slower and is only recommended for premium users who wish to download songs in 320kbps without buying premium on a burner account.
 
 **Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
 
