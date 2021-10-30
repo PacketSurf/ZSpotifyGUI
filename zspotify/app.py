@@ -7,7 +7,7 @@ from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALB
 from playlist import get_playlist_songs, get_playlist_info, download_from_user_playlist, download_playlist
 from podcast import download_episode, get_show_episodes
 from track import download_track, get_saved_tracks
-from utils import sanitize_data, splash, split_input, regex_input_for_urls
+from utils import fix_filename, splash, split_input, regex_input_for_urls
 from zspotify import ZSpotify
 
 SEARCH_URL = 'https://api.spotify.com/v1/search'
@@ -45,7 +45,7 @@ def client(args) -> None:
                 name, _ = get_playlist_info(playlist_id)
                 for song in playlist_songs:
                     download_track(song[TRACK][ID],
-                                   sanitize_data(name) + '/')
+                                   fix_filename(name) + '/')
                     print('\n')
             elif episode_id is not None:
                 download_episode(episode_id)
@@ -83,7 +83,7 @@ def client(args) -> None:
             playlist_songs = get_playlist_songs(playlist_id)
             name, _ = get_playlist_info(playlist_id)
             for song in playlist_songs:
-                download_track(song[TRACK][ID], sanitize_data(name) + '/')
+                download_track(song[TRACK][ID], fix_filename(name) + '/')
                 print('\n')
         elif episode_id is not None:
             download_episode(episode_id)

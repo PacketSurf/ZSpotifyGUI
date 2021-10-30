@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from const import (CHUNK_SIZE, ERROR, ID, ITEMS, NAME, ROOT_PODCAST_PATH, SHOW,
                    SKIP_EXISTING_FILES)
-from utils import create_download_directory, sanitize_data
+from utils import create_download_directory, fix_filename
 from zspotify import ZSpotify
 
 EPISODE_INFO_URL = 'https://api.spotify.com/v1/episodes'
@@ -18,7 +18,7 @@ def get_episode_info(episode_id_str) -> Tuple[Optional[str], Optional[str]]:
     info = ZSpotify.invoke_url(f'{EPISODE_INFO_URL}/{episode_id_str}')
     if ERROR in info:
         return None, None
-    return sanitize_data(info[SHOW][NAME]), sanitize_data(info[NAME])
+    return fix_filename(info[SHOW][NAME]), fix_filename(info[NAME])
 
 
 def get_show_episodes(show_id_str) -> list:

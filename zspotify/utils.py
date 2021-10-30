@@ -60,13 +60,6 @@ def clear() -> None:
         os.system('clear')
 
 
-def sanitize_data(value) -> str:
-    """ Returns given string with problematic removed """
-    for pattern in SANITIZE:
-        value = value.replace(pattern, '')
-    return value.replace('|', '-')
-
-
 def set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number) -> None:
     """ sets music_tag metadata """
     tags = music_tag.load_file(filename)

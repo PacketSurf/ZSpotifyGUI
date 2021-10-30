@@ -11,7 +11,7 @@ from tqdm import tqdm
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, SPLIT_ALBUM_DISCS, ROOT_PATH, DOWNLOAD_FORMAT, CHUNK_SIZE, \
     SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME
-from utils import sanitize_data, set_audio_tags, set_music_thumbnail, create_download_directory
+from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_download_directory
 from zspotify import ZSpotify
 
 
@@ -38,9 +38,9 @@ def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any
 
     artists = []
     for data in info[TRACKS][0][ARTISTS]:
-        artists.append(sanitize_data(data[NAME]))
-    album_name = sanitize_data(info[TRACKS][0][ALBUM][NAME])
-    name = sanitize_data(info[TRACKS][0][NAME])
+        artists.append(data[NAME])
+    album_name = info[TRACKS][0][ALBUM][NAME]
+    name = info[TRACKS][0][NAME]
     image_url = info[TRACKS][0][ALBUM][IMAGES][0][URL]
     release_year = info[TRACKS][0][ALBUM][RELEASE_DATE].split('-')[0]
     disc_number = info[TRACKS][0][DISC_NUMBER]
@@ -66,7 +66,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
             download_directory = os.path.join(os.path.dirname(
                 __file__), ZSpotify.get_config(ROOT_PATH), extra_paths)
 
-        song_name = artists[0] + ' - ' + name
+        song_name = fix_filename(artists[0]) + ' - ' + fix_filename(name)
         if prefix:
             song_name = f'{prefix_value.zfill(2)} - {song_name}' if prefix_value.isdigit(
             ) else f'{prefix_value} - {song_name}'

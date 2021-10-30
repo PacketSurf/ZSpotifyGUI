@@ -2,7 +2,7 @@ from tqdm import tqdm
 
 from const import ITEMS, ID, TRACK, NAME
 from track import download_track
-from utils import sanitize_data
+from utils import fix_filename
 from zspotify import ZSpotify
 
 MY_PLAYLISTS_URL = 'https://api.spotify.com/v1/me/playlists'
@@ -54,7 +54,7 @@ def download_playlist(playlist):
     p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
     enum = 1
     for song in p_bar:
-        download_track(song[TRACK][ID], sanitize_data(playlist[NAME].strip()) + '/',
+        download_track(song[TRACK][ID], fix_filename(playlist[NAME].strip()) + '/',
                        prefix=True, prefix_value=str(enum) ,disable_progressbar=True)
         p_bar.set_description(song[TRACK][NAME])
         enum += 1
