@@ -4,3 +4,5 @@ pydub
 Pillow
 tqdm
 tabulate
+PyQt5
+pyqtdarkthem
