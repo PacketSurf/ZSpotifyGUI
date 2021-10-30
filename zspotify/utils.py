@@ -15,11 +15,38 @@ from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTW
 class MusicFormat(str, Enum):
     MP3 = 'mp3',
     OGG = 'ogg',
-    
+
 
 def create_download_directory(download_path: str) -> None:
+    """ Create directory and add a hidden file with song ids """
     os.makedirs(download_path, exist_ok=True)
 
+    # add hidden file with song ids
+    hidden_file_path = os.path.join(download_path, '.song_ids')
+    if not os.path.isfile(hidden_file_path):
+        with open(hidden_file_path, 'w', encoding='utf-8') as f:
+            pass
+
+def get_directory_song_ids(download_path: str) -> List[str]:
+    """ Gets song ids of songs in directory """
+
+    song_ids = []
+
+    hidden_file_path = os.path.join(download_path, '.song_ids')
+    if os.path.isfile(hidden_file_path):
+        with open(hidden_file_path, 'r', encoding='utf-8') as file:
+            song_ids.extend([line.strip() for line in file.readlines()])
+
+    return song_ids
+
+def add_to_directory_song_ids(download_path: str, song_id: str) -> None:
+    """ Appends song_id to .song_ids file in directory """
+
+    hidden_file_path = os.path.join(download_path, '.song_ids')
+    # not checking if file exists because we need an exception
+    # to be raised if something is wrong
+    with open(hidden_file_path, 'a', encoding='utf-8') as file:
+        file.write(f'{song_id}\n')
 
 def wait(seconds: int = 3) -> None:
     """ Pause for a set number of seconds """
