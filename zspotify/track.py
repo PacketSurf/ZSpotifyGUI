@@ -94,7 +94,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                 print('\n###   SKIPPING:', song_name,
                     '(SONG IS UNAVAILABLE)   ###')
             else:
-                if check_id and ZSpotify.get_config(SKIP_EXISTING_FILES):
+                if check_id and check_name and ZSpotify.get_config(SKIP_EXISTING_FILES):
                     print('\n###   SKIPPING:', song_name,
                         '(SONG ALREADY EXISTS)   ###')
                 else:
@@ -131,7 +131,8 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                     set_music_thumbnail(filename, image_url)
 
                     # add song id to download directory's .song_ids file
-                    add_to_directory_song_ids(download_directory, scraped_song_id)
+                    if not check_id:
+                        add_to_directory_song_ids(download_directory, scraped_song_id)
 
                     if not ZSpotify.get_config(OVERRIDE_AUTO_WAIT):
                         time.sleep(ZSpotify.get_config(ANTI_BAN_WAIT_TIME))
