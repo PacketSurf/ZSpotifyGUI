@@ -78,47 +78,46 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
         print('###   SKIPPING SONG - FAILED TO QUERY METADATA   ###')
         print(e)
     else:
-        if not is_playable:
-            print('\n###   SKIPPING:', song_name,
-                  '(SONG IS UNAVAILABLE)   ###')
-        else:
-            if os.path.isfile(filename) and os.path.getsize(filename) and ZSpotify.get_config(SKIP_EXISTING_FILES):
-                print('\n###   SKIPPING:', song_name,
-                      '(SONG ALREADY EXISTS)   ###')
-            else:
-                if track_id != scraped_song_id:
-                    track_id = scraped_song_id
-                track_id = TrackId.from_base62(track_id)
-                stream = ZSpotify.get_content_stream(
-                    track_id, ZSpotify.DOWNLOAD_QUALITY)
-                create_download_directory(download_directory)
-                total_size = stream.input_stream.size
-                downloaded = 0
-                with open(filename, 'wb') as file, tqdm(
-                        desc=song_name,
-                        total=total_size,
-                        unit='B',
-                        unit_scale=True,
-                        unit_divisor=1024,
-                        disable=disable_progressbar
-                ) as p_bar:
-                    for _ in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
-                        dl_amount = file.write(stream.input_stream.stream().read(ZSpotify.get_config(CHUNK_SIZE)))
-                        downloaded += dl_amount
-                        if progress_callback:
-                            progress_callback(downloaded/total_size)
-                        p_bar.update(dl_amount)
-
-                if ZSpotify.get_config(DOWNLOAD_FORMAT) == 'mp3':
-                    convert_audio_format(filename)
-                    set_audio_tags(filename, artists, name, album_name,
-                                   release_year, disc_number, track_number)
-                    set_music_thumbnail(filename, image_url)
-
-                if not ZSpotify.get_config(OVERRIDE_AUTO_WAIT):
-                    time.sleep(ZSpotify.get_config(ANTI_BAN_WAIT_TIME))
         try:
-            print('ok')
+            if not is_playable:
+                print('\n###   SKIPPING:', song_name,
+                      '(SONG IS UNAVAILABLE)   ###')
+            else:
+                if os.path.isfile(filename) and os.path.getsize(filename) and ZSpotify.get_config(SKIP_EXISTING_FILES):
+                    print('\n###   SKIPPING:', song_name,
+                          '(SONG ALREADY EXISTS)   ###')
+                else:
+                    if track_id != scraped_song_id:
+                        track_id = scraped_song_id
+                    track_id = TrackId.from_base62(track_id)
+                    stream = ZSpotify.get_content_stream(
+                        track_id, ZSpotify.DOWNLOAD_QUALITY)
+                    create_download_directory(download_directory)
+                    total_size = stream.input_stream.size
+                    downloaded = 0
+                    with open(filename, 'wb') as file, tqdm(
+                            desc=song_name,
+                            total=total_size,
+                            unit='B',
+                            unit_scale=True,
+                            unit_divisor=1024,
+                            disable=disable_progressbar
+                    ) as p_bar:
+                        for _ in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
+                            dl_amount = file.write(stream.input_stream.stream().read(ZSpotify.get_config(CHUNK_SIZE)))
+                            downloaded += dl_amount
+                            if progress_callback:
+                                progress_callback(downloaded/total_size)
+                            p_bar.update(dl_amount)
+
+                    if ZSpotify.get_config(DOWNLOAD_FORMAT) == 'mp3':
+                        convert_audio_format(filename)
+                        set_audio_tags(filename, artists, name, album_name,
+                                       release_year, disc_number, track_number)
+                        set_music_thumbnail(filename, image_url)
+
+                    if not ZSpotify.get_config(OVERRIDE_AUTO_WAIT):
+                        time.sleep(ZSpotify.get_config(ANTI_BAN_WAIT_TIME))
         except Exception as e:
             print('###   SKIPPING:', song_name,
                   '(GENERAL DOWNLOAD ERROR)   ###')

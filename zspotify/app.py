@@ -273,7 +273,7 @@ def search(search_term):
                     elif dic['type'] == ARTIST:
                         download_artist_albums(dic[ID])
                     else:
-                        download_playlist(dic)
+                        download_playlist(dic[ID])
 
 if __name__ == '__main__':
     client()

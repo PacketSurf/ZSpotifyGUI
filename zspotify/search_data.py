@@ -2,14 +2,6 @@ class Result:
     def __init__(self, index):
         self.index = index
 
-    def get_title_info(self):
-        return self.title
-
-    def get_secondary_info(self):
-        return self.artists
-
-    def get_ternary_info(self):
-        return self.album
 
 class Track(Result):
     def __init__(self, index, id, title, artists, album="", img="",release_date="", explicit=False):

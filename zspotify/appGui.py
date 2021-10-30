@@ -11,18 +11,20 @@ from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.uic import loadUi
 from librespot.audio.decoders import AudioQuality
 from librespot.core import Session
-from gui import Ui_MainWindow
+from main_window import Ui_MainWindow
 from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
+from search_data import Artist
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
     OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT
 from worker import DLWorker, SearchWorker
+import qdarktheme
 
 
 def main():
-
     ZSpotify.load_config()
     app = QApplication(sys.argv)
+    app.setStyleSheet(qdarktheme.load_stylesheet("dark"))
     win = Window()
     win.show()
     sys.exit(app.exec())
@@ -38,10 +40,13 @@ class Window(QMainWindow, Ui_MainWindow):
         self.init_tab_view()
         self.init_info_labels()
         self.init_list_columns()
+        self.progressBar.hide()
         self.login_dialog = None
         self.selected_id = -1
         self.results = {}
         self.threads = []
+        self.resultTabs.setCurrentIndex(0)
+        self.on_tab_change(0)
 
     def show(self):
         super().show()
@@ -77,6 +82,15 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def on_start_download(self):
         if self.selected_id == -1: return
+        self.progressBar.setValue(0)
+        self.progressBar.setEnabled(True)
+        self.progressBar.show()
+        item = self.get_item(self.selected_id)
+        if item != None:
+            if type(item) == Artist:
+                self.downloadInfoLabel.setText(f"Downloading {item.name} albums...")
+            else:
+                self.downloadInfoLabel.setText(f"Downloading {item.title}...")
         self.downloadBtn.setEnabled(False)
         tab = self.resultTabs.currentIndex()
         self.dl_worker = DLWorker(self.selected_id, self.tabs[tab])
@@ -86,13 +100,13 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def on_download_complete(self):
         self.progressBar.setValue(0)
-        self.progressBar.show()
+        self.progressBar.hide()
+        self.downloadInfoLabel.setText("")
         self.downloadBtn.setEnabled(True)
         QApplication.processEvents()
 
     def update_dl_progress(self, amount):
         perc = int(amount*100)
-        print(perc)
         self.progressBar.setValue(perc)
         self.progressBar.show()
         QApplication.processEvents()
@@ -107,16 +121,19 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.downloadBtn.setText("Download album")
             if self.tabs[index] == PLAYLISTS:
                 self.downloadBtn.setText("Download playlist")
-
-            i = self.resultTabs.currentIndex()
-            tree = self.trees[i]
-            header = tree.headerItem()
-            for i in range(1,tree.columnCount()):
-                if i <= len(self.info_headers):
-                    self.info_headers[i-1].setText(f"{header.text(i)}:")
-
-
         else: self.downloadBtn.setText("Download")
+
+        i = self.resultTabs.currentIndex()
+        tree = self.trees[i]
+        header = tree.headerItem()
+        for i in range(0,len(self.info_headers)):
+            self.info_labels[i].setText("")
+            if i < tree.columnCount()-1:
+                self.info_headers[i].setText(f"{header.text(i+1)}:")
+            else:
+                self.info_headers[i].setText("")
+
+        self.load_album_cover()
 
     def send_search_input(self):
         if ZSpotify.SESSION:
@@ -160,28 +177,27 @@ class Window(QMainWindow, Ui_MainWindow):
             list = self.results[tab]
             item = list[i-1]
             self.selected_id = item.id
-        except Exception:
-            print(Exception)
+        except Exception as e:
+            print(e)
 
         [lbl.setText("") for lbl in self.info_labels]
         if curr == None or curr.columnCount() <= 0: return
         for i in range(1,curr.columnCount()):
             if i < len(self.info_labels):
                 self.info_labels[i-1].setText(curr.text(i))
-        if item.img != "":
-            self.load_album_cover(item.img)
-        else:
-            self.coverArtLabel.setPixmap(QtGui.QPixmap(COVER_DEFAULT))
-            self.coverArtLabel.setScaledContents(True)
+                self.info_labels[i-1].setToolTip(curr.text(i))
+        self.load_album_cover(item.img)
 
 
-    def load_album_cover(self, url):
-        image = QImage()
-        image.loadFromData(requests.get(url).content)
+    def load_album_cover(self, url=""):
         lbl = self.coverArtLabel
-        width = lbl.size().width()
-        image = image.scaledToWidth(width)
-        lbl.setPixmap(QPixmap(image))
+        pixmap = QPixmap(COVER_DEFAULT)
+        if url != "":
+            image = QImage()
+            image.loadFromData(requests.get(url).content)
+            pixmap = QPixmap(image)
+        lbl.setPixmap(pixmap)
+        lbl.setScaledContents(True)
         lbl.show()
 
     def change_dl_dir(self):
@@ -191,6 +207,14 @@ class Window(QMainWindow, Ui_MainWindow):
             dir = dialog.selectedFiles()
             ZSpotify.set_config("ROOT_PATH", dir[0])
 
+    def get_item(self, id):
+        if self.results == {}: return
+        i = self.resultTabs.currentIndex()
+        tab = self.tabs[i]
+        for item in self.results[tab]:
+            if item.id == id:
+                return item
+        return None
 
     def init_list_columns(self):
         for tree in self.trees:
@@ -213,12 +237,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.dirBtn.clicked.connect(self.change_dl_dir)
         self.loginBtn.clicked.connect(self.open_login_dialog)
 
-
-
     def init_tab_view(self):
         self.tabs = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
         self.trees = [self.songsTree, self.artistsTree, self.albumsTree, self.playlistsTree]
-        self.resultTabs.setCurrentIndex(0)
 
 
 class LoginDialog(QDialog, Ui_LoginDialog):

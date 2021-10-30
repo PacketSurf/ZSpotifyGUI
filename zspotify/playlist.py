@@ -1,6 +1,6 @@
 from tqdm import tqdm
 
-from const import ITEMS, ID, TRACK, NAME
+from const import ITEMS, ID, TRACK, NAME, OWNER, DISPLAY_NAME
 from track import download_track
 from utils import sanitize_data
 from zspotify import ZSpotify
@@ -44,22 +44,19 @@ def get_playlist_songs(playlist_id):
 def get_playlist_info(playlist_id):
     """ Returns information scraped from playlist """
     resp = ZSpotify.invoke_url(f'{PLAYLISTS_URL}/{playlist_id}?fields=name,owner(display_name)&market=from_token')
-    return resp['name'].strip(), resp['owner']['display_name'].strip()
+    return resp[NAME].strip(), resp[OWNER][DISPLAY_NAME].strip()
 
 
-def download_playlist(playlist, progress_callback=None):
+def download_playlist(playlist_id, progress_callback=None):
     """Downloads all the songs from a playlist"""
-
-    playlist_songs = [song for song in get_playlist_songs(playlist[ID]) if song[TRACK][ID]]
-    downloaded = 0
+    playlist_songs = [song for song in get_playlist_songs(playlist_id) if song[TRACK][ID]]
+    playlist = get_playlist_info(playlist_id)
     p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
     for song in p_bar:
-        download_track(song[TRACK][ID], sanitize_data(playlist[NAME].strip()) + '/',
-                       disable_progressbar=True)
+        download_track(song[TRACK][ID], sanitize_data(playlist[0].strip()) + '/',
+                       disable_progressbar=True, progress_callback=progress_callback)
         p_bar.set_description(song[TRACK][NAME])
-        downloaded += 1
-        if progress_callback != None:
-            progress_callback(downloaded/len(playlist_songs))
+
 
 
 def download_from_user_playlist():

@@ -20,7 +20,7 @@ from const import CREDENTIALS_JSON, TYPE, \
     PLAYLIST_READ_PRIVATE, CONFIG_DEFAULT_SETTINGS,TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
     OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE
 from utils import MusicFormat
-from search_results import Track, Album, Artist, Playlist
+from search_data import Track, Album, Artist, Playlist
 
 
 
@@ -39,15 +39,13 @@ class ZSpotify:
         if os.path.isfile(CREDENTIALS_JSON):
             try:
                 cls.SESSION = Session.Builder().stored_file().create()
-                print(cls.SESSION.connection)
             except:
                 return False
         elif username != "" and password != "":
             try:
                 cls.SESSION = Session.Builder().user_pass(username, password).create();
-
-
-            except Exception:
+            except Exception as e:
+                print(e)
                 return False
         else: return
         if ZSpotify.check_premium():
@@ -90,7 +88,6 @@ class ZSpotify:
 
         resp = cls.invoke_url_with_params(cls.SEARCH_URL, **params)
 
-
         dics = []
         results = {TRACKS:[], ARTISTS:[],ALBUMS:[], PLAYLISTS:[]}
         counter = 1
@@ -104,7 +101,10 @@ class ZSpotify:
         counter = 1
         if resp[ALBUMS] != None:
             for a in resp[ALBUMS][ITEMS]:
-                url = a[IMAGES][1][URL]
+                if len(a[IMAGES]) > 1:
+                    url = a[IMAGES][1][URL]
+                else:
+                    url = ""
                 artists = ' & '.join([artist[NAME] for artist in a[ARTISTS]])
                 album = Album(counter, a[ID], a[NAME], artists, a[TOTAL_TRACKS], release_date=a[RELEASE_DATE], img=url)
                 results[ALBUMS].append(album)
@@ -121,12 +121,13 @@ class ZSpotify:
         counter = 1
         if resp[ARTISTS] != None:
             for playlist in resp[PLAYLISTS][ITEMS]:
-                if len(playlist[IMAGES]) > 0: url = playlist[IMAGES][0][URL]
-                print(url)
+                if len(playlist[IMAGES]) > 0:
+                    url = playlist[IMAGES][0][URL]
+                else:
+                    url = ""
                 playlist = Playlist(counter, playlist[ID], playlist[NAME], playlist[OWNER][DISPLAY_NAME], playlist[TRACKS][TOTAL], img=url)
                 results[PLAYLISTS].append(playlist)
                 counter += 1
-
 
         return results
 

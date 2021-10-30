@@ -98,7 +98,7 @@ OVERRIDE_AUTO_WAIT = 'OVERRIDE_AUTO_WAIT'
 
 CHUNK_SIZE = 'CHUNK_SIZE'
 
-COVER_DEFAULT = '"../resources/cover_default.jpg"'
+COVER_DEFAULT = '../resources/cover_default.jpg'
 
 SPLIT_ALBUM_DISCS = 'SPLIT_ALBUM_DISCS'
 
