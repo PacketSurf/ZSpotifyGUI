@@ -54,6 +54,7 @@ def download_playlist(playlist_id, progress_callback=None):
     p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
     enum = 1
     for song in p_bar:
+        
         download_track(song[TRACK][ID], fix_filename(playlist[NAME].strip()) + '/',
                        disable_progressbar=True, prefix_value=str(enum), progress_callback=progress_callback)
         p_bar.set_description(song[TRACK][NAME])

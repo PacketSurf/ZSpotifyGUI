@@ -132,7 +132,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                             unit_divisor=1024,
                             disable=disable_progressbar
                     ) as p_bar:
-                        for _ in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
+                        for chunk in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
                             data = stream.input_stream.stream().read(ZSpotify.get_config(CHUNK_SIZE))
                             if data == b'':
                                 break
