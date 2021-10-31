@@ -487,6 +487,11 @@
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="infoHeader1">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -506,6 +511,11 @@
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="infoHeader2">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -525,6 +535,11 @@
              </item>
              <item row="2" column="0">
               <widget class="QLabel" name="infoHeader3">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -544,6 +559,11 @@
              </item>
              <item row="3" column="0">
               <widget class="QLabel" name="infoHeader4">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -563,6 +583,11 @@
              </item>
              <item row="4" column="0">
               <widget class="QLabel" name="infoHeader5">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -582,6 +607,11 @@
              </item>
              <item row="5" column="0">
               <widget class="QLabel" name="infoHeader6">
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
                <property name="text">
                 <string/>
                </property>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'gui.ui'
+# Form implementation generated from reading ui file 'main_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.5
 #
@@ -159,6 +159,9 @@ class Ui_MainWindow(object):
         self.formLayout.setVerticalSpacing(10)
         self.formLayout.setObjectName("formLayout")
         self.infoHeader1 = QtWidgets.QLabel(self.widget_2)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.infoHeader1.setFont(font)
         self.infoHeader1.setText("")
         self.infoHeader1.setObjectName("infoHeader1")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.infoHeader1)
@@ -170,6 +173,9 @@ class Ui_MainWindow(object):
         self.infoLabel1.setObjectName("infoLabel1")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.infoLabel1)
         self.infoHeader2 = QtWidgets.QLabel(self.widget_2)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.infoHeader2.setFont(font)
         self.infoHeader2.setText("")
         self.infoHeader2.setObjectName("infoHeader2")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.infoHeader2)
@@ -181,6 +187,9 @@ class Ui_MainWindow(object):
         self.infoLabel2.setObjectName("infoLabel2")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.infoLabel2)
         self.infoHeader3 = QtWidgets.QLabel(self.widget_2)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.infoHeader3.setFont(font)
         self.infoHeader3.setText("")
         self.infoHeader3.setObjectName("infoHeader3")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.infoHeader3)
@@ -192,6 +201,9 @@ class Ui_MainWindow(object):
         self.infoLabel3.setObjectName("infoLabel3")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.infoLabel3)
         self.infoHeader4 = QtWidgets.QLabel(self.widget_2)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.infoHeader4.setFont(font)
         self.infoHeader4.setText("")
         self.infoHeader4.setObjectName("infoHeader4")
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.infoHeader4)
@@ -203,6 +215,9 @@ class Ui_MainWindow(object):
         self.infoLabel4.setObjectName("infoLabel4")
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.infoLabel4)
         self.infoHeader5 = QtWidgets.QLabel(self.widget_2)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.infoHeader5.setFont(font)
         self.infoHeader5.setText("")
         self.infoHeader5.setObjectName("infoHeader5")
         self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.infoHeader5)
@@ -214,6 +229,9 @@ class Ui_MainWindow(object):
         self.infoLabel5.setObjectName("infoLabel5")
         self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.infoLabel5)
         self.infoHeader6 = QtWidgets.QLabel(self.widget_2)
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.infoHeader6.setFont(font)
         self.infoHeader6.setText("")
         self.infoHeader6.setObjectName("infoHeader6")
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.infoHeader6)
@@ -255,7 +273,7 @@ class Ui_MainWindow(object):
         self.downloadInfoLabel.setObjectName("downloadInfoLabel")
         self.verticalLayout_9.addWidget(self.downloadInfoLabel)
         self.progressBar = QtWidgets.QProgressBar(self.widget_2)
-        self.progressBar.setEnabled(False)
+        self.progressBar.setEnabled(True)
         self.progressBar.setMaximumSize(QtCore.QSize(16777215, 12))
         self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
