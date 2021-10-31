@@ -1,6 +1,7 @@
 import os
 import platform
 import re
+import subprocess
 import time
 from enum import Enum
 from typing import List, Tuple
@@ -47,6 +48,17 @@ def add_to_directory_song_ids(download_path: str, song_id: str) -> None:
     # to be raised if something is wrong
     with open(hidden_file_path, 'a', encoding='utf-8') as file:
         file.write(f'{song_id}\n')
+
+def get_downloaded_song_duration(filename: str) -> float:
+    """ Returns the downloaded file's duration in seconds """
+
+    command = ['ffprobe', '-show_entries', 'format=duration', '-i', f'{filename}']
+    output = subprocess.run(command, capture_output=True)
+
+    duration = re.search(r'[\D]=([\d\.]*)', str(output.stdout)).groups()[0]
+    duration = float(duration)
+
+    return duration
 
 def wait(seconds: int = 3) -> None:
     """ Pause for a set number of seconds """

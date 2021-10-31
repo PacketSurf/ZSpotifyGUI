@@ -10,8 +10,8 @@ from pydub import AudioSegment
 from tqdm import tqdm
 
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
-    RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, SPLIT_ALBUM_DISCS, ROOT_PATH, DOWNLOAD_FORMAT, CHUNK_SIZE, \
-    SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME
+    RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, TRACK_STATS_URL, SPLIT_ALBUM_DISCS, ROOT_PATH, DOWNLOAD_FORMAT, \
+    CHUNK_SIZE, SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME
 from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_download_directory, \
     get_directory_song_ids, add_to_directory_song_ids
 from zspotify import ZSpotify
@@ -52,6 +52,21 @@ def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any
 
     return artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable
 
+def get_song_duration(song_id: str) -> float:
+    """ Retrieves duration of song in second as is on spotify """
+
+    resp = ZSpotify.invoke_url(f'{TRACK_STATS_URL}{song_id}')
+
+    # get duration in miliseconds
+    ms_duration = resp['duration_ms']
+    # convert to seconds
+    duration = float(ms_duration)/1000
+
+    # debug
+    # print(duration)
+    # print(type(duration))
+
+    return duration
 
 # noinspection PyBroadException
 def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='', disable_progressbar=False) -> None:
