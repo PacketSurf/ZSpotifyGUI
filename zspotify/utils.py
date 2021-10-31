@@ -55,12 +55,9 @@ def get_downloaded_song_duration(filename: str) -> float:
     command = ['ffprobe', '-show_entries', 'format=duration', '-i', f'{filename}']
     output = subprocess.run(command, capture_output=True)
 
-    print(output.stdout)
-
     duration = re.search(r'[\D]=([\d\.]*)', str(output.stdout)).groups()[0]
     duration = float(duration)
 
-    print(duration)
     return duration
 
 def wait(seconds: int = 3) -> None:

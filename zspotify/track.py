@@ -63,8 +63,8 @@ def get_song_duration(song_id: str) -> float:
     duration = float(ms_duration)/1000
 
     # debug
-    print(duration)
-    print(type(duration))
+    # print(duration)
+    # print(type(duration))
 
     return duration
 
