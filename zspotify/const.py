@@ -1,8 +1,8 @@
-SANITIZE = ('\\', '/', ':', '*', '?', '\'', '<', '>', '"')
-
 SAVED_TRACKS_URL = 'https://api.spotify.com/v1/me/tracks'
 
 TRACKS_URL = 'https://api.spotify.com/v1/tracks'
+
+TRACK_STATS_URL = 'https://api.spotify.com/v1/audio-features/'
 
 TRACKNUMBER = 'tracknumber'
 
@@ -76,6 +76,8 @@ USER_READ_EMAIL = 'user-read-email'
 
 PLAYLIST_READ_PRIVATE = 'playlist-read-private'
 
+USER_LIBRARY_READ = 'user-library-read'
+
 WINDOWS_SYSTEM = 'Windows'
 
 CREDENTIALS_JSON = 'credentials.json'
@@ -102,14 +104,39 @@ COVER_DEFAULT = '../resources/cover_default.jpg'
 
 SPLIT_ALBUM_DISCS = 'SPLIT_ALBUM_DISCS'
 
+DOWNLOAD_REAL_TIME = 'DOWNLOAD_REAL_TIME'
+
+BITRATE = 'BITRATE'
+
+CODEC_MAP = {
+    'aac': 'aac',
+    'fdk_aac': 'libfdk_aac',
+    'm4a': 'aac',
+    'mp3': 'libmp3lame',
+    'ogg': 'copy',
+    'opus': 'libopus',
+    'vorbis': 'copy',
+}
+
+EXT_MAP = {
+    'aac': 'm4a',
+    'fdk_aac': 'm4a',
+    'm4a': 'm4a',
+    'mp3': 'mp3',
+    'ogg': 'ogg',
+    'opus': 'ogg',
+    'vorbis': 'ogg',
+}
+
 CONFIG_DEFAULT_SETTINGS = {
     'ROOT_PATH': '../ZSpotify Music/',
     'ROOT_PODCAST_PATH': '../ZSpotify Podcasts/',
     'SKIP_EXISTING_FILES': True,
-    'DOWNLOAD_FORMAT': 'mp3',
+    'DOWNLOAD_FORMAT': 'ogg',
     'FORCE_PREMIUM': False,
     'ANTI_BAN_WAIT_TIME': 1,
     'OVERRIDE_AUTO_WAIT': False,
     'CHUNK_SIZE': 50000,
-    'SPLIT_ALBUM_DISCS': False
+    'SPLIT_ALBUM_DISCS': False,
+    'DOWNLOAD_REAL_TIME': False
 }

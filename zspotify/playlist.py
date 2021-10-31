@@ -2,7 +2,7 @@ from tqdm import tqdm
 
 from const import ITEMS, ID, TRACK, NAME, OWNER, DISPLAY_NAME
 from track import download_track
-from utils import sanitize_data
+from utils import fix_filename
 from zspotify import ZSpotify
 
 MY_PLAYLISTS_URL = 'https://api.spotify.com/v1/me/playlists'
@@ -52,10 +52,12 @@ def download_playlist(playlist_id, progress_callback=None):
     playlist_songs = [song for song in get_playlist_songs(playlist_id) if song[TRACK][ID]]
     playlist = get_playlist_info(playlist_id)
     p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
+    enum = 1
     for song in p_bar:
-        download_track(song[TRACK][ID], sanitize_data(playlist[0].strip()) + '/',
-                       disable_progressbar=True, progress_callback=progress_callback)
+        download_track(song[TRACK][ID], fix_filename(playlist[NAME].strip()) + '/',
+                       disable_progressbar=True, prefix_value=str(enum), progress_callback=progress_callback)
         p_bar.set_description(song[TRACK][NAME])
+        enum += 1
 
 
 
@@ -72,17 +74,14 @@ def download_from_user_playlist():
     print('> SELECT A RANGE BY ADDING A DASH BETWEEN BOTH ID\'s')
     print('> For example, typing 10 to get one playlist or 10-20 to get\nevery playlist from 10-20 (inclusive)\n')
 
-    playlist_choices = input('ID(s): ').split('-')
+    playlist_choices = map(int, input('ID(s): ').split('-'))
 
-    if len(playlist_choices) == 1:
-        download_playlist(playlists, playlist_choices[0])
-    else:
-        start = int(playlist_choices[0])
-        end = int(playlist_choices[1]) + 1
+    start = next(playlist_choices) - 1
+    end = next(playlist_choices, start + 1)
 
-        print(f'Downloading from {start} to {end}...')
+    for playlist_number in range(start, end):
+        playlist = playlists[playlist_number]
+        print(f'Downloading {playlist[NAME].strip()}')
+        download_playlist(playlist)
 
-        for playlist_number in range(start, end):
-            download_playlist(playlists, playlist_number)
-
-        print('\n**All playlists have been downloaded**\n')
+    print('\n**All playlists have been downloaded**\n')

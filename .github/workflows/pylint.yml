@@ -1,23 +1,23 @@
 name: Pylint
 
-on: [push]
+# yamllint disable-line rule:truthy
+on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pylint
-        pip install -r requirements.txt
-    - name: Analysing the code with pylint
-      run: |
-        pylint $(git ls-files '*.py')
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Setup Pylint
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint pylint-exit
+          pip install -r requirements.txt
+      - name: Run Pylint
+        run: |
+          pylint $(git ls-files '*.py') || pylint-exit $?

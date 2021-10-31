@@ -1,6 +1,7 @@
 import os
 import platform
 import re
+import subprocess
 import time
 from enum import Enum
 from typing import List, Tuple
@@ -8,18 +9,56 @@ from typing import List, Tuple
 import music_tag
 import requests
 
-from const import SANITIZE, ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
+from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
     WINDOWS_SYSTEM
 
 
 class MusicFormat(str, Enum):
     MP3 = 'mp3',
     OGG = 'ogg',
-    
+
 
 def create_download_directory(download_path: str) -> None:
+    """ Create directory and add a hidden file with song ids """
     os.makedirs(download_path, exist_ok=True)
 
+    # add hidden file with song ids
+    hidden_file_path = os.path.join(download_path, '.song_ids')
+    if not os.path.isfile(hidden_file_path):
+        with open(hidden_file_path, 'w', encoding='utf-8') as f:
+            pass
+
+def get_directory_song_ids(download_path: str) -> List[str]:
+    """ Gets song ids of songs in directory """
+
+    song_ids = []
+
+    hidden_file_path = os.path.join(download_path, '.song_ids')
+    if os.path.isfile(hidden_file_path):
+        with open(hidden_file_path, 'r', encoding='utf-8') as file:
+            song_ids.extend([line.strip() for line in file.readlines()])
+
+    return song_ids
+
+def add_to_directory_song_ids(download_path: str, song_id: str) -> None:
+    """ Appends song_id to .song_ids file in directory """
+
+    hidden_file_path = os.path.join(download_path, '.song_ids')
+    # not checking if file exists because we need an exception
+    # to be raised if something is wrong
+    with open(hidden_file_path, 'a', encoding='utf-8') as file:
+        file.write(f'{song_id}\n')
+
+def get_downloaded_song_duration(filename: str) -> float:
+    """ Returns the downloaded file's duration in seconds """
+
+    command = ['ffprobe', '-show_entries', 'format=duration', '-i', f'{filename}']
+    output = subprocess.run(command, capture_output=True)
+
+    duration = re.search(r'[\D]=([\d\.]*)', str(output.stdout)).groups()[0]
+    duration = float(duration)
+
+    return duration
 
 def wait(seconds: int = 3) -> None:
     """ Pause for a set number of seconds """
@@ -58,13 +97,6 @@ def clear() -> None:
         os.system('cls')
     else:
         os.system('clear')
-
-
-def sanitize_data(value) -> str:
-    """ Returns given string with problematic removed """
-    for pattern in SANITIZE:
-        value = value.replace(pattern, '')
-    return value.replace('|', '-')
 
 
 def set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number) -> None:
@@ -179,3 +211,22 @@ def regex_input_for_urls(search_input) -> Tuple[str, str, str, str, str, str]:
         artist_id_str = None
 
     return track_id_str, album_id_str, playlist_id_str, episode_id_str, show_id_str, artist_id_str
+
+
+def fix_filename(name):
+    """
+    Replace invalid characters on Linux/Windows/MacOS with underscores.
+    List from https://stackoverflow.com/a/31976060/819417
+    Trailing spaces & periods are ignored on Windows.
+    >>> fix_filename("  COM1  ")
+    '_ COM1 _'
+    >>> fix_filename("COM10")
+    'COM10'
+    >>> fix_filename("COM1,")
+    'COM1,'
+    >>> fix_filename("COM1.txt")
+    '_.txt'
+    >>> all('_' == fix_filename(chr(i)) for i in list(range(32)))
+    True
+    """
+    return re.sub(r'[/\\:|<>"?*\0-\x1f]|^(AUX|COM[1-9]|CON|LPT[1-9]|NUL|PRN)(?![^.])|^\s|[\s.]$', "_", name, flags=re.IGNORECASE)
