@@ -27,7 +27,7 @@ class SearchWorker(Worker):
 
 class DLWorker(Worker):
     finished = pyqtSignal()
-    update = pyqtSignal(float, int)
+    update = pyqtSignal(float)
 
     def __init__(self, id, dl_type):
         super().__init__()
