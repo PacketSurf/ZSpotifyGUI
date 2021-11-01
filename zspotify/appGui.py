@@ -16,7 +16,7 @@ from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
 from search_data import Artist
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
-    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME
 from worker import DLWorker, SearchWorker
 import qdarktheme
 
@@ -207,6 +207,16 @@ class Window(QMainWindow, Ui_MainWindow):
             dir = dialog.selectedFiles()
             ZSpotify.set_config("ROOT_PATH", dir[0])
 
+    #0 for off, 1 for on
+    def set_real_time_dl(self, value):
+        if value == 0:
+            ZSpotify.set_config("DOWNLOAD_REAL_TIME", False)
+        else:
+            ZSpotify.set_config("DOWNLOAD_REAL_TIME", True)
+
+
+
+
     def get_item(self, id):
         if self.results == {}: return
         i = self.resultTabs.currentIndex()
@@ -222,6 +232,10 @@ class Window(QMainWindow, Ui_MainWindow):
             tree.header().resizeSection(0, 65)
 
     def init_info_labels(self):
+        dl_realtime = ZSpotify.get_config("DOWNLOAD_REAL_TIME")
+        if dl_realtime:
+            self.realTimeCheckBox.setCheckState(1)
+        else: self.realTimeCheckBox.setCheckState(0)
         self.info_labels = [self.infoLabel1, self.infoLabel2, self.infoLabel3, self.infoLabel4, self.infoLabel5, self.infoLabel6]
         self.info_headers = [self.infoHeader1, self.infoHeader2, self.infoHeader3, self.infoHeader4, self.infoHeader5, self.infoHeader6]
 
@@ -236,6 +250,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.playlistsTree.currentItemChanged.connect(self.update_item_info)
         self.dirBtn.clicked.connect(self.change_dl_dir)
         self.loginBtn.clicked.connect(self.open_login_dialog)
+        self.realTimeCheckBox.stateChanged.connect(self.set_real_time_dl)
 
     def init_tab_view(self):
         self.tabs = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
