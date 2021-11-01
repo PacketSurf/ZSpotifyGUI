@@ -49,13 +49,14 @@ def get_playlist_info(playlist_id):
 
 def download_playlist(playlist_id, progress_callback=None):
     """Downloads all the songs from a playlist"""
+    print("yes mate")
     playlist_songs = [song for song in get_playlist_songs(playlist_id) if song[TRACK][ID]]
     playlist = get_playlist_info(playlist_id)
     p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
     enum = 1
+    print("nah amte")
     for song in p_bar:
-        
-        download_track(song[TRACK][ID], fix_filename(playlist[NAME].strip()) + '/',
+        download_track(song[TRACK][ID], fix_filename(playlist[0].strip()) + '/',
                        disable_progressbar=True, prefix_value=str(enum), progress_callback=progress_callback)
         p_bar.set_description(song[TRACK][NAME])
         enum += 1
