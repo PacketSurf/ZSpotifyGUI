@@ -18,8 +18,8 @@ from librespot.core import Session
 from const import CREDENTIALS_JSON, TYPE, \
     PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, \
     PLAYLIST_READ_PRIVATE, CONFIG_DEFAULT_SETTINGS,TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
-    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE, USER_LIBRARY_READ
-from utils import MusicFormat
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE, USER_LIBRARY_READ, DURATION
+from utils import MusicFormat, ms_to_time_str
 from search_data import Track, Album, Artist, Playlist
 
 
@@ -95,7 +95,10 @@ class ZSpotify:
             for t in resp[TRACKS][ITEMS]:
                 artists = ' & '.join([artist[NAME] for artist in t[ARTISTS]])
                 url = t[ALBUM][IMAGES][1][URL]
-                track = Track(counter, t[ID], str(t[NAME]), artists, str(t[ALBUM][NAME]), release_date=t[ALBUM][RELEASE_DATE],img=url)
+
+                duration = ms_to_time_str(t[DURATION])
+                track = Track(counter, t[ID], str(t[NAME]), artists, str(t[ALBUM][NAME]), \
+                    release_date=t[ALBUM][RELEASE_DATE], duration=duration, img=url)
                 results[TRACKS].append(track)
                 counter += 1
         counter = 1

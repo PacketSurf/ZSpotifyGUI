@@ -230,3 +230,11 @@ def fix_filename(name):
     True
     """
     return re.sub(r'[/\\:|<>"?*\0-\x1f]|^(AUX|COM[1-9]|CON|LPT[1-9]|NUL|PRN)(?![^.])|^\s|[\s.]$', "_", name, flags=re.IGNORECASE)
+
+def ms_to_time_str(ms):
+    overallSec = ms/1000
+    min = int(overallSec/60)
+    sec = str(int((overallSec%60)))
+    if len(sec) == 1:
+        sec = f"0{sec}"
+    return f"{min}:{sec}"

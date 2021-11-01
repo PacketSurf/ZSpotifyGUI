@@ -4,7 +4,7 @@ class Result:
 
 
 class Track(Result):
-    def __init__(self, index, id, title, artists, album="", img="",release_date="", explicit=False):
+    def __init__(self, index, id, title, artists, album="", img="",release_date="", duration=-1,explicit=False):
         super().__init__(index)
         self.id = id
         self.title = title
@@ -12,6 +12,7 @@ class Track(Result):
         self.album = album
         self.img = img
         self.release_date = release_date
+        self.duration = duration
         self.explicit = explicit
 
 class Album(Result):

@@ -68,6 +68,8 @@ DISPLAY_NAME = 'display_name'
 
 ALBUMS = 'albums'
 
+DURATION = "duration_ms"
+
 TYPE = 'type'
 
 PREMIUM = 'premium'

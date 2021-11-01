@@ -154,7 +154,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
         try:
             for track in self.results[TRACKS]:
-                item = QTreeWidgetItem([str(track.index), track.title, track.artists, track.album, track.release_date])
+                item = QTreeWidgetItem([str(track.index), track.title, track.artists, track.album, str(track.duration), track.release_date])
                 self.songsTree.addTopLevelItem(item)
             for artist in self.results[ARTISTS]:
                 item = QTreeWidgetItem([str(artist.index), artist.name])
@@ -227,8 +227,10 @@ class Window(QMainWindow, Ui_MainWindow):
         return None
 
     def init_list_columns(self):
+        #Resize duration header in songs tree
+        self.songsTree.header().resizeSection(4,65)
         for tree in self.trees:
-            tree.header().resizeSection(0, 15)
+            #Resize index header in all trees
             tree.header().resizeSection(0, 65)
 
     def init_info_labels(self):
