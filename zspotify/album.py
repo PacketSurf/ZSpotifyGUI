@@ -50,9 +50,11 @@ def download_album(album, progress_callback=None):
     artist_fixed = fix_filename(artist)
     album_name_fixed = fix_filename(album_name)
     tracks = get_album_tracks(album)
+    downloaded = 0
     for n, track in tqdm(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=len(tracks)):
         download_track(track[ID], f'{artist_fixed}/{album_name_fixed}',
                        prefix=True, prefix_value=str(n), disable_progressbar=True, progress_callback=progress_callback)
+        downloaded += 1
 
 
 

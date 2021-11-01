@@ -16,7 +16,7 @@ from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
 from search_data import Artist
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
-    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS
 from worker import DLWorker, SearchWorker
 import qdarktheme
 
@@ -40,6 +40,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.init_tab_view()
         self.init_info_labels()
         self.init_list_columns()
+        self.init_search_results_combo()
         self.progressBar.hide()
         self.login_dialog = None
         self.selected_id = -1
@@ -168,6 +169,11 @@ class Window(QMainWindow, Ui_MainWindow):
         except Exception:
             pass
 
+    def update_result_amount(self, index):
+        amount = int(self.resultAmountCombo.itemText(index))
+        ZSpotify.set_config(SEARCH_RESULTS, amount)
+
+
     def update_item_info(self, curr, old):
         item = None
         tab = ""
@@ -205,14 +211,15 @@ class Window(QMainWindow, Ui_MainWindow):
         dialog.setFileMode(QFileDialog.Directory)
         if dialog.exec_():
             dir = dialog.selectedFiles()
-            ZSpotify.set_config("ROOT_PATH", dir[0])
+            ZSpotify.set_config(ROOT_PATH, dir[0])
 
     #0 for off, 1 for on
     def set_real_time_dl(self, value):
         if value == 0:
-            ZSpotify.set_config("DOWNLOAD_REAL_TIME", False)
+            ZSpotify.set_config(DOWNLOAD_REAL_TIME, False)
         else:
-            ZSpotify.set_config("DOWNLOAD_REAL_TIME", True)
+            ZSpotify.set_config(DOWNLOAD_REAL_TIME, True)
+
 
 
 
@@ -234,7 +241,7 @@ class Window(QMainWindow, Ui_MainWindow):
             tree.header().resizeSection(0, 65)
 
     def init_info_labels(self):
-        dl_realtime = ZSpotify.get_config("DOWNLOAD_REAL_TIME")
+        dl_realtime = ZSpotify.get_config(DOWNLOAD_REAL_TIME)
         self.realTimeCheckBox.setChecked(dl_realtime)
         self.info_labels = [self.infoLabel1, self.infoLabel2, self.infoLabel3, self.infoLabel4, self.infoLabel5, self.infoLabel6]
         self.info_headers = [self.infoHeader1, self.infoHeader2, self.infoHeader3, self.infoHeader4, self.infoHeader5, self.infoHeader6]
@@ -251,10 +258,25 @@ class Window(QMainWindow, Ui_MainWindow):
         self.dirBtn.clicked.connect(self.change_dl_dir)
         self.loginBtn.clicked.connect(self.open_login_dialog)
         self.realTimeCheckBox.stateChanged.connect(self.set_real_time_dl)
+        self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
 
     def init_tab_view(self):
         self.tabs = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
         self.trees = [self.songsTree, self.artistsTree, self.albumsTree, self.playlistsTree]
+
+    def init_search_results_combo(self):
+        amount = int(ZSpotify.get_config(SEARCH_RESULTS))
+        nextHighest = 0
+        for i in range(self.resultAmountCombo.count()):
+            amt = int(self.resultAmountCombo.itemText(i))
+            if amt == amount:
+                self.resultAmountCombo.setCurrentIndex(i)
+                return
+            if amount < amt: nextHighest = i
+        self.resultAmountCombo.insertItem(nextHighest)
+
+
+
 
 
 class LoginDialog(QDialog, Ui_LoginDialog):

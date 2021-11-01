@@ -110,6 +110,8 @@ DOWNLOAD_REAL_TIME = 'DOWNLOAD_REAL_TIME'
 
 BITRATE = 'BITRATE'
 
+SEARCH_RESULTS = 'SEARCH_RESULTS'
+
 CODEC_MAP = {
     'aac': 'aac',
     'fdk_aac': 'libfdk_aac',
@@ -135,6 +137,7 @@ CONFIG_DEFAULT_SETTINGS = {
     'ROOT_PODCAST_PATH': '../ZSpotify Podcasts/',
     'SKIP_EXISTING_FILES': True,
     'DOWNLOAD_FORMAT': 'ogg',
+    'SEARCH_RESULTS': 10,
     'FORCE_PREMIUM': False,
     'ANTI_BAN_WAIT_TIME': 1,
     'OVERRIDE_AUTO_WAIT': False,
