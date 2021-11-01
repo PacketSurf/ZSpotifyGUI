@@ -230,6 +230,7 @@ class Ui_MainWindow(object):
         self.fileFormatCombo.addItem("")
         self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.fileFormatCombo)
         self.label_2 = QtWidgets.QLabel(self.widget_2)
+        self.label_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop|QtCore.Qt.AlignTrailing)
         self.label_2.setObjectName("label_2")
         self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_2)
         self.realTimeCheckBox = QtWidgets.QCheckBox(self.widget_2)

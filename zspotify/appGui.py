@@ -233,9 +233,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def init_info_labels(self):
         dl_realtime = ZSpotify.get_config("DOWNLOAD_REAL_TIME")
-        if dl_realtime:
-            self.realTimeCheckBox.setCheckState(1)
-        else: self.realTimeCheckBox.setCheckState(0)
+        self.realTimeCheckBox.setChecked(dl_realtime)
         self.info_labels = [self.infoLabel1, self.infoLabel2, self.infoLabel3, self.infoLabel4, self.infoLabel5, self.infoLabel6]
         self.info_headers = [self.infoHeader1, self.infoHeader2, self.infoHeader3, self.infoHeader4, self.infoHeader5, self.infoHeader6]
 

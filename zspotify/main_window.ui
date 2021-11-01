@@ -645,6 +645,9 @@
                <property name="text">
                 <string>Download in real time:</string>
                </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+               </property>
               </widget>
              </item>
              <item row="2" column="1">
