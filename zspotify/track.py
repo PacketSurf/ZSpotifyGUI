@@ -75,7 +75,6 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
     try:
         (artists, album_name, name, image_url, release_year, disc_number,
          track_number, scraped_song_id, is_playable) = get_song_info(track_id)
-        print(ZSpotify.get_config(ROOT_PATH))
         if ZSpotify.get_config(SPLIT_ALBUM_DISCS):
             download_directory = os.path.join(os.path.dirname(
                 __file__), ZSpotify.get_config(ROOT_PATH), extra_paths, f'Disc {disc_number}')
