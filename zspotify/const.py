@@ -114,6 +114,10 @@ BITRATE = 'BITRATE'
 
 SEARCH_RESULTS = 'SEARCH_RESULTS'
 
+PAUSE_ICON = '../resources/pauseBtn.png'
+
+PLAY_ICON = '../resources/playBtn16Green.png'
+
 
 CODEC_MAP = {
     'aac': 'aac',

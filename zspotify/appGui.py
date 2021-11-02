@@ -23,7 +23,7 @@ from track import download_track
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
     OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS
 from worker import Worker
-from audio import AudioPlayer
+from audio import AudioPlayer, MusicController
 import qdarktheme
 
 
@@ -42,20 +42,19 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.retranslateUi(self)
-
         self.init_signals()
         self.init_tab_view()
         self.init_info_labels()
         self.init_list_columns()
         self.init_search_results_combo()
+        self.music_controller = MusicController(self)
         self.progressBar.hide()
         self.login_dialog = None
         self.selected_item = None
         self.results = {}
         self.library = {""}
-        self.audio_player = AudioPlayer(self.update_music_progress)
         self.searchTabIndex = 1
-        self.seeking = False
+
         self.resultTabs.setCurrentIndex(0)
         self.on_tab_change(0)
 
@@ -167,21 +166,19 @@ class Window(QMainWindow, Ui_MainWindow):
         self.albumsTree.clear()
         self.playlistsTree.clear()
 
-        try:
-            for track in self.results[TRACKS]:
-                item = QTreeWidgetItem([str(track.index), track.title, track.artists, track.album, str(track.duration), track.release_date])
-                self.songsTree.addTopLevelItem(item)
-            for artist in self.results[ARTISTS]:
-                item = QTreeWidgetItem([str(artist.index), artist.name])
-                self.artistsTree.addTopLevelItem(item)
-            for album in self.results[ALBUMS]:
-                item = QTreeWidgetItem([str(album.index), album.title, album.artists, str(album.total_tracks), str(album.release_date)])
-                self.albumsTree.addTopLevelItem(item)
-            for playlist in self.results[PLAYLISTS]:
-                item = QTreeWidgetItem([str(playlist.index), playlist.title, str(playlist.creator), str(playlist.total_tracks)])
-                self.playlistsTree.addTopLevelItem(item)
-        except Exception:
-            pass
+        for track in self.results[TRACKS]:
+            item = QTreeWidgetItem([str(track.index), track.title, track.artists, track.album, str(track.duration), track.release_date])
+            self.songsTree.addTopLevelItem(item)
+        for artist in self.results[ARTISTS]:
+            item = QTreeWidgetItem([str(artist.index), artist.name])
+            self.artistsTree.addTopLevelItem(item)
+        for album in self.results[ALBUMS]:
+            item = QTreeWidgetItem([str(album.index), album.title, album.artists, str(album.total_tracks), str(album.release_date)])
+            self.albumsTree.addTopLevelItem(item)
+        for playlist in self.results[PLAYLISTS]:
+            item = QTreeWidgetItem([str(playlist.index), playlist.title, str(playlist.creator), str(playlist.total_tracks)])
+            self.playlistsTree.addTopLevelItem(item)
+
 
     def update_result_amount(self, index):
         amount = int(self.resultAmountCombo.itemText(index))
@@ -237,30 +234,7 @@ class Window(QMainWindow, Ui_MainWindow):
             ZSpotify.set_config(DOWNLOAD_REAL_TIME, True)
 
 
-    def play_selected(self):
-        if self.selected_item == None: return
-        self.audio_player.play(self.selected_item)
-        worker = Worker(self.run_progress_bar, 0, update=self.update_music_progress)
-        QThreadPool.globalInstance().start(worker)
 
-    def update_music_progress(self, perc):
-        if not self.seeking:
-            self.playbackBar.setValue(int(perc*10000))
-
-    def run_progress_bar(self, signal, *args, **kwargs):
-        while(self.audio_player.playing):
-            if self.audio_player.player.get_length() > 0:
-                signal(self.audio_player.get_elapsed_percent())
-            QtTest.QTest.qWait(100)
-
-    def on_seek(self):
-        self.seeking = True
-
-    def on_stop_seeking(self):
-
-        percent = self.playbackBar.value()/self.playbackBar.maximum()
-        self.audio_player.set_time(percent)
-        self.seeking = False
 
     def get_item(self, id):
         if self.results == {}: return
@@ -297,9 +271,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.loginBtn.clicked.connect(self.open_login_dialog)
         self.realTimeCheckBox.stateChanged.connect(self.set_real_time_dl)
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
-        self.playBtn.clicked.connect(self.play_selected)
-        self.playbackBar.sliderPressed.connect(self.on_seek)
-        self.playbackBar.sliderReleased.connect(self.on_stop_seeking)
+
 
     def init_tab_view(self):
         self.tabs = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
