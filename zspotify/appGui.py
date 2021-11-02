@@ -54,7 +54,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.results = {}
         self.library = {""}
         self.searchTabIndex = 1
-
         self.resultTabs.setCurrentIndex(0)
         self.on_tab_change(0)
 
@@ -218,7 +217,6 @@ class Window(QMainWindow, Ui_MainWindow):
         lbl.show()
 
 
-
     def change_dl_dir(self):
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.Directory)
@@ -232,8 +230,6 @@ class Window(QMainWindow, Ui_MainWindow):
             ZSpotify.set_config(DOWNLOAD_REAL_TIME, False)
         else:
             ZSpotify.set_config(DOWNLOAD_REAL_TIME, True)
-
-
 
 
     def get_item(self, id):
@@ -276,6 +272,7 @@ class Window(QMainWindow, Ui_MainWindow):
     def init_tab_view(self):
         self.tabs = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
         self.trees = [self.songsTree, self.artistsTree, self.albumsTree, self.playlistsTree]
+        self.libraryTrees = [self.downloadedTree, self.likedTree]
 
     def init_search_results_combo(self):
         amount = int(ZSpotify.get_config(SEARCH_RESULTS))
@@ -287,9 +284,6 @@ class Window(QMainWindow, Ui_MainWindow):
                 return
             if amount < amt: nextHighest = i
         self.resultAmountCombo.insertItem(nextHighest)
-
-
-
 
 
 class LoginDialog(QDialog, Ui_LoginDialog):

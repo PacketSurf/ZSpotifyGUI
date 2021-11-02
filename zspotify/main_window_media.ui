@@ -223,7 +223,7 @@
              <enum>QTabWidget::West</enum>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -302,7 +302,7 @@
                    <number>3</number>
                   </property>
                   <item>
-                   <widget class="QTreeWidget" name="downloadedTree_2">
+                   <widget class="QTreeWidget" name="likedTree">
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>

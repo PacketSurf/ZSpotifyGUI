@@ -58,6 +58,10 @@ class MusicController:
         self.window.playbackBar.sliderPressed.connect(self.on_seek)
         self.window.playbackBar.sliderReleased.connect(self.on_stop_seeking)
         self.window.volumeSlider.valueChanged.connect(self.set_volume)
+        for tree in self.window.trees:
+            tree.itemDoubleClicked.connect(self.play_selected)
+        for tree in self.window.libraryTrees:
+            tree.itemDoubleClicked.connect(self.play_selected)
 
 class AudioPlayer:
 
