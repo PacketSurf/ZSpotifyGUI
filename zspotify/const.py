@@ -72,6 +72,10 @@ DURATION = "duration_ms"
 
 SPOTIFY_ID = 'comment'
 
+DOWNLOADED = 'downloaded'
+
+LIKED = 'liked'
+
 TYPE = 'type'
 
 PREMIUM = 'premium'

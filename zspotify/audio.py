@@ -4,9 +4,10 @@ import time
 import music_tag
 from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool
-from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON
+from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK
 from zspotify import ZSpotify
 from worker import Worker
+from search_data import Track
 
 
 class MusicController:
@@ -65,13 +66,14 @@ class MusicController:
 
 class AudioPlayer:
 
+    SUPPORTED_FORMATS = ["mp3"]
+
     def __init__(self, update):
         self.player = None
         self.track = None
         self.audio_file = ""
         self.root = ZSpotify.get_config(ROOT_PATH)
         self.file_format = ".mp3"
-        self.supported_formats = ["mp3"]
         self.player = None
         self.playing = False
         self.update = update
@@ -94,7 +96,7 @@ class AudioPlayer:
                     return True
 
         abs_root = os.path.abspath(self.root)
-        self.audio_file = self.find_local_track(track.id)
+        self.audio_file = find_local_track(track.id)
         if self.audio_file != None:
             self.track = track
             self.playing = True
@@ -105,23 +107,14 @@ class AudioPlayer:
         return False
 
     def get_elapsed_percent(self):
-        if self.player.get_length() == 0: return 0
+        if self.player == None or self.player.get_length() == 0: return 0
         return self.player.get_time()/self.player.get_length()
 
     def set_time(self, percent):
+        if self.player == None: return
         self.player.set_position(percent)
 
-    def find_local_track(self, id):
-        dir = os.listdir(self.root)
-        for file in dir:
-            split = file.split(".")
-            if not len(split) >= 2 or split[1] not in self.supported_formats: continue
-            download_directory = os.path.join(os.path.dirname(
-                __file__), ZSpotify.get_config(ROOT_PATH))
-            filename = f"{download_directory}/{file}"
-            tag = music_tag.load_file(filename)
-            if str(tag[SPOTIFY_ID]) == str(id): return file
-        return None
+
 
     def is_playing(self):
         if self.player != None and self.player.is_playing():
@@ -133,3 +126,40 @@ class AudioPlayer:
         self.volume = max(0, min(100, value))
         if self.player != None:
             self.player.audio_set_volume(value)
+
+def find_local_track(id):
+    track_files = find_local_tracks()
+    for file in track_files:
+        if find_id_in_metadata(file) == str(id): return file
+    return None
+
+def find_local_tracks():
+    root = ZSpotify.get_config(ROOT_PATH)
+    dir = os.listdir(root)
+    track_files = []
+    for file in dir:
+        split = file.split(".")
+        if not len(split) >= 2 or split[1] not in AudioPlayer.SUPPORTED_FORMATS:
+            continue
+        else:
+            track_files.append(file)
+    return track_files
+
+def get_track_file_as_item(file, index):
+    split = file.split(".")
+    if not len(split) >= 2 or split[1] not in AudioPlayer.SUPPORTED_FORMATS:
+        return None
+    download_directory = os.path.join(os.path.dirname(
+        __file__), ZSpotify.get_config(ROOT_PATH))
+    path = f"{download_directory}/{file}"
+    tag = music_tag.load_file(path)
+    track = Track(index, tag[SPOTIFY_ID], tag[TRACKTITLE], tag[ARTIST], album=tag[ALBUM], img=tag[ARTWORK])
+    return track
+
+def find_id_in_metadata(file_name):
+    download_directory = os.path.join(os.path.dirname(
+        __file__), ZSpotify.get_config(ROOT_PATH))
+    file = f"{download_directory}/{file_name}"
+
+    tag = music_tag.load_file(file)
+    return str(tag[SPOTIFY_ID])

@@ -248,7 +248,7 @@
               <item>
                <widget class="QTabWidget" name="tabWidget">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="downloadedTab">
                  <attribute name="title">
@@ -272,12 +272,31 @@
                     <property name="alternatingRowColors">
                      <bool>true</bool>
                     </property>
+                    <property name="sortingEnabled">
+                     <bool>true</bool>
+                    </property>
                     <property name="animated">
                      <bool>true</bool>
                     </property>
+                    <attribute name="headerDefaultSectionSize">
+                     <number>15</number>
+                    </attribute>
+                    <attribute name="headerMinimumSectionSize">
+                     <number>270</number>
+                    </attribute>
                     <column>
                      <property name="text">
-                      <string notr="true">1</string>
+                      <string notr="true">Title</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Artists</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Album</string>
                      </property>
                     </column>
                    </widget>

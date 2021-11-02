@@ -1,9 +1,7 @@
 import sys
 import time
 import requests
-from PyQt5 import QtTest
-from PyQt5 import QtGui
-from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot, QThreadPool
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThreadPool
 from PyQt5.QtWidgets import (
 
     QApplication, QMainWindow, QDialog, QTreeWidget, QTreeWidgetItem, QFileDialog, QLineEdit
@@ -16,14 +14,12 @@ from librespot.core import Session
 from main_windowMedia import Ui_MainWindow
 from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
-from search_data import Artist
-from playlist import download_playlist
-from album import download_album, download_artist_albums
-from track import download_track
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
-    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS,\
+    DOWNLOADED, LIKED
 from worker import Worker
-from audio import AudioPlayer, MusicController
+from audio import MusicController, find_local_tracks, get_track_file_as_item
+from download import DownloadController
 import qdarktheme
 
 
@@ -42,34 +38,41 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.retranslateUi(self)
+        self.tabs = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
+        self.trees = [self.songsTree, self.artistsTree, self.albumsTree, self.playlistsTree]
+        self.libraryTrees = [self.downloadedTree, self.likedTree]
+        self.library = {DOWNLOADED:[], LIKED:[]}
         self.init_signals()
-        self.init_tab_view()
         self.init_info_labels()
         self.init_list_columns()
-        self.init_search_results_combo()
+        self.init_results_amount_combo()
+        self.init_downloads_view()
         self.music_controller = MusicController(self)
-        self.progressBar.hide()
-        self.login_dialog = None
+        self.download_controller = DownloadController(self)
+        self.logged_in = False
         self.selected_item = None
         self.results = {}
-        self.library = {""}
+        self.selected_tab = self.downloadedTab
         self.searchTabIndex = 1
         self.resultTabs.setCurrentIndex(0)
         self.on_tab_change(0)
 
     def show(self):
         super().show()
-        self.open_login_dialog()
+        if not ZSpotify.login():
+            self.open_login_dialog()
+        else:
+            self.on_login_finished(1)
 
     def open_login_dialog(self):
-        if not ZSpotify.login():
-            self.login_dialog = LoginDialog()
-            self.login_dialog.finished.connect(self.on_login_finished)
-            self.login_dialog.exec_()
-        else: self.on_login_finished(1)
+        login_dialog = LoginDialog()
+        login_dialog.finished.connect(self.on_login_finished)
+        login_dialog.exec_()
+
 
     def on_login_finished(self, result):
         if result == 1:
+            self.logged_in = True
             self.loginBtn.setEnabled(False)
             if ZSpotify.IS_PREMIUM:
                 self.accountTypeLabel.setText("Premium Account")
@@ -79,49 +82,6 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.dlQualityLabel.setText("160kbps")
         self.login_dialog = None
 
-    def on_start_download(self):
-        if self.selected_item == None: return
-        self.progressBar.setValue(0)
-        self.progressBar.setEnabled(True)
-        self.progressBar.show()
-
-
-        if type(self.selected_item) == Artist:
-            self.downloadInfoLabel.setText(f"Downloading {self.selected_item.name} albums...")
-        else:
-            self.downloadInfoLabel.setText(f"Downloading {self.selected_item.title}...")
-        self.downloadBtn.setEnabled(False)
-        tab = self.resultTabs.currentIndex()
-        worker = Worker(self.download_item, self.selected_item.id, update=self.update_dl_progress)
-        worker.signals.finished.connect(self.on_download_complete)
-        QThreadPool.globalInstance().start(worker)
-
-
-    def download_item(self, signal, *args, **kwargs):
-        item_id = args[0]
-        index = self.resultTabs.currentIndex()
-        if self.tabs[index] == TRACKS:
-            download_track(item_id,progress_callback=signal)
-        elif self.tabs[index] == ALBUMS:
-            download_album(item_id, progress_callback=signal)
-        elif self.tabs[index] == ARTISTS:
-            download_artist_albums(item_id)
-        elif self.tabs[index] == PLAYLISTS:
-            download_playlist(item_id,progress_callback=signal)
-
-
-    def on_download_complete(self):
-        self.progressBar.setValue(0)
-        self.progressBar.hide()
-        self.downloadInfoLabel.setText("")
-        self.downloadBtn.setEnabled(True)
-        QApplication.processEvents()
-
-    def update_dl_progress(self, amount):
-        perc = int(amount*100)
-        self.progressBar.setValue(perc)
-        self.progressBar.show()
-        QApplication.processEvents()
 
     def on_tab_change(self, index):
         if self.tabs and index < len(self.tabs) and index > 0:
@@ -135,6 +95,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.downloadBtn.setText("Download playlist")
         else: self.downloadBtn.setText("Download")
 
+        #clear all labels with no field and update rest to match visible tree view
         i = self.resultTabs.currentIndex()
         tree = self.trees[i]
         header = tree.headerItem()
@@ -147,6 +108,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
         self.load_album_cover()
 
+    #run worker on thread that searches and return results through signal callback
     def send_search_input(self):
         if ZSpotify.SESSION:
             search = self.searchInput.text()
@@ -155,7 +117,7 @@ class Window(QMainWindow, Ui_MainWindow):
             QThreadPool.globalInstance().start(worker)
             self.libraryTabs.setCurrentIndex(self.searchTabIndex)
 
-        elif self.login_dialog is None:
+        elif not self.logged_in:
             self.open_login_dialog()
 
     def display_results(self, results):
@@ -164,7 +126,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.artistsTree.clear()
         self.albumsTree.clear()
         self.playlistsTree.clear()
-
+        #Item details in QTreeWidgetItem must be in same order as their item tree
         for track in self.results[TRACKS]:
             item = QTreeWidgetItem([str(track.index), track.title, track.artists, track.album, str(track.duration), track.release_date])
             self.songsTree.addTopLevelItem(item)
@@ -202,7 +164,7 @@ class Window(QMainWindow, Ui_MainWindow):
             if i < len(self.info_labels):
                 self.info_labels[i-1].setText(curr.text(i))
                 self.info_labels[i-1].setToolTip(curr.text(i))
-        self.load_album_cover(item.img)
+        #if str(item.img) != "": self.load_album_cover(item.img)
 
 
     def load_album_cover(self, url=""):
@@ -215,21 +177,6 @@ class Window(QMainWindow, Ui_MainWindow):
         lbl.setPixmap(pixmap)
         lbl.setScaledContents(True)
         lbl.show()
-
-
-    def change_dl_dir(self):
-        dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.Directory)
-        if dialog.exec_():
-            dir = dialog.selectedFiles()
-            ZSpotify.set_config(ROOT_PATH, dir[0])
-
-    #0 for off, 1 for on
-    def set_real_time_dl(self, value):
-        if value == 0:
-            ZSpotify.set_config(DOWNLOAD_REAL_TIME, False)
-        else:
-            ZSpotify.set_config(DOWNLOAD_REAL_TIME, True)
 
 
     def get_item(self, id):
@@ -249,32 +196,34 @@ class Window(QMainWindow, Ui_MainWindow):
             tree.header().resizeSection(0, 65)
 
     def init_info_labels(self):
-        dl_realtime = ZSpotify.get_config(DOWNLOAD_REAL_TIME)
-        self.realTimeCheckBox.setChecked(dl_realtime)
         self.info_labels = [self.infoLabel1, self.infoLabel2, self.infoLabel3, self.infoLabel4, self.infoLabel5, self.infoLabel6]
         self.info_headers = [self.infoHeader1, self.infoHeader2, self.infoHeader3, self.infoHeader4, self.infoHeader5, self.infoHeader6]
 
     def init_signals(self):
         self.searchBtn.clicked.connect(self.send_search_input)
         self.searchInput.returnPressed.connect(self.send_search_input)
-        self.downloadBtn.clicked.connect(self.on_start_download)
         self.resultTabs.currentChanged.connect(self.on_tab_change)
-        self.songsTree.currentItemChanged.connect(self.update_item_info)
-        self.artistsTree.currentItemChanged.connect(self.update_item_info)
-        self.albumsTree.currentItemChanged.connect(self.update_item_info)
-        self.playlistsTree.currentItemChanged.connect(self.update_item_info)
-        self.dirBtn.clicked.connect(self.change_dl_dir)
+        for tree in self.trees:
+            tree.currentItemChanged.connect(self.update_item_info)
+        for tree in self.libraryTrees:
+            tree.currentItemChanged.connect(self.update_item_info)
         self.loginBtn.clicked.connect(self.open_login_dialog)
-        self.realTimeCheckBox.stateChanged.connect(self.set_real_time_dl)
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
 
+    def init_downloads_view(self):
+        track_files = find_local_tracks()
+        self.library[DOWNLOADED] = []
+        index = 0
+        for file in track_files:
+            track = get_track_file_as_item(file, index)
+            if track != None:
+                self.library[DOWNLOADED].append(track)
+                item = QTreeWidgetItem([str(index),str(track.title), str(track.artists), str(track.album)])
+                self.downloadedTree.addTopLevelItem(item)
+                index += 1
 
-    def init_tab_view(self):
-        self.tabs = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
-        self.trees = [self.songsTree, self.artistsTree, self.albumsTree, self.playlistsTree]
-        self.libraryTrees = [self.downloadedTree, self.likedTree]
 
-    def init_search_results_combo(self):
+    def init_results_amount_combo(self):
         amount = int(ZSpotify.get_config(SEARCH_RESULTS))
         nextHighest = 0
         for i in range(self.resultAmountCombo.count()):
@@ -308,7 +257,6 @@ class LoginDialog(QDialog, Ui_LoginDialog):
     def init_signals(self):
         self.loginBtn.clicked.connect(self.send_login)
         self.cancelBtn.clicked.connect(self.reject)
-
 
 
 

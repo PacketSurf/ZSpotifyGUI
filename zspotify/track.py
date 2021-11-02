@@ -133,8 +133,6 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                     ) as p_bar:
                         for chunk in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
                             data = stream.input_stream.stream().read(ZSpotify.get_config(CHUNK_SIZE))
-                            if data == b'':
-                                break
                             dl_amount = file.write(data)
                             p_bar.update(dl_amount)
                             downloaded += dl_amount

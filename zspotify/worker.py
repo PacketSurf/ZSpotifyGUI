@@ -12,7 +12,8 @@ class WorkerSignals(QObject):
 
 
 class Worker(QRunnable):
-
+    #kwarg passed with key "update" is a callback function that gets connected to worker update signal
+    #When using update the fn must have a first parameter that will get a signal emit function passed to it
     def __init__(self, fn, *args, **kwargs):
         super().__init__()
         self.fn = fn

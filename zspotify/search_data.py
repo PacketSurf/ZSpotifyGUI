@@ -1,11 +1,9 @@
-class Result:
-    def __init__(self, index):
+
+
+
+class Track():
+    def __init__(self, index, id, title, artists,album="", img="",release_date="", duration=-1,explicit=False):
         self.index = index
-
-
-class Track(Result):
-    def __init__(self, index, id, title, artists, album="", img="",release_date="", duration=-1,explicit=False):
-        super().__init__(index)
         self.id = id
         self.title = title
         self.artists = artists
@@ -14,10 +12,11 @@ class Track(Result):
         self.release_date = release_date
         self.duration = duration
         self.explicit = explicit
+        self.index = index
 
-class Album(Result):
+class Album():
     def __init__(self, index, id, title,artists, total_tracks, release_date="", img="", explicit=False):
-        super().__init__(index)
+        self.index = index
         self.id = id
         self.title = title
         self.artists = artists
@@ -25,19 +24,22 @@ class Album(Result):
         self.total_tracks = total_tracks
         self.release_date = release_date
         self.explicit = explicit
+        self.index = index
 
-class Artist(Result):
-    def __init__(self, index, id, name, img=""):
-        super().__init__(index)
+class Artist():
+    def __init__(self,index, id, name, img=""):
+        self.index = index
         self.id = id
         self.name = name
         self.img = img
+        self.index = index
 
-class Playlist(Result):
-    def __init__(self, index,id, title,creator, total_tracks, img=""):
-        super().__init__(index)
+class Playlist():
+    def __init__(self, index, id, title,creator, total_tracks, img=""):
+        self.index = index
         self.id = id
         self.title = title
         self.creator = creator
         self.total_tracks = total_tracks
         self.img=img
+        self.index = index
