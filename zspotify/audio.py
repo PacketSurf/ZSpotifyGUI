@@ -15,6 +15,7 @@ class MusicController:
         self.seeking = False
         self.audio_player = AudioPlayer(self.update_music_progress)
         self.init_signals()
+        self.set_volume(self.window.volumeSlider.value())
 
     def play_selected(self):
         if self.window.selected_item == None: return
@@ -49,14 +50,19 @@ class MusicController:
         self.audio_player.set_time(percent)
         self.seeking = False
 
+    def set_volume(self, value):
+        self.audio_player.set_volume(value)
+
     def init_signals(self):
         self.window.playBtn.clicked.connect(self.play_selected)
         self.window.playbackBar.sliderPressed.connect(self.on_seek)
         self.window.playbackBar.sliderReleased.connect(self.on_stop_seeking)
+        self.window.volumeSlider.valueChanged.connect(self.set_volume)
 
 class AudioPlayer:
 
     def __init__(self, update):
+        self.player = None
         self.track = None
         self.audio_file = ""
         self.root = ZSpotify.get_config(ROOT_PATH)
@@ -66,6 +72,7 @@ class AudioPlayer:
         self.playing = False
         self.update = update
         self.prog_tick_rate = 100
+        self.volume = 100
 
     def play(self, track):
         if self.player != None and self.track != None:
@@ -88,6 +95,7 @@ class AudioPlayer:
             self.track = track
             self.playing = True
             self.player = vlc.MediaPlayer(f"{self.root}/{self.audio_file}")
+            self.set_volume(self.volume)
             self.player.play()
             return True
         return False
@@ -116,3 +124,8 @@ class AudioPlayer:
             self.playing = self.player.is_playing()
             return True
         return False
+
+    def set_volume(self, value):
+        self.volume = max(0, min(100, value))
+        if self.player != None:
+            self.player.audio_set_volume(value)

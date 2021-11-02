@@ -806,7 +806,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QSlider" name="horizontalSlider_2">
+              <widget class="QSlider" name="volumeSlider">
                <property name="minimumSize">
                 <size>
                  <width>150</width>
@@ -818,6 +818,12 @@
                  <width>150</width>
                  <height>10</height>
                 </size>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>100</number>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
