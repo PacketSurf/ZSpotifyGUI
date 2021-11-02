@@ -223,7 +223,7 @@
              <enum>QTabWidget::West</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -411,6 +411,11 @@
                     <column>
                      <property name="text">
                       <string>Album</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Duration</string>
                      </property>
                     </column>
                     <column>
@@ -637,7 +642,13 @@
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../resources/backBtn16.png</normaloff>../resources/backBtn16.png</iconset>
+                 <normaloff>../resources/prev16.png</normaloff>../resources/prev16.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
                </property>
                <property name="flat">
                 <bool>true</bool>
@@ -652,12 +663,24 @@
                  <height>50</height>
                 </size>
                </property>
+               <property name="maximumSize">
+                <size>
+                 <width>62</width>
+                 <height>30</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../resources/playBtn16.png</normaloff>../resources/playBtn16.png</iconset>
+                 <normaloff>../resources/playBtn16Green.png</normaloff>../resources/playBtn16Green.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
                </property>
                <property name="flat">
                 <bool>true</bool>
@@ -677,11 +700,11 @@
                </property>
                <property name="icon">
                 <iconset>
-                 <normaloff>../resources/nextBtn16.png</normaloff>../resources/nextBtn16.png</iconset>
+                 <normaloff>../resources/next16.png</normaloff>../resources/next16.png</iconset>
                </property>
                <property name="iconSize">
                 <size>
-                 <width>24</width>
+                 <width>16</width>
                  <height>16</height>
                 </size>
                </property>
@@ -707,7 +730,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QSlider" name="horizontalSlider">
+              <widget class="QSlider" name="playbackBar">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -719,6 +742,15 @@
                  <width>1</width>
                  <height>50</height>
                 </size>
+               </property>
+               <property name="maximum">
+                <number>10000</number>
+               </property>
+               <property name="pageStep">
+                <number>1</number>
+               </property>
+               <property name="value">
+                <number>0</number>
                </property>
                <property name="tracking">
                 <bool>true</bool>
@@ -1044,6 +1076,9 @@
                  <width>80</width>
                  <height>16777215</height>
                 </size>
+               </property>
+               <property name="minimumContentsLength">
+                <number>7</number>
                </property>
                <item>
                 <property name="text">

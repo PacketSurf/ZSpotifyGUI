@@ -95,7 +95,6 @@ class ZSpotify:
             for t in resp[TRACKS][ITEMS]:
                 artists = ' & '.join([artist[NAME] for artist in t[ARTISTS]])
                 url = t[ALBUM][IMAGES][1][URL]
-
                 duration = ms_to_time_str(t[DURATION])
                 track = Track(counter, t[ID], str(t[NAME]), artists, str(t[ALBUM][NAME]), \
                     release_date=t[ALBUM][RELEASE_DATE], duration=duration, img=url)

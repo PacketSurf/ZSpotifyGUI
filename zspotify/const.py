@@ -36,8 +36,6 @@ ID = 'id'
 
 URL = 'url'
 
-COMMENT = 'comment'
-
 RELEASE_DATE = 'release_date'
 
 IMAGES = 'images'
@@ -71,6 +69,8 @@ DISPLAY_NAME = 'display_name'
 ALBUMS = 'albums'
 
 DURATION = "duration_ms"
+
+SPOTIFY_ID = 'comment'
 
 TYPE = 'type'
 
@@ -113,6 +113,7 @@ DOWNLOAD_REAL_TIME = 'DOWNLOAD_REAL_TIME'
 BITRATE = 'BITRATE'
 
 SEARCH_RESULTS = 'SEARCH_RESULTS'
+
 
 CODEC_MAP = {
     'aac': 'aac',

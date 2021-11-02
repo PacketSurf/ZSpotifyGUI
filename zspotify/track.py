@@ -148,7 +148,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
                     convert_audio_format(filename)
                     set_audio_tags(filename, artists, name, album_name,
-                                release_year, disc_number, track_number)
+                                release_year, disc_number, track_number, spotify_id=scraped_song_id)
                     set_music_thumbnail(filename, image_url)
 
                     # add song id to download directory's .song_ids file
@@ -198,7 +198,6 @@ def convert_audio_format(filename) -> None:
     output_params = ['-c:a', file_codec]
     if bitrate:
         output_params += ['-b:a', bitrate]
-
     ff_m = FFmpeg(
         global_options=['-y', '-hide_banner', '-loglevel error'],
         inputs={temp_filename: None},

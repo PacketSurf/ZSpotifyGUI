@@ -1,7 +1,9 @@
 import sys
+import time
 import requests
+from PyQt5 import QtTest
 from PyQt5 import QtGui
-from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot, QThreadPool
 from PyQt5.QtWidgets import (
 
     QApplication, QMainWindow, QDialog, QTreeWidget, QTreeWidgetItem, QFileDialog, QLineEdit
@@ -15,9 +17,12 @@ from main_windowMedia import Ui_MainWindow
 from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
 from search_data import Artist
+from playlist import download_playlist
+from album import download_album, download_artist_albums
+from track import download_track
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
-    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS, COMMENT
-from worker import DLWorker, SearchWorker
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS
+from worker import Worker
 from audio import AudioPlayer
 import qdarktheme
 
@@ -37,34 +42,26 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.retranslateUi(self)
+
         self.init_signals()
         self.init_tab_view()
         self.init_info_labels()
         self.init_list_columns()
         self.init_search_results_combo()
-        self.audio_player = AudioPlayer()
         self.progressBar.hide()
         self.login_dialog = None
         self.selected_item = None
         self.results = {}
-        self.threads = []
+        self.library = {""}
+        self.audio_player = AudioPlayer(self.update_music_progress)
         self.searchTabIndex = 1
+        self.seeking = False
         self.resultTabs.setCurrentIndex(0)
         self.on_tab_change(0)
 
     def show(self):
         super().show()
         self.open_login_dialog()
-
-    def run_worker(self, worker, callback=None):
-        thread = QThread()
-        self.threads.append(thread)
-        worker.moveToThread(thread)
-        thread.started.connect(worker.run)
-        worker.finished.connect(thread.quit)
-        thread.finished.connect(thread.deleteLater)
-        if callback: worker.finished.connect(callback)
-        thread.start()
 
     def open_login_dialog(self):
         if not ZSpotify.login():
@@ -97,9 +94,22 @@ class Window(QMainWindow, Ui_MainWindow):
             self.downloadInfoLabel.setText(f"Downloading {self.selected_item.title}...")
         self.downloadBtn.setEnabled(False)
         tab = self.resultTabs.currentIndex()
-        self.dl_worker = DLWorker(self.selected_item.id, self.tabs[tab])
-        self.dl_worker.update.connect(self.update_dl_progress)
-        self.run_worker(self.dl_worker, self.on_download_complete)
+        worker = Worker(self.download_item, self.selected_item.id, update=self.update_dl_progress)
+        worker.signals.finished.connect(self.on_download_complete)
+        QThreadPool.globalInstance().start(worker)
+
+
+    def download_item(self, signal, *args, **kwargs):
+        item_id = args[0]
+        index = self.resultTabs.currentIndex()
+        if self.tabs[index] == TRACKS:
+            download_track(item_id,progress_callback=signal)
+        elif self.tabs[index] == ALBUMS:
+            download_album(item_id, progress_callback=signal)
+        elif self.tabs[index] == ARTISTS:
+            download_artist_albums(item_id)
+        elif self.tabs[index] == PLAYLISTS:
+            download_playlist(item_id,progress_callback=signal)
 
 
     def on_download_complete(self):
@@ -142,13 +152,13 @@ class Window(QMainWindow, Ui_MainWindow):
     def send_search_input(self):
         if ZSpotify.SESSION:
             search = self.searchInput.text()
-            self.search_worker = SearchWorker(search)
-            self.run_worker(self.search_worker, callback=self.display_results)
+            worker = Worker(ZSpotify.search, search)
+            worker.signals.result.connect(self.display_results)
+            QThreadPool.globalInstance().start(worker)
             self.libraryTabs.setCurrentIndex(self.searchTabIndex)
 
         elif self.login_dialog is None:
             self.open_login_dialog()
-
 
     def display_results(self, results):
         self.results = results
@@ -210,6 +220,8 @@ class Window(QMainWindow, Ui_MainWindow):
         lbl.setScaledContents(True)
         lbl.show()
 
+
+
     def change_dl_dir(self):
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.Directory)
@@ -227,8 +239,28 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def play_selected(self):
         if self.selected_item == None: return
-        self.audio_player.play(self.selected_item.id)
+        self.audio_player.play(self.selected_item)
+        worker = Worker(self.run_progress_bar, 0, update=self.update_music_progress)
+        QThreadPool.globalInstance().start(worker)
 
+    def update_music_progress(self, perc):
+        if not self.seeking:
+            self.playbackBar.setValue(int(perc*10000))
+
+    def run_progress_bar(self, signal, *args, **kwargs):
+        while(self.audio_player.playing):
+            if self.audio_player.player.get_length() > 0:
+                signal(self.audio_player.get_elapsed_percent())
+            QtTest.QTest.qWait(100)
+
+    def on_seek(self):
+        self.seeking = True
+
+    def on_stop_seeking(self):
+
+        percent = self.playbackBar.value()/self.playbackBar.maximum()
+        self.audio_player.set_time(percent)
+        self.seeking = False
 
     def get_item(self, id):
         if self.results == {}: return
@@ -266,6 +298,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.realTimeCheckBox.stateChanged.connect(self.set_real_time_dl)
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
         self.playBtn.clicked.connect(self.play_selected)
+        self.playbackBar.sliderPressed.connect(self.on_seek)
+        self.playbackBar.sliderReleased.connect(self.on_stop_seeking)
 
     def init_tab_view(self):
         self.tabs = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
