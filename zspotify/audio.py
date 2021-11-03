@@ -14,21 +14,24 @@ class MusicController:
     def __init__(self, window):
         self.window = window
         self.seeking = False
+        self.worker = None
         self.audio_player = AudioPlayer(self.update_music_progress)
         self.init_signals()
         self.set_volume(self.window.volumeSlider.value())
 
     def play(self, item):
         if self.audio_player.play(item):
-            path = PAUSE_ICON
-            worker = Worker(self.run_progress_bar, 0, update=self.update_music_progress)
-            QThreadPool.globalInstance().start(worker)
+            self.set_icon(PAUSE_ICON)
+            self.start_progress_worker()
         else:
-            path = PLAY_ICON
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(path), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.window.playBtn.setIcon(icon)
-        self.window.playBtn.setIconSize(QtCore.QSize(24, 24))
+            self.set_icon(PLAY_ICON)
+            self.playing = False
+
+    def start_progress_worker(self):
+        if self.worker != None: return
+        self.worker = Worker(self.run_progress_bar, 0, update=self.update_music_progress)
+        self.worker.signals.finished.connect(self.on_progress_finished)
+        QThreadPool.globalInstance().start(self.worker)
 
 
     def update_music_progress(self, perc):
@@ -42,6 +45,9 @@ class MusicController:
                 signal(self.audio_player.get_elapsed_percent())
             QtTest.QTest.qWait(100)
 
+    def on_progress_finished(self):
+        self.worker = None
+
     def on_seek(self):
         self.seeking = True
 
@@ -54,7 +60,25 @@ class MusicController:
         self.audio_player.set_volume(value)
 
     def on_press_play(self):
-        if self.window.selected_item != None: self.play(self.window.selected_item)
+        if self.audio_player.is_playing():
+            self.set_icon(PLAY_ICON)
+            self.audio_player.pause()
+        elif self.window.selected_item != None:
+            if not self.audio_player.is_playing() and self.audio_player.player != None:
+                self.audio_player.player.set_pause(1)
+                self.set_icon(PAUSE_ICON)
+                self.start_progress_worker()
+            else:
+                self.play(self.window.selected_item)
+                self.set_icon(PLAY_ICON)
+
+
+    def set_icon(self, icon_path):
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(icon_path), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.window.playBtn.setIcon(icon)
+        self.window.playBtn.setIconSize(QtCore.QSize(24, 24))
+        self.audio_player.pause()
 
     def init_signals(self):
         self.window.playBtn.clicked.connect(self.on_press_play)
@@ -75,22 +99,13 @@ class AudioPlayer:
         self.file_format = ".mp3"
         self.player = None
         self.playing = False
-        self.update = update
         self.prog_tick_rate = 100
         self.volume = 100
 
     def play(self, track):
         if self.player != None and self.track != None:
-            print(self.player.is_playing())
-            if self.playing:
-                self.player.pause()
-                self.playing = False
-                return False
-            else:
-                self.player.play()
-                self.playing = True
-                self.track = track
-                return True
+                if self.is_playing:
+                    self.player.stop()
 
         abs_root = os.path.abspath(self.root)
         self.audio_file = find_local_track(track.id)
@@ -102,6 +117,13 @@ class AudioPlayer:
             self.player.play()
             return True
         return False
+
+    def pause(self):
+        self.player.pause()
+        self.playing = False
+
+    def unpause(self):
+        self.player.play()
 
     def get_elapsed_percent(self):
         if self.player == None or self.player.get_length() == 0: return 0
