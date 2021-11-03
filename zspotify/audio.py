@@ -7,7 +7,7 @@ from PyQt5.QtCore import pyqtSignal, QThreadPool
 from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK
 from zspotify import ZSpotify
 from worker import Worker
-from search_data import Track
+from item import Track
 
 
 class MusicController:
@@ -18,9 +18,8 @@ class MusicController:
         self.init_signals()
         self.set_volume(self.window.volumeSlider.value())
 
-    def play_selected(self):
-        if self.window.selected_item == None: return
-        if self.audio_player.play(self.window.selected_item):
+    def play(self, item):
+        if self.audio_player.play(item):
             path = PAUSE_ICON
             worker = Worker(self.run_progress_bar, 0, update=self.update_music_progress)
             QThreadPool.globalInstance().start(worker)
@@ -54,15 +53,15 @@ class MusicController:
     def set_volume(self, value):
         self.audio_player.set_volume(value)
 
+    def on_press_play(self):
+        if self.window.selected_item != None: self.play(self.window.selected_item)
+
     def init_signals(self):
-        self.window.playBtn.clicked.connect(self.play_selected)
+        self.window.playBtn.clicked.connect(self.on_press_play)
         self.window.playbackBar.sliderPressed.connect(self.on_seek)
         self.window.playbackBar.sliderReleased.connect(self.on_stop_seeking)
         self.window.volumeSlider.valueChanged.connect(self.set_volume)
-        for tree in self.window.trees:
-            tree.itemDoubleClicked.connect(self.play_selected)
-        for tree in self.window.libraryTrees:
-            tree.itemDoubleClicked.connect(self.play_selected)
+
 
 class AudioPlayer:
 
@@ -82,18 +81,16 @@ class AudioPlayer:
 
     def play(self, track):
         if self.player != None and self.track != None:
-            if self.track.id != track.id:
+            print(self.player.is_playing())
+            if self.playing:
                 self.player.pause()
                 self.playing = False
+                return False
             else:
-                if self.playing:
-                    self.player.pause()
-                    self.playing = False
-                    return False
-                else:
-                    self.player.play()
-                    self.playing = True
-                    return True
+                self.player.play()
+                self.playing = True
+                self.track = track
+                return True
 
         abs_root = os.path.abspath(self.root)
         self.audio_file = find_local_track(track.id)
@@ -115,7 +112,6 @@ class AudioPlayer:
         self.player.set_position(percent)
 
 
-
     def is_playing(self):
         if self.player != None and self.player.is_playing():
             self.playing = self.player.is_playing()
@@ -126,6 +122,8 @@ class AudioPlayer:
         self.volume = max(0, min(100, value))
         if self.player != None:
             self.player.audio_set_volume(value)
+
+
 
 def find_local_track(id):
     track_files = find_local_tracks()
@@ -153,7 +151,8 @@ def get_track_file_as_item(file, index):
         __file__), ZSpotify.get_config(ROOT_PATH))
     path = f"{download_directory}/{file}"
     tag = music_tag.load_file(path)
-    track = Track(index, tag[SPOTIFY_ID], tag[TRACKTITLE], tag[ARTIST], album=tag[ALBUM], img=tag[ARTWORK])
+    track = Track(index, str(tag[SPOTIFY_ID]), str(tag[TRACKTITLE]), str(tag[ARTIST]), \
+        album=str(tag[ALBUM]), downloaded=True)
     return track
 
 def find_id_in_metadata(file_name):
