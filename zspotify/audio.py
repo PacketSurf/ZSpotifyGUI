@@ -65,6 +65,7 @@ class MusicController:
 
     def set_volume(self, value):
         self.audio_player.set_volume(value)
+        #self.window.
 
     def on_press_play(self):
         if self.audio_player.is_playing():
@@ -168,23 +169,22 @@ def find_local_tracks():
     all_results = []
     for format in FORMATS:
         ext = "*." + format
-        print(ext)
         results = [y for x in os.walk(root) for y in glob(os.path.join(x[0], ext))]
         all_results += results
     files = [res.replace(root,"") for res in all_results]
     track_files = []
     for file in files:
         split = file.split(".")
-        if not len(split) >= 2 or split[1] not in FORMATS:
+        print(split[-1])
+        if not len(split) >= 2 or split[-1] not in FORMATS:
             continue
         else:
             track_files.append(file)
     return track_files
 
 def get_track_file_as_item(file, index):
-    split = file.split(".")
-    if not len(split) >= 2 or split[1] not in FORMATS:
-        return None
+    for format in FORMATS:
+        if format in file: continue
     download_directory = os.path.join(os.path.dirname(
         __file__), ZSpotify.get_config(ROOT_PATH))
     download_directory = download_directory.replace("zspotify/../", "")
