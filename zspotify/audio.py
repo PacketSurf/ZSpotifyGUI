@@ -52,7 +52,7 @@ class MusicController:
 
     def run_progress_bar(self, signal, *args, **kwargs):
         while(self.audio_player.is_playing() or self.awaiting_play):
-            print(f"{self.audio_player.player.get_time()} : {self.audio_player.player.get_length()}")
+            #print(f"{self.audio_player.player.get_time()} : {self.audio_player.player.get_length()}")
             self.awaiting_play = False
             if self.audio_player.player.get_length() > 0:
                 signal(self.audio_player.get_elapsed_percent(), self.audio_player.player.get_time(), \
@@ -165,8 +165,13 @@ def find_local_track(id):
 
 def find_local_tracks():
     root = ZSpotify.get_config(ROOT_PATH)
-    results = [y for x in os.walk(root) for y in glob(os.path.join(x[0], '*.mp3'))]
-    files = [res.replace(root,"") for res in results]
+    all_results = []
+    for format in FORMATS:
+        ext = "*." + format
+        print(ext)
+        results = [y for x in os.walk(root) for y in glob(os.path.join(x[0], ext))]
+        all_results += results
+    files = [res.replace(root,"") for res in all_results]
     track_files = []
     for file in files:
         split = file.split(".")

@@ -62,6 +62,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.musicTabs.setCurrentIndex(0)
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.select()
+        self.download_tree.tree.sortItems(0,0)
 
 
 
