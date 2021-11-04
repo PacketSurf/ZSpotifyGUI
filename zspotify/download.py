@@ -4,9 +4,9 @@ from album import download_album, download_artist_albums
 from track import download_track
 from item import Item, Track, Artist, Album, Playlist
 from worker import Worker
-from const import TRACKS, ARTISTS, ALBUMS, PLAYLISTS, ROOT_PATH, DOWNLOAD_REAL_TIME
+from const import TRACKS, ARTISTS, ALBUMS, PLAYLISTS, ROOT_PATH, DOWNLOAD_REAL_TIME, DOWNLOAD_FORMAT, FORMATS
 from PyQt5.QtCore import QThreadPool, QObject, pyqtSignal
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QFileDialog
 
 class DownloadController(QObject):
 
@@ -18,6 +18,7 @@ class DownloadController(QObject):
         self.window.progressBar.hide()
         dl_realtime = ZSpotify.get_config(DOWNLOAD_REAL_TIME)
         self.window.realTimeCheckBox.setChecked(dl_realtime)
+        self.load_download_format()
         self.init_signals()
         self.item = None
         self.downloading = False
@@ -76,12 +77,26 @@ class DownloadController(QObject):
         QApplication.processEvents()
 
     def change_dl_dir(self):
-        dialog = QFileDialog(self)
+        dialog = QFileDialog(self.window)
         dialog.setFileMode(QFileDialog.Directory)
         if dialog.exec_():
             dir = dialog.selectedFiles()
             ZSpotify.set_config(ROOT_PATH, dir[0])
 
+    def update_download_format(self, index):
+        format = self.window.fileFormatCombo.itemText(index)
+        ZSpotify.set_config(DOWNLOAD_FORMAT, format)
+
+    def load_download_format(self):
+        self.window.fileFormatCombo.clear()
+        format = ZSpotify.get_config(DOWNLOAD_FORMAT)
+        self.window.fileFormatCombo.addItems(FORMATS)
+        for i in range(len(FORMATS)):
+            if format == FORMATS[i]:
+                self.window.fileFormatCombo.setCurrentIndex(i)
+                return
+        self.window.fileFormatCombo.setCurrentIndex(0)
+        ZSpotify.set_config(DOWNLOAD_FORMAT, FORMATS[0])
         #0 for off, 1 for on
     def set_real_time_dl(self, value):
         if value == 0:
@@ -93,3 +108,4 @@ class DownloadController(QObject):
         self.window.downloadBtn.clicked.connect(self.on_start_download)
         self.window.dirBtn.clicked.connect(self.change_dl_dir)
         self.window.realTimeCheckBox.stateChanged.connect(self.set_real_time_dl)
+        self.window.fileFormatCombo.currentIndexChanged.connect(self.update_download_format)

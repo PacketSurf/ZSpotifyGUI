@@ -53,6 +53,12 @@ class ItemTree(QObject):
         if self.tree.topLevelItemCount() > 0:
             self.tree.setCurrentItem(self.tree.topLevelItem(0))
 
+    def clear(self):
+        self.treeItems = []
+        self.selected_item = None
+        self.tree.clear()
+
+
     def get_selected_item(self):
         tree_widget = self.tree.currentItem()
         if tree_widget:

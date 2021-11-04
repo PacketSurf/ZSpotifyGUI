@@ -16,7 +16,7 @@ from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
     OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS,\
-    DOWNLOADED, LIKED
+    DOWNLOADED, LIKED, DOWNLOAD_FORMAT
 from worker import Worker
 from audio import MusicController, find_local_tracks, get_track_file_as_item
 from download import DownloadController
@@ -62,6 +62,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.musicTabs.setCurrentIndex(0)
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.select()
+
 
 
     def show(self):
@@ -125,11 +126,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.playlists_tree.set_items(results[PLAYLISTS])
 
 
-    def update_result_amount(self, index):
-        amount = int(self.resultAmountCombo.itemText(index))
-        ZSpotify.set_config(SEARCH_RESULTS, amount)
-
-
     def update_item_info(self, item, headers, labels):
         self.selected_item = item
         [lbl.setText("") for lbl in self.info_labels]
@@ -168,6 +164,9 @@ class Window(QMainWindow, Ui_MainWindow):
         lbl.setScaledContents(True)
         lbl.show()
 
+    def update_result_amount(self, index):
+        amount = int(self.resultAmountCombo.itemText(index))
+        ZSpotify.set_config(SEARCH_RESULTS, amount)
 
     def get_item(self, id):
         if self.results == {}: return
@@ -191,7 +190,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.libraryTabs.currentChanged.connect(self.on_tab_change)
         self.loginBtn.clicked.connect(self.open_login_dialog)
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
-        self.download_controller.downloadComplete.connect(self.download_tree.add_item)
+        self.download_controller.downloadComplete.connect(self.init_downloads_view)
+
         for tree in self.trees:
             tree.itemChanged.connect(self.update_item_info)
             tree.onSelected.connect(self.update_item_labels)
@@ -201,6 +201,7 @@ class Window(QMainWindow, Ui_MainWindow):
         track_files = find_local_tracks()
         self.library[DOWNLOADED] = []
         index = 0
+        self.download_tree.clear()
         for file in track_files:
             track = get_track_file_as_item(file, index)
             if track != None:

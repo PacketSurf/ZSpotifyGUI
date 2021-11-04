@@ -118,9 +118,11 @@ BITRATE = 'BITRATE'
 
 SEARCH_RESULTS = 'SEARCH_RESULTS'
 
-PAUSE_ICON = '../resources/pauseBtn.png'
+PAUSE_ICON = '../resources/pauseIcon.png'
 
-PLAY_ICON = '../resources/playBtn16Green.png'
+PLAY_ICON = '../resources/playIcon.png'
+
+FORMATS = ['mp3', 'ogg']
 
 
 CODEC_MAP = {

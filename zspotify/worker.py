@@ -7,19 +7,23 @@ from const import TRACKS, ARTISTS, ALBUMS, PLAYLISTS
 class WorkerSignals(QObject):
     finished = pyqtSignal()
     error = pyqtSignal(tuple)
-    update = pyqtSignal(float)
+    update = pyqtSignal(object)
     result = pyqtSignal(object)
 
+class MusicSignals(WorkerSignals):
+    update = pyqtSignal(float, int, int)
 
 class Worker(QRunnable):
     #kwarg passed with key "update" is a callback function that gets connected to worker update signal
-    #When using update the fn must have a first parameter that will get a signal emit function passed to it
+    #When using update the fn method must have a first parameter that will be a signal emit function 
     def __init__(self, fn, *args, **kwargs):
         super().__init__()
         self.fn = fn
         self.args = args
         self.kwargs = kwargs
-        self.signals = WorkerSignals()
+        if "signals" in self.kwargs:
+            self.signals =self.kwargs["signals"]
+        else: self.signals = WorkerSignals()
         if "update" in self.kwargs.keys():
             self.signals.update.connect(self.kwargs["update"])
 
