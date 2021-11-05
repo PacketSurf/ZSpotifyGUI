@@ -28,6 +28,7 @@ from item import Track, Artist, Album, Playlist
 def main():
     ZSpotify.load_config()
     app = QApplication(sys.argv)
+    app.setApplicationName("ZSpotify")
     app.setStyleSheet(qdarktheme.load_stylesheet("dark"))
     win = Window()
     win.show()
