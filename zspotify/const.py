@@ -122,6 +122,10 @@ PAUSE_ICON = '../resources/pauseIcon.png'
 
 PLAY_ICON = '../resources/playIcon.png'
 
+VOL_ICON = '../resources/volIcon.png'
+
+MUTE_ICON = '../resources/mutedIcon.png'
+
 FORMATS = ['mp3', 'ogg']
 
 

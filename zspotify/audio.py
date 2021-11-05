@@ -4,7 +4,9 @@ import time
 import music_tag
 from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool
-from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS
+from PyQt5.QtGui import QImage, QPixmap
+from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
+    VOL_ICON, MUTE_ICON
 from zspotify import ZSpotify
 from worker import Worker, MusicSignals
 from item import Track
@@ -18,19 +20,23 @@ class MusicController:
         self.seeking = False
         self.worker = None
         self.audio_player = AudioPlayer(self.update_music_progress)
+        self.item = None
         self.init_signals()
         self.set_volume(self.window.volumeSlider.value())
         self.awaiting_play = False
+        self.queue_next_song = False
+        self.paused = False
 
     def play(self, item):
         if self.audio_player.play(item):
+            self.queue_next_song = False
+            self.paused = False
             self.window.playingInfo1.setText(f"{item.title}  -")
             self.window.playingInfo2.setText(f"{item.artists}")
             self.set_icon(PAUSE_ICON)
             self.awaiting_play = True
+            self.item = item
             self.start_progress_worker()
-        else:
-            self.set_icon(PLAY_ICON)
 
     def start_progress_worker(self):
         self.worker = Worker(self.run_progress_bar, update=self.update_music_progress, signals=MusicSignals())
@@ -38,10 +44,25 @@ class MusicController:
         self.worker.signals.error.connect(lambda e: print(e))
         QThreadPool.globalInstance().start(self.worker)
 
+    def pause(self):
+        self.set_icon(PLAY_ICON)
+        self.paused = True
+        self.queue_next_song = False
+        self.audio_player.pause()
+
+    def unpause(self):
+        self.set_icon(PAUSE_ICON)
+        self.paused = False
+        self.queue_next_song = True
+        self.audio_player.unpause()
+        self.start_progress_worker()
+
+
 
     def update_music_progress(self, perc, elapsed, total):
         if not self.seeking:
             self.window.playbackBar.setValue(int(perc*10000))
+            self.queue_next_song = True
         if self.seeking:
             duration = self.audio_player.player.get_length()
             playback_bar_perc = self.window.playbackBar.value()/self.window.playbackBar.maximum()
@@ -52,32 +73,32 @@ class MusicController:
 
     def run_progress_bar(self, signal, *args, **kwargs):
         while(self.audio_player.is_playing() or self.awaiting_play):
-            #print(f"{self.audio_player.player.get_time()} : {self.audio_player.player.get_length()}")
             self.awaiting_play = False
             if self.audio_player.player.get_length() > 0:
                 signal(self.audio_player.get_elapsed_percent(), self.audio_player.player.get_time(), \
                     self.audio_player.player.get_length())
             QtTest.QTest.qWait(100)
 
+
     def on_progress_finished(self):
         self.worker = None
+        if self.queue_next_song:
+            self.on_next()
 
 
     def set_volume(self, value):
         self.audio_player.set_volume(value)
-        #self.window.
+        if value == 0:
+            self.set_vol_icon(MUTE_ICON)
+        else: self.set_vol_icon(VOL_ICON)
 
     def on_press_play(self):
         if self.audio_player.is_playing():
-            self.set_icon(PLAY_ICON)
-            self.audio_player.pause()
-        elif self.window.selected_item != None:
-            if not self.audio_player.is_playing() and self.audio_player.player != None:
-                self.audio_player.player.set_pause(1)
-                self.set_icon(PAUSE_ICON)
-                self.start_progress_worker()
-            else:
+            self.pause()
+        elif self.window.selected_item:
+            if not self.paused:
                 self.play(self.window.selected_item)
+            else: self.unpause()
 
     def on_seek(self):
         self.seeking = True
@@ -87,6 +108,16 @@ class MusicController:
         self.audio_player.set_time(percent)
         self.seeking = False
 
+    def on_next(self):
+        if not self.item: return
+        item = self.window.select_next_item(self.item)
+        if item: self.play(item)
+
+    def on_prev(self):
+        if not self.item: return
+        item = self.window.select_prev_item(self.item)
+        if item: self.play(item)
+
 
     def set_icon(self, icon_path):
         icon = QtGui.QIcon()
@@ -95,12 +126,20 @@ class MusicController:
         self.window.playBtn.setIconSize(QtCore.QSize(24, 24))
         self.audio_player.pause()
 
+    def set_vol_icon(self, icon_path):
+        lbl = self.window.volIconLabel
+        pixmap = QPixmap(icon_path)
+        lbl.setPixmap(pixmap)
+        lbl.setScaledContents(True)
+        lbl.show()
+
     def init_signals(self):
         self.window.playBtn.clicked.connect(self.on_press_play)
         self.window.playbackBar.sliderPressed.connect(self.on_seek)
         self.window.playbackBar.sliderReleased.connect(self.on_stop_seeking)
         self.window.volumeSlider.valueChanged.connect(self.set_volume)
-
+        self.window.nextBtn.clicked.connect(self.on_next)
+        self.window.prevBtn.clicked.connect(self.on_prev)
 
 class AudioPlayer:
 
@@ -119,7 +158,6 @@ class AudioPlayer:
         if self.player != None and self.track != None:
                 if self.is_playing:
                     self.player.stop()
-
         self.audio_file = find_local_track(track.id)
         if self.audio_file != None:
             self.track = track
@@ -172,15 +210,7 @@ def find_local_tracks():
         results = [y for x in os.walk(root) for y in glob(os.path.join(x[0], ext))]
         all_results += results
     files = [res.replace(root,"") for res in all_results]
-    track_files = []
-    for file in files:
-        split = file.split(".")
-        print(split[-1])
-        if not len(split) >= 2 or split[-1] not in FORMATS:
-            continue
-        else:
-            track_files.append(file)
-    return track_files
+    return files
 
 def get_track_file_as_item(file, index):
     for format in FORMATS:

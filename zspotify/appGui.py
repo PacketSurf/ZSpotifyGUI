@@ -1,6 +1,7 @@
 import sys
 import time
 import requests
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThreadPool
 from PyQt5.QtWidgets import (
 
@@ -56,12 +57,12 @@ class Window(QMainWindow, Ui_MainWindow):
         self.logged_in = False
         self.selected_item = None
         self.results = {}
-        self.selected_tab = self.downloadedTab
+        self.selected_tab = self.download_tree
         self.searchTabIndex = 1
         self.resultTabs.setCurrentIndex(0)
         self.musicTabs.setCurrentIndex(0)
         self.libraryTabs.setCurrentIndex(0)
-        self.download_tree.select()
+        self.download_tree.focus()
         self.download_tree.tree.sortItems(0,0)
 
 
@@ -96,13 +97,13 @@ class Window(QMainWindow, Ui_MainWindow):
         i = self.musicTabs.currentIndex()
         library = self.tabs[i]
         self.selected_tab = library[index]
-        self.selected_tab.select()
+        self.selected_tab.focus()
 
     def on_music_tab_change(self, index):
         tabs = self.tabs[index]
         i = self.tabWidgets[index].currentIndex()
         self.selected_tab = tabs[i]
-        self.selected_tab.select()
+        self.selected_tab.focus()
 
     #run worker on thread that searches and return results through signal callback
     def send_search_input(self):
@@ -119,7 +120,7 @@ class Window(QMainWindow, Ui_MainWindow):
             self.open_login_dialog()
 
     def display_results(self, results):
-        self.selected_tab.select()
+        self.selected_tab.focus()
         self.results = results
         self.songs_tree.set_items(results[TRACKS])
         self.artists_tree.set_items(results[ARTISTS])
@@ -169,15 +170,30 @@ class Window(QMainWindow, Ui_MainWindow):
         amount = int(self.resultAmountCombo.itemText(index))
         ZSpotify.set_config(SEARCH_RESULTS, amount)
 
-    def get_item(self, id):
-        if self.results == {}: return
-        i = self.resultTabs.currentIndex()
-        tab = self.tabs[i]
-        for item in self.results[tab]:
-            if item.id == id:
-                return item
-        return None
 
+    def select_next_item(self, current_item=None):
+        if current_item:
+            index = self.selected_tab.item_index(current_item)
+        else:
+            index = self.selected_tab.current_item_index()
+        if index == -1: return None
+        if index == self.selected_tab.count():
+            index = 0
+        else:
+            index += 1
+        return self.selected_tab.select_index(index)
+
+    def select_prev_item(self, current_item=None):
+        if current_item:
+            index = self.selected_tab.item_index(current_item)
+        else:
+            index = self.selected_tab.current_item_index()
+        if index == -1: return None
+        if index <= 0:
+            index = self.selected_tab.count()
+        else:
+            index -= 1
+        return self.selected_tab.select_index(index)
 
     def init_info_labels(self):
         self.info_labels = [self.infoLabel1, self.infoLabel2, self.infoLabel3, self.infoLabel4, self.infoLabel5, self.infoLabel6]
@@ -197,6 +213,24 @@ class Window(QMainWindow, Ui_MainWindow):
             tree.itemChanged.connect(self.update_item_info)
             tree.onSelected.connect(self.update_item_labels)
             tree.doubleClicked.connect(self.music_controller.play)
+            return_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Return,
+                tree.tree,
+                context=QtCore.Qt.WidgetShortcut,
+                activated=self.on_press_return_item)
+
+            space_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Space,
+                tree.tree,
+                context=QtCore.Qt.WidgetShortcut,
+                activated=self.on_press_space_item)
+
+
+    def on_press_return_item(self):
+        item = self.selected_tab.get_selected_item()
+        if item: self.music_controller.play(item)
+
+    def on_press_space_item(self):
+        item = self.selected_tab.get_selected_item()
+        if item: self.music_controller.on_press_play()
 
     def init_downloads_view(self):
         track_files = find_local_tracks()

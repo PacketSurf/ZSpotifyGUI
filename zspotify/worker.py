@@ -15,7 +15,7 @@ class MusicSignals(WorkerSignals):
 
 class Worker(QRunnable):
     #kwarg passed with key "update" is a callback function that gets connected to worker update signal
-    #When using update the fn method must have a first parameter that will be a signal emit function 
+    #When using update the fn method must have a first parameter that will be a signal emit function
     def __init__(self, fn, *args, **kwargs):
         super().__init__()
         self.fn = fn
