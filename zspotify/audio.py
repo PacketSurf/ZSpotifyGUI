@@ -15,6 +15,7 @@ from glob import glob
 
 
 class MusicController:
+
     def __init__(self, window):
         self.window = window
         self.seeking = False
@@ -117,6 +118,11 @@ class MusicController:
 
     def on_prev(self):
         if not self.item and not self.playlist_tree: return
+        if self.audio_player.is_playing():
+            if self.audio_player.player and self.audio_player.player.get_time() > 15000:
+                self.awaiting_play = True
+                self.audio_player.restart()
+                return
         item = self.window.select_prev_item(self.item, self.playlist_tree)
         if item: self.play(item, self.playlist_tree)
 
@@ -176,6 +182,10 @@ class AudioPlayer:
 
     def unpause(self):
         self.player.play()
+
+    def restart(self):
+        if self.player:
+            self.player.set_time(0)
 
     def get_elapsed_percent(self):
         if self.player == None or self.player.get_length() == 0: return 0
