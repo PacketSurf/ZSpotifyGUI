@@ -80,14 +80,14 @@ class ZSpotify:
     def get_auth_header(cls):
         return {
             'Authorization': f'Bearer {cls.__get_auth_token()}',
-            'Accept-Language': f'{cls.CONFIG.get(LANGUAGE)}'
+            'Accept-Language': f'{cls.CONFIG.get("LANGUAGE")}'
         }
 
     @classmethod
     def get_auth_header_and_params(cls, limit, offset):
         return {
             'Authorization': f'Bearer {cls.__get_auth_token()}',
-            'Accept-Language': f'{cls.CONFIG.get(LANGUAGE)}'
+            'Accept-Language': f'{cls.CONFIG.get("LANGUAGE")}'
         }, {LIMIT: limit, OFFSET: offset}
 
     @classmethod
