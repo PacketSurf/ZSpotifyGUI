@@ -70,6 +70,12 @@ ALBUMS = 'albums'
 
 DURATION = "duration_ms"
 
+SPOTIFY_ID = 'comment'
+
+DOWNLOADED = 'downloaded'
+
+LIKED = 'liked'
+
 TYPE = 'type'
 
 PREMIUM = 'premium'
@@ -112,6 +118,17 @@ BITRATE = 'BITRATE'
 
 SEARCH_RESULTS = 'SEARCH_RESULTS'
 
+PAUSE_ICON = '../resources/pauseIcon.png'
+
+PLAY_ICON = '../resources/playIcon.png'
+
+VOL_ICON = '../resources/volIcon.png'
+
+MUTE_ICON = '../resources/mutedIcon.png'
+
+FORMATS = ['mp3', 'ogg']
+
+
 CODEC_MAP = {
     'aac': 'aac',
     'fdk_aac': 'libfdk_aac',
@@ -137,7 +154,11 @@ CONFIG_DEFAULT_SETTINGS = {
     'ROOT_PODCAST_PATH': '../ZSpotify Podcasts/',
     'SKIP_EXISTING_FILES': True,
     'DOWNLOAD_FORMAT': 'ogg',
+<<<<<<< HEAD
     'SEARCH_RESULTS': 10,
+=======
+    'SEARCH_RESULTS':10,
+>>>>>>> musicPlayer
     'FORCE_PREMIUM': False,
     'ANTI_BAN_WAIT_TIME': 1,
     'OVERRIDE_AUTO_WAIT': False,

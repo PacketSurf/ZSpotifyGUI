@@ -18,10 +18,9 @@ from librespot.core import Session
 from const import CREDENTIALS_JSON, TYPE, \
     PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, \
     PLAYLIST_READ_PRIVATE, CONFIG_DEFAULT_SETTINGS,TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
-    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE, USER_LIBRARY_READ, DURATION,\
-    SEARCH_RESULTS
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE, USER_LIBRARY_READ, DURATION, SEARCH_RESULTS
 from utils import MusicFormat, ms_to_time_str
-from search_data import Track, Album, Artist, Playlist
+from item import Track, Album, Artist, Playlist
 
 
 
@@ -72,8 +71,8 @@ class ZSpotify:
     def search(cls, search_terms):
         # Clean search term
         """ Searches Spotify's API for relevant data """
-        resultAmount = int(cls.get_config(SEARCH_RESULTS))
-        params = {'limit': resultAmount,
+        results = cls.CONFIG[SEARCH_RESULTS]
+        params = {'limit': results,
                   'offset': '0',
                   'q': search_terms,
                   'type': 'track,album,artist,playlist'}

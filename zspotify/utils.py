@@ -10,7 +10,7 @@ import music_tag
 import requests
 
 from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
-    WINDOWS_SYSTEM
+    WINDOWS_SYSTEM, SPOTIFY_ID
 
 
 class MusicFormat(str, Enum):
@@ -99,7 +99,7 @@ def clear() -> None:
         os.system('clear')
 
 
-def set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number) -> None:
+def set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number, spotify_id="") -> None:
     """ sets music_tag metadata """
     tags = music_tag.load_file(filename)
     tags[ARTIST] = conv_artist_format(artists)
@@ -108,6 +108,7 @@ def set_audio_tags(filename, artists, name, album_name, release_year, disc_numbe
     tags[YEAR] = release_year
     tags[DISCNUMBER] = disc_number
     tags[TRACKNUMBER] = track_number
+    tags[SPOTIFY_ID] = spotify_id #saves the spotify ID in one of unused media tags such as comment
     tags.save()
 
 
@@ -232,9 +233,9 @@ def fix_filename(name):
     return re.sub(r'[/\\:|<>"?*\0-\x1f]|^(AUX|COM[1-9]|CON|LPT[1-9]|NUL|PRN)(?![^.])|^\s|[\s.]$', "_", name, flags=re.IGNORECASE)
 
 def ms_to_time_str(ms):
-    overallSec = ms/1000
-    min = int(overallSec/60)
-    sec = str(int((overallSec%60)))
+
+    min = int((ms/(60*1000))%60)
+    sec = str(int((ms/1000)%60))
     if len(sec) == 1:
         sec = f"0{sec}"
-    return f"{min}:{sec}"
+    return f"{min}:{sec[:2]}"
