@@ -10,7 +10,7 @@ import music_tag
 import requests
 
 from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
-    WINDOWS_SYSTEM
+    WINDOWS_SYSTEM, ALBUMARTIST
 
 
 class MusicFormat(str, Enum):
@@ -102,6 +102,7 @@ def clear() -> None:
 def set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number) -> None:
     """ sets music_tag metadata """
     tags = music_tag.load_file(filename)
+    tags[ALBUMARTIST] = artists[0]
     tags[ARTIST] = conv_artist_format(artists)
     tags[TRACKTITLE] = name
     tags[ALBUM] = album_name

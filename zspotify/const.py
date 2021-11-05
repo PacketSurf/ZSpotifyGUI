@@ -18,6 +18,8 @@ ARTIST = 'artist'
 
 ARTISTS = 'artists'
 
+ALBUMARTIST = 'albumartist'
+
 ARTWORK = 'artwork'
 
 TRACKS = 'tracks'
