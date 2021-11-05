@@ -154,11 +154,7 @@ CONFIG_DEFAULT_SETTINGS = {
     'ROOT_PODCAST_PATH': '../ZSpotify Podcasts/',
     'SKIP_EXISTING_FILES': True,
     'DOWNLOAD_FORMAT': 'ogg',
-<<<<<<< HEAD
     'SEARCH_RESULTS': 10,
-=======
-    'SEARCH_RESULTS':10,
->>>>>>> musicPlayer
     'FORCE_PREMIUM': False,
     'ANTI_BAN_WAIT_TIME': 1,
     'OVERRIDE_AUTO_WAIT': False,
