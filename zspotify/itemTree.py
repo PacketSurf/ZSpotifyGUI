@@ -3,18 +3,16 @@ from PyQt5.QtCore import pyqtSignal, QObject
 from item import Item
 
 
-class ItemTree(QObject):
+class ItemTree:
 
-    doubleClicked = pyqtSignal(Item)
-    itemChanged = pyqtSignal(Item, list, list)
-    onSelected = pyqtSignal(list)
 
     def __init__(self, tree, tree_widget_builder = None):
-        super().__init__()
+
         self.tree = tree
         self.items = []
         self.tree_items = {}
         self.selected_item = None
+        self.signals = ItemTreeSignals()
         if tree_widget_builder == None:
             tree_widget_builder = lambda track: QTreeWidgetItem([str(track.index), track.title, track.artists, \
                 track.album, str(track.duration), track.release_date])
@@ -50,7 +48,7 @@ class ItemTree(QObject):
             else: break
 
     def focus(self):
-        self.onSelected.emit(self.get_headers())
+        self.signals.onSelected.emit(self.get_headers())
         if self.tree.topLevelItemCount() > 0:
             self.tree.setCurrentItem(self.tree.topLevelItem(0))
 
@@ -62,7 +60,9 @@ class ItemTree(QObject):
 
     def item_index(self, item):
         if not self.tree_items or len(self.tree_items) <= 0: return -1
+        if not item in self.tree_items: return -1
         for i in range(self.tree.topLevelItemCount()):
+
             if self.tree.topLevelItem(i) == self.tree_items[item]:
                 return i
         return -1
@@ -108,12 +108,17 @@ class ItemTree(QObject):
         labels = []
         for i in range(widget_item.columnCount()):
             labels.append(widget_item.text(i))
-        self.itemChanged.emit(self.selected_item, headers, labels)
+        self.signals.itemChanged.emit(self.selected_item, headers, labels)
 
     def on_double_clicked(self,widget_item, item):
         item = self.get_selected_item()
-        self.doubleClicked.emit(item)
+        self.signals.doubleClicked.emit(item, self)
 
     def init_signals(self):
         self.tree.currentItemChanged.connect(self.on_item_changed)
         self.tree.itemDoubleClicked.connect(self.on_double_clicked)
+
+class ItemTreeSignals(QObject):
+    doubleClicked = pyqtSignal(Item, ItemTree)
+    itemChanged = pyqtSignal(Item, list, list)
+    onSelected = pyqtSignal(list)

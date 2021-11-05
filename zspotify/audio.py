@@ -21,13 +21,14 @@ class MusicController:
         self.worker = None
         self.audio_player = AudioPlayer(self.update_music_progress)
         self.item = None
+        self.playlist_tree = None
         self.init_signals()
         self.set_volume(self.window.volumeSlider.value())
         self.awaiting_play = False
         self.queue_next_song = False
         self.paused = False
 
-    def play(self, item):
+    def play(self, item, playlist_tree):
         if self.audio_player.play(item):
             self.queue_next_song = False
             self.paused = False
@@ -36,6 +37,7 @@ class MusicController:
             self.set_icon(PAUSE_ICON)
             self.awaiting_play = True
             self.item = item
+            self.playlist_tree = playlist_tree
             self.start_progress_worker()
 
     def start_progress_worker(self):
@@ -96,8 +98,8 @@ class MusicController:
         if self.audio_player.is_playing():
             self.pause()
         elif self.window.selected_item:
-            if not self.paused:
-                self.play(self.window.selected_item)
+            if not self.paused and self.window.selected_item and self.window.selected_tab:
+                self.play(self.window.selected_item, self.window.selected_tab)
             else: self.unpause()
 
     def on_seek(self):
@@ -109,14 +111,14 @@ class MusicController:
         self.seeking = False
 
     def on_next(self):
-        if not self.item: return
-        item = self.window.select_next_item(self.item)
-        if item: self.play(item)
+        if not self.item and not self.playlist_tree: return
+        item = self.window.select_next_item(self.item, self.playlist_tree)
+        if item: self.play(item, self.playlist_tree)
 
     def on_prev(self):
-        if not self.item: return
-        item = self.window.select_prev_item(self.item)
-        if item: self.play(item)
+        if not self.item and not self.playlist_tree: return
+        item = self.window.select_prev_item(self.item, self.playlist_tree)
+        if item: self.play(item, self.playlist_tree)
 
 
     def set_icon(self, icon_path):

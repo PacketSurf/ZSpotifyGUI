@@ -114,8 +114,6 @@ class Window(QMainWindow, Ui_MainWindow):
             QThreadPool.globalInstance().start(worker)
             self.musicTabs.setCurrentIndex(1)
             self.resultTabs.setCurrentIndex(0)
-
-
         elif not self.logged_in:
             self.open_login_dialog()
 
@@ -171,29 +169,31 @@ class Window(QMainWindow, Ui_MainWindow):
         ZSpotify.set_config(SEARCH_RESULTS, amount)
 
 
-    def select_next_item(self, current_item=None):
+    def select_next_item(self, current_item=None, tree=None):
+        if not tree: tree = self.selected_tab
         if current_item:
-            index = self.selected_tab.item_index(current_item)
+            index = tree.item_index(current_item)
         else:
-            index = self.selected_tab.current_item_index()
+            index = tree.current_item_index()
         if index == -1: return None
-        if index == self.selected_tab.count():
+        if index == tree.count():
             index = 0
         else:
             index += 1
-        return self.selected_tab.select_index(index)
+        return tree.select_index(index)
 
-    def select_prev_item(self, current_item=None):
+    def select_prev_item(self, current_item=None, tree=None):
+        if not tree: tree = self.selected_tab
         if current_item:
-            index = self.selected_tab.item_index(current_item)
+            index = tree.item_index(current_item)
         else:
-            index = self.selected_tab.current_item_index()
+            index = tree.current_item_index()
         if index == -1: return None
         if index <= 0:
-            index = self.selected_tab.count()
+            index = tree.count()
         else:
             index -= 1
-        return self.selected_tab.select_index(index)
+        return tree.select_index(index)
 
     def init_info_labels(self):
         self.info_labels = [self.infoLabel1, self.infoLabel2, self.infoLabel3, self.infoLabel4, self.infoLabel5, self.infoLabel6]
@@ -210,9 +210,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.download_controller.downloadComplete.connect(self.init_downloads_view)
 
         for tree in self.trees:
-            tree.itemChanged.connect(self.update_item_info)
-            tree.onSelected.connect(self.update_item_labels)
-            tree.doubleClicked.connect(self.music_controller.play)
+            tree.signals.itemChanged.connect(self.update_item_info)
+            tree.signals.onSelected.connect(self.update_item_labels)
+            tree.signals.doubleClicked.connect(self.music_controller.play)
             return_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Return,
                 tree.tree,
                 context=QtCore.Qt.WidgetShortcut,

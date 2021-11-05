@@ -8,3 +8,4 @@ PyQt5
 pyqtdarktheme
 pydub
 protobuf
+python-vlc
