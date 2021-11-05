@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1440</width>
-    <height>855</height>
+    <height>852</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,6 +21,9 @@
     </size>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="sizeConstraint">
@@ -78,35 +81,20 @@
          </item>
          <item>
           <widget class="QComboBox" name="resultAmountCombo">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="minimumSize">
             <size>
-             <width>64</width>
+             <width>65</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>64</width>
+             <width>65</width>
              <height>16777215</height>
             </size>
            </property>
-           <property name="currentIndex">
-            <number>0</number>
-           </property>
-           <property name="sizeAdjustPolicy">
-            <enum>QComboBox::AdjustToContents</enum>
-           </property>
            <property name="minimumContentsLength">
-            <number>7</number>
-           </property>
-           <property name="duplicatesEnabled">
-            <bool>false</bool>
+            <number>6</number>
            </property>
            <item>
             <property name="text">
@@ -136,7 +124,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="label_6">
            <property name="text">
             <string>Results</string>
            </property>
@@ -219,245 +207,764 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QTabWidget" name="resultTabs">
-          <property name="currentIndex">
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
            <number>0</number>
           </property>
-          <property name="movable">
-           <bool>false</bool>
+          <property name="bottomMargin">
+           <number>0</number>
           </property>
-          <widget class="QWidget" name="songsTab">
-           <attribute name="title">
-            <string>Songs</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <property name="leftMargin">
-             <number>5</number>
+          <item>
+           <widget class="QTabWidget" name="musicTabs">
+            <property name="styleSheet">
+             <string notr="true">border:0</string>
             </property>
-            <property name="topMargin">
+            <property name="tabPosition">
+             <enum>QTabWidget::West</enum>
+            </property>
+            <property name="currentIndex">
              <number>0</number>
             </property>
-            <property name="rightMargin">
-             <number>5</number>
+            <property name="tabBarAutoHide">
+             <bool>true</bool>
             </property>
-            <property name="bottomMargin">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QTreeWidget" name="songsTree">
-              <property name="dragEnabled">
-               <bool>false</bool>
+            <widget class="QWidget" name="libraryLayout">
+             <attribute name="title">
+              <string>Your Library</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_10">
+              <property name="leftMargin">
+               <number>3</number>
               </property>
-              <property name="alternatingRowColors">
-               <bool>true</bool>
+              <property name="topMargin">
+               <number>0</number>
               </property>
-              <property name="animated">
-               <bool>true</bool>
+              <property name="rightMargin">
+               <number>3</number>
               </property>
-              <attribute name="headerDefaultSectionSize">
-               <number>230</number>
-              </attribute>
-              <attribute name="headerMinimumSectionSize">
-               <number>15</number>
-              </attribute>
-              <column>
-               <property name="text">
-                <string>Index</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Title</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Artists</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Album</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Duration</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Release Date</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="artistsTab">
-           <attribute name="title">
-            <string>Artists</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <property name="leftMargin">
-             <number>5</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>5</number>
-            </property>
-            <property name="bottomMargin">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QTreeWidget" name="artistsTree">
-              <property name="alternatingRowColors">
-               <bool>true</bool>
+              <property name="bottomMargin">
+               <number>3</number>
               </property>
-              <property name="animated">
-               <bool>true</bool>
+              <item>
+               <widget class="QTabWidget" name="libraryTabs">
+                <property name="currentIndex">
+                 <number>0</number>
+                </property>
+                <widget class="QWidget" name="downloadedTab">
+                 <attribute name="title">
+                  <string>Downloaded</string>
+                 </attribute>
+                 <layout class="QVBoxLayout" name="verticalLayout_16">
+                  <property name="leftMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>3</number>
+                  </property>
+                  <item>
+                   <widget class="QTreeWidget" name="downloadedTree">
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="sortingEnabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="animated">
+                     <bool>true</bool>
+                    </property>
+                    <attribute name="headerDefaultSectionSize">
+                     <number>15</number>
+                    </attribute>
+                    <attribute name="headerMinimumSectionSize">
+                     <number>270</number>
+                    </attribute>
+                    <column>
+                     <property name="text">
+                      <string notr="true">Title</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Artists</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Album</string>
+                     </property>
+                    </column>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="likedTab">
+                 <attribute name="title">
+                  <string>Liked</string>
+                 </attribute>
+                 <layout class="QVBoxLayout" name="verticalLayout_17">
+                  <property name="leftMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>3</number>
+                  </property>
+                  <item>
+                   <widget class="QTreeWidget" name="likedTree">
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="animated">
+                     <bool>true</bool>
+                    </property>
+                    <column>
+                     <property name="text">
+                      <string notr="true">1</string>
+                     </property>
+                    </column>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="resultLayout">
+             <attribute name="title">
+              <string>Search Results</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_15">
+              <property name="leftMargin">
+               <number>3</number>
               </property>
-              <attribute name="headerDefaultSectionSize">
-               <number>230</number>
-              </attribute>
-              <attribute name="headerMinimumSectionSize">
-               <number>15</number>
-              </attribute>
-              <column>
-               <property name="text">
-                <string>Index</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Name</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="albumsTab">
-           <attribute name="title">
-            <string>Albums</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <property name="leftMargin">
-             <number>5</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>5</number>
-            </property>
-            <property name="bottomMargin">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QTreeWidget" name="albumsTree">
-              <property name="alternatingRowColors">
-               <bool>true</bool>
+              <property name="topMargin">
+               <number>0</number>
               </property>
-              <property name="animated">
-               <bool>true</bool>
+              <property name="rightMargin">
+               <number>3</number>
               </property>
-              <attribute name="headerDefaultSectionSize">
-               <number>230</number>
-              </attribute>
-              <attribute name="headerMinimumSectionSize">
-               <number>15</number>
-              </attribute>
-              <column>
-               <property name="text">
-                <string>Index</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Title</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Artists</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Total Tracks</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Release Date</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-          <widget class="QWidget" name="playlistsTab">
-           <attribute name="title">
-            <string>Playlists</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <property name="leftMargin">
-             <number>5</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>5</number>
-            </property>
-            <property name="bottomMargin">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QTreeWidget" name="playlistsTree">
-              <property name="alternatingRowColors">
-               <bool>true</bool>
+              <property name="bottomMargin">
+               <number>3</number>
               </property>
-              <property name="animated">
-               <bool>true</bool>
-              </property>
-              <attribute name="headerDefaultSectionSize">
-               <number>230</number>
-              </attribute>
-              <attribute name="headerMinimumSectionSize">
-               <number>15</number>
-              </attribute>
-              <column>
-               <property name="text">
-                <string>Index</string>
+              <item>
+               <widget class="QTabWidget" name="resultTabs">
+                <property name="styleSheet">
+                 <string notr="true">border: 0</string>
+                </property>
+                <property name="tabPosition">
+                 <enum>QTabWidget::North</enum>
+                </property>
+                <property name="currentIndex">
+                 <number>0</number>
+                </property>
+                <property name="elideMode">
+                 <enum>Qt::ElideRight</enum>
+                </property>
+                <property name="movable">
+                 <bool>false</bool>
+                </property>
+                <widget class="QWidget" name="songsTab">
+                 <attribute name="title">
+                  <string>Songs</string>
+                 </attribute>
+                 <layout class="QVBoxLayout" name="verticalLayout_11">
+                  <property name="leftMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>5</number>
+                  </property>
+                  <item>
+                   <widget class="QTreeWidget" name="songsTree">
+                    <property name="styleSheet">
+                     <string notr="true">border:0</string>
+                    </property>
+                    <property name="dragEnabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="animated">
+                     <bool>true</bool>
+                    </property>
+                    <attribute name="headerDefaultSectionSize">
+                     <number>230</number>
+                    </attribute>
+                    <attribute name="headerMinimumSectionSize">
+                     <number>15</number>
+                    </attribute>
+                    <column>
+                     <property name="text">
+                      <string>Index</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Title</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Artists</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Album</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Duration</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Release Date</string>
+                     </property>
+                    </column>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="artistsTab">
+                 <attribute name="title">
+                  <string>Artists</string>
+                 </attribute>
+                 <layout class="QVBoxLayout" name="verticalLayout_12">
+                  <property name="leftMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>5</number>
+                  </property>
+                  <item>
+                   <widget class="QTreeWidget" name="artistsTree">
+                    <property name="styleSheet">
+                     <string notr="true">border: 0</string>
+                    </property>
+                    <property name="autoScrollMargin">
+                     <number>16</number>
+                    </property>
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="animated">
+                     <bool>true</bool>
+                    </property>
+                    <attribute name="headerDefaultSectionSize">
+                     <number>230</number>
+                    </attribute>
+                    <attribute name="headerMinimumSectionSize">
+                     <number>15</number>
+                    </attribute>
+                    <column>
+                     <property name="text">
+                      <string>Index</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Name</string>
+                     </property>
+                    </column>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="albumsTab">
+                 <attribute name="title">
+                  <string>Albums</string>
+                 </attribute>
+                 <layout class="QVBoxLayout" name="verticalLayout_13">
+                  <property name="leftMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>5</number>
+                  </property>
+                  <item>
+                   <widget class="QTreeWidget" name="albumsTree">
+                    <property name="styleSheet">
+                     <string notr="true">border:0</string>
+                    </property>
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="animated">
+                     <bool>true</bool>
+                    </property>
+                    <attribute name="headerDefaultSectionSize">
+                     <number>230</number>
+                    </attribute>
+                    <attribute name="headerMinimumSectionSize">
+                     <number>15</number>
+                    </attribute>
+                    <column>
+                     <property name="text">
+                      <string>Index</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Title</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Artists</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Total Tracks</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Release Date</string>
+                     </property>
+                    </column>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="playlistsTab">
+                 <attribute name="title">
+                  <string>Playlists</string>
+                 </attribute>
+                 <layout class="QVBoxLayout" name="verticalLayout_14">
+                  <property name="leftMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>5</number>
+                  </property>
+                  <item>
+                   <widget class="QTreeWidget" name="playlistsTree">
+                    <property name="styleSheet">
+                     <string notr="true">border:0</string>
+                    </property>
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="animated">
+                     <bool>true</bool>
+                    </property>
+                    <attribute name="headerDefaultSectionSize">
+                     <number>230</number>
+                    </attribute>
+                    <attribute name="headerMinimumSectionSize">
+                     <number>15</number>
+                    </attribute>
+                    <column>
+                     <property name="text">
+                      <string>Index</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Title</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Creator</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Total Tracks</string>
+                     </property>
+                    </column>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="mediaControls" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>60</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <property name="spacing">
+              <number>5</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="bottomMargin">
+              <number>5</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="prevBtn">
+               <property name="minimumSize">
+                <size>
+                 <width>62</width>
+                 <height>50</height>
+                </size>
                </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Title</string>
+               <property name="sizeIncrement">
+                <size>
+                 <width>40</width>
+                 <height>0</height>
+                </size>
                </property>
-              </column>
-              <column>
                <property name="text">
-                <string>Creator</string>
+                <string/>
                </property>
-              </column>
-              <column>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../resources/prevIcon.png</normaloff>../resources/prevIcon.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_5">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>20</number>
+               </property>
+               <item>
+                <widget class="QPushButton" name="playBtn">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>62</width>
+                   <height>50</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>62</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../resources/playIcon.png</normaloff>../resources/playIcon.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="flat">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="nextBtn">
+               <property name="minimumSize">
+                <size>
+                 <width>62</width>
+                 <height>50</height>
+                </size>
+               </property>
                <property name="text">
-                <string>Total Tracks</string>
+                <string/>
                </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../resources/nextIcon.png</normaloff>../resources/nextIcon.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_4">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <layout class="QFormLayout" name="formLayout_3">
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="playingInfo1">
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="playingInfo2">
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                 <property name="spacing">
+                  <number>10</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="elapsedTimeLabel">
+                   <property name="minimumSize">
+                    <size>
+                     <width>40</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>0:00</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSlider" name="playbackBar">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>1</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>1</number>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="tracking">
+                    <bool>true</bool>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="invertedControls">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="remainingTimeLabel">
+                   <property name="minimumSize">
+                    <size>
+                     <width>40</width>
+                     <height>50</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>-0:00</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Minimum</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QLabel" name="volIconLabel">
+               <property name="minimumSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="textFormat">
+                <enum>Qt::RichText</enum>
+               </property>
+               <property name="pixmap">
+                <pixmap>../resources/volIcon.png</pixmap>
+               </property>
+               <property name="scaledContents">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="textFormat">
+                <enum>Qt::RichText</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSlider" name="volumeSlider">
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color:#5d605f</string>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>100</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QWidget" name="widget_2" native="true">
+         <widget class="QWidget" name="infoView" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -558,8 +1065,23 @@
              </property>
              <item row="0" column="0">
               <widget class="QLabel" name="infoHeader1">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>30</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -572,6 +1094,18 @@
              </item>
              <item row="1" column="0">
               <widget class="QLabel" name="infoHeader2">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>30</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -586,6 +1120,18 @@
              </item>
              <item row="2" column="0">
               <widget class="QLabel" name="infoHeader3">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>30</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -600,6 +1146,18 @@
              </item>
              <item row="3" column="0">
               <widget class="QLabel" name="infoHeader4">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>30</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -614,6 +1172,18 @@
              </item>
              <item row="4" column="0">
               <widget class="QLabel" name="infoHeader5">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>30</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -628,6 +1198,18 @@
              </item>
              <item row="5" column="0">
               <widget class="QLabel" name="infoHeader6">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>30</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -704,20 +1286,25 @@
                  <height>16777215</height>
                 </size>
                </property>
+               <property name="minimumContentsLength">
+                <number>7</number>
+               </property>
                <item>
                 <property name="text">
                  <string>.mp3</string>
                 </property>
                </item>
+               <item>
+                <property name="text">
+                 <string>.ogg</string>
+                </property>
+               </item>
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="label_5">
                <property name="text">
                 <string>Download in real time:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
                </property>
               </widget>
              </item>
@@ -725,12 +1312,6 @@
               <widget class="QCheckBox" name="realTimeCheckBox">
                <property name="text">
                 <string/>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-               <property name="tristate">
-                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -849,7 +1430,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
