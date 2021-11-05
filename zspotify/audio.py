@@ -34,7 +34,7 @@ class MusicController:
             self.queue_next_song = False
             self.paused = False
             self.window.playingInfo1.setText(f"{item.title}  -")
-            self.window.playingInfo2.setText(f"{item.artists}")
+            self.window.playingInfo2.setText(f"  {item.artists}")
             self.set_icon(PAUSE_ICON)
             self.awaiting_play = True
             self.item = item
