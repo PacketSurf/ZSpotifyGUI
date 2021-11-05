@@ -2,9 +2,9 @@
 ![Forks](https://img.shields.io/github/forks/Footsiefat/zspotify.svg)
 ![Size](https://img.shields.io/github/repo-size/Footsiefat/zspotify)
 
-# ZSpotify
+# ZSpotifyGUI
 
-### A Spotify downloader needing only a python interpreter and ffmpeg.
+### A GUI for ZSpotify
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/12180913/138040605-c9d46e45-3830-4a4b-a7ac-c56bb0d76335.png">
@@ -19,6 +19,7 @@ Binaries
 
 - Python 3.9 or greater
 - ffmpeg*
+- vlc
 - Git**
 
 Python packages:
@@ -34,6 +35,11 @@ Python packages:
 ### Command line usage:
 
 ```
+Run the GUI by running appGui.py
+
+From main directory: python zspotify/appGui.py
+
+
 Basic command line usage:
   python zspotify <track/album/playlist/episode/artist url>   Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded. Can take multiple urls.
 
