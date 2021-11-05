@@ -220,7 +220,15 @@
           <item>
            <widget class="QTabWidget" name="musicTabs">
             <property name="styleSheet">
-             <string notr="true">border:0</string>
+             <string notr="true">QTabWidget::pane
+{
+	border: 0
+}
+
+QTabWidget::tab-bar
+{
+	alignment: center;
+}</string>
             </property>
             <property name="tabPosition">
              <enum>QTabWidget::West</enum>
@@ -250,6 +258,12 @@
               </property>
               <item>
                <widget class="QTabWidget" name="libraryTabs">
+                <property name="styleSheet">
+                 <string notr="true">QTabWidget::tab-bar
+{
+	alignment: center;
+}</string>
+                </property>
                 <property name="currentIndex">
                  <number>0</number>
                 </property>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'main_window_media.ui'
+# Form implementation generated from reading ui file 'main_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.5
 #
@@ -82,7 +82,15 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.setSpacing(2)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.musicTabs = QtWidgets.QTabWidget(self.centralwidget)
-        self.musicTabs.setStyleSheet("border:0")
+        self.musicTabs.setStyleSheet("QTabWidget::pane\n"
+"{\n"
+"    border: 0\n"
+"}\n"
+"\n"
+"QTabWidget::tab-bar\n"
+"{\n"
+"    alignment: center;\n"
+"}")
         self.musicTabs.setTabPosition(QtWidgets.QTabWidget.West)
         self.musicTabs.setTabBarAutoHide(True)
         self.musicTabs.setObjectName("musicTabs")
@@ -92,6 +100,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_10.setContentsMargins(3, 0, 3, 3)
         self.verticalLayout_10.setObjectName("verticalLayout_10")
         self.libraryTabs = QtWidgets.QTabWidget(self.libraryLayout)
+        self.libraryTabs.setStyleSheet("QTabWidget::tab-bar\n"
+"{\n"
+"    alignment: center;\n"
+"}")
         self.libraryTabs.setObjectName("libraryTabs")
         self.downloadedTab = QtWidgets.QWidget()
         self.downloadedTab.setObjectName("downloadedTab")
