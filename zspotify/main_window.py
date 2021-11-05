@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1440, 852)
+        MainWindow.resize(1440, 855)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setMinimumSize(QtCore.QSize(900, 750))
         self.centralwidget.setObjectName("centralwidget")
@@ -84,7 +84,7 @@ class Ui_MainWindow(object):
         self.musicTabs = QtWidgets.QTabWidget(self.centralwidget)
         self.musicTabs.setStyleSheet("QTabWidget::pane\n"
 "{\n"
-"    border: 0\n"
+"    border:0px;\n"
 "}\n"
 "\n"
 "QTabWidget::tab-bar\n"
@@ -136,10 +136,10 @@ class Ui_MainWindow(object):
         self.resultLayout = QtWidgets.QWidget()
         self.resultLayout.setObjectName("resultLayout")
         self.verticalLayout_15 = QtWidgets.QVBoxLayout(self.resultLayout)
-        self.verticalLayout_15.setContentsMargins(3, 0, 3, 3)
+        self.verticalLayout_15.setContentsMargins(1, 0, 1, 3)
         self.verticalLayout_15.setObjectName("verticalLayout_15")
         self.resultTabs = QtWidgets.QTabWidget(self.resultLayout)
-        self.resultTabs.setStyleSheet("border: 0")
+        self.resultTabs.setStyleSheet("")
         self.resultTabs.setTabPosition(QtWidgets.QTabWidget.North)
         self.resultTabs.setElideMode(QtCore.Qt.ElideRight)
         self.resultTabs.setMovable(False)
@@ -150,7 +150,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_11.setContentsMargins(5, 0, 5, 5)
         self.verticalLayout_11.setObjectName("verticalLayout_11")
         self.songsTree = QtWidgets.QTreeWidget(self.songsTab)
-        self.songsTree.setStyleSheet("border:0")
+        self.songsTree.setStyleSheet("")
         self.songsTree.setDragEnabled(False)
         self.songsTree.setAlternatingRowColors(True)
         self.songsTree.setAnimated(True)
@@ -211,7 +211,7 @@ class Ui_MainWindow(object):
         self.mediaControls.setStyleSheet("")
         self.mediaControls.setObjectName("mediaControls")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.mediaControls)
-        self.horizontalLayout_5.setContentsMargins(-1, 3, -1, 5)
+        self.horizontalLayout_5.setContentsMargins(-1, 3, -1, 10)
         self.horizontalLayout_5.setSpacing(5)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.prevBtn = QtWidgets.QPushButton(self.mediaControls)
@@ -256,6 +256,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setSpacing(0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.formLayout_3 = QtWidgets.QFormLayout()
+        self.formLayout_3.setLabelAlignment(QtCore.Qt.AlignCenter)
         self.formLayout_3.setContentsMargins(-1, 0, -1, -1)
         self.formLayout_3.setObjectName("formLayout_3")
         self.playingInfo1 = QtWidgets.QLabel(self.mediaControls)
@@ -535,8 +536,8 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.musicTabs.setCurrentIndex(0)
-        self.libraryTabs.setCurrentIndex(0)
+        self.musicTabs.setCurrentIndex(1)
+        self.libraryTabs.setCurrentIndex(1)
         self.resultTabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 

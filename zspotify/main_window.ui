@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1440</width>
-    <height>852</height>
+    <height>855</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -222,7 +222,7 @@
             <property name="styleSheet">
              <string notr="true">QTabWidget::pane
 {
-	border: 0
+	border:0px;
 }
 
 QTabWidget::tab-bar
@@ -234,7 +234,7 @@ QTabWidget::tab-bar
              <enum>QTabWidget::West</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -265,7 +265,7 @@ QTabWidget::tab-bar
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="downloadedTab">
                  <attribute name="title">
@@ -363,14 +363,17 @@ QTabWidget::tab-bar
               <string>Search Results</string>
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_15">
+              <property name="spacing">
+               <number>-1</number>
+              </property>
               <property name="leftMargin">
-               <number>3</number>
+               <number>1</number>
               </property>
               <property name="topMargin">
                <number>0</number>
               </property>
               <property name="rightMargin">
-               <number>3</number>
+               <number>1</number>
               </property>
               <property name="bottomMargin">
                <number>3</number>
@@ -378,7 +381,7 @@ QTabWidget::tab-bar
               <item>
                <widget class="QTabWidget" name="resultTabs">
                 <property name="styleSheet">
-                 <string notr="true">border: 0</string>
+                 <string notr="true"/>
                 </property>
                 <property name="tabPosition">
                  <enum>QTabWidget::North</enum>
@@ -412,7 +415,7 @@ QTabWidget::tab-bar
                   <item>
                    <widget class="QTreeWidget" name="songsTree">
                     <property name="styleSheet">
-                     <string notr="true">border:0</string>
+                     <string notr="true"/>
                     </property>
                     <property name="dragEnabled">
                      <bool>false</bool>
@@ -666,7 +669,7 @@ QTabWidget::tab-bar
               <number>3</number>
              </property>
              <property name="bottomMargin">
-              <number>5</number>
+              <number>10</number>
              </property>
              <item>
               <widget class="QPushButton" name="prevBtn">
@@ -790,6 +793,9 @@ QTabWidget::tab-bar
                </property>
                <item>
                 <layout class="QFormLayout" name="formLayout_3">
+                 <property name="labelAlignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
                  <property name="topMargin">
                   <number>0</number>
                  </property>
