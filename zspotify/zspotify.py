@@ -79,7 +79,9 @@ class ZSpotify:
     @classmethod
     def get_auth_header(cls):
         return {
-            AUTHORIZATION: f'Bearer {cls.__get_auth_token()}'}
+            'Authorization': f'Bearer {cls.__get_auth_token()}',
+            'Accept-Language': 'zh'
+        }
 
     @classmethod
     def get_auth_header_and_params(cls, limit, offset):
