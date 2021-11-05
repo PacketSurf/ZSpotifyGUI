@@ -227,7 +227,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def on_press_return_item(self):
         item = self.selected_tab.get_selected_item()
-        if item: self.music_controller.play(item)
+        if item: self.music_controller.play(item, self.selected_tab)
 
     def on_press_space_item(self):
         item = self.selected_tab.get_selected_item()
