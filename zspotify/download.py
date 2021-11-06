@@ -36,7 +36,7 @@ class DownloadController(QObject):
         else:
             self.window.downloadInfoLabel.setText(f"Downloading {item.title}...")
         self.window.downloadBtn.setEnabled(False)
-        tab = self.window.resultTabs.currentIndex()
+        tab = self.window.searchTabs.currentIndex()
         worker = Worker(self.download_item, item, update=self.update_dl_progress)
         worker.signals.finished.connect(self.on_download_complete)
         QThreadPool.globalInstance().start(worker)
