@@ -13,7 +13,7 @@ from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
     OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS,\
-    DOWNLOADED, LIKED, DOWNLOAD_FORMAT
+    DOWNLOADED, LIKED, DOWNLOAD_FORMAT, SAVED_TRACKS_URL
 from worker import Worker
 from audio import MusicController, find_local_tracks, get_track_file_as_item
 from download import DownloadController
@@ -88,6 +88,8 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.accountTypeLabel.setText("Free Account")
                 self.dlQualityLabel.setText("160kbps")
         self.login_dialog = None
+        self.init_likes_view()
+        #print(ZSpotify.load_tracks_url(SAVED_TRACKS_URL))
         #play_track("6RGsTUL2nGjtSizbzYa6XY")
 
 
@@ -231,6 +233,10 @@ class Window(QMainWindow, Ui_MainWindow):
         item = self.selected_tab.get_selected_item()
         if item: self.music_controller.on_press_play()
 
+    def init_likes_view(self):
+        tracks = ZSpotify.load_tracks_url(SAVED_TRACKS_URL)
+        self.liked_tree.set_items(tracks)
+
     def init_downloads_view(self):
         try:
             track_files = find_local_tracks()
@@ -285,6 +291,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.library_trees = [self.download_tree, self.liked_tree]
         self.trees = [self.songs_tree, self.artists_tree, self.albums_tree, self.playlists_tree, self.download_tree, self.liked_tree]
 
+        for tree in self.library_trees:
+            tree.set_header_spacing(270,270,270)
         for tree in self.search_trees:
             tree.set_header_spacing(65)
         self.songs_tree.set_header_spacing(65,-1,-1,-1,65)

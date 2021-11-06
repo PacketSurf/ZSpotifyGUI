@@ -15,7 +15,7 @@ import requests
 from librespot.audio.decoders import VorbisOnlyAudioQuality, AudioQuality
 from librespot.core import Session
 
-from const import CREDENTIALS_JSON, TYPE, \
+from const import CREDENTIALS_JSON, TYPE, ITEMS, \
     PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, \
     PLAYLIST_READ_PRIVATE, CONFIG_DEFAULT_SETTINGS,TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
     OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE, USER_LIBRARY_READ, DURATION, SEARCH_RESULTS
@@ -94,7 +94,7 @@ class ZSpotify:
         counter = 1
         if resp[TRACKS] != None:
             for t in resp[TRACKS][ITEMS]:
-                artists = ' & '.join([artist[NAME] for artist in t[ARTISTS]])
+                artists = ' ,'.join([artist[NAME] for artist in t[ARTISTS]])
                 url = t[ALBUM][IMAGES][1][URL]
                 duration = ms_to_time_str(t[DURATION])
                 track = Track(counter, t[ID], str(t[NAME]), artists, str(t[ALBUM][NAME]), \
@@ -108,7 +108,7 @@ class ZSpotify:
                     url = a[IMAGES][1][URL]
                 else:
                     url = ""
-                artists = ' & '.join([artist[NAME] for artist in a[ARTISTS]])
+                artists = ' ,'.join([artist[NAME] for artist in a[ARTISTS]])
                 album = Album(counter, a[ID], a[NAME], artists, a[TOTAL_TRACKS], release_date=a[RELEASE_DATE], img=url)
                 results[ALBUMS].append(album)
                 counter += 1
@@ -133,6 +133,21 @@ class ZSpotify:
                 counter += 1
 
         return results
+
+    @classmethod
+    def load_tracks_url(cls, url):
+        items = cls.invoke_url(url)
+        if not items or len(items) <= 0: return
+        index = 0
+        tracks = []
+        for item in items[ITEMS]:
+            artists = ', '.join([artist[NAME] for artist in item[TRACK][ARTISTS]])
+            duration = ms_to_time_str(item[TRACK][DURATION])
+            track = Track(index, item[TRACK][ID], item[TRACK][NAME], artists, album=item[TRACK][ALBUM][NAME], \
+            img=item[TRACK][ALBUM][IMAGES][1][URL], duration=duration)
+            tracks.append(track)
+        return tracks
+
 
     @classmethod
     def set_config(cls, key, value):
@@ -162,6 +177,11 @@ class ZSpotify:
     @classmethod
     def get_auth_header_and_params(cls, limit, offset):
         return {AUTHORIZATION: f'Bearer {cls.__get_auth_token()}'}, {LIMIT: limit, OFFSET: offset}
+
+    @classmethod
+    def send_url(cls, url):
+        headers = cls.get_auth_header()
+        return requests.put(url, headers=headers)
 
     @classmethod
     def invoke_url_with_params(cls, url, limit, offset, **kwargs):

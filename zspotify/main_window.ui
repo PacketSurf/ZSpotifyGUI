@@ -234,7 +234,7 @@ QTabWidget::tab-bar
              <enum>QTabWidget::West</enum>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -265,7 +265,7 @@ QTabWidget::tab-bar
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="downloadedTab">
                  <attribute name="title">
@@ -296,10 +296,10 @@ QTabWidget::tab-bar
                      <bool>true</bool>
                     </property>
                     <attribute name="headerDefaultSectionSize">
-                     <number>15</number>
+                     <number>270</number>
                     </attribute>
                     <attribute name="headerMinimumSectionSize">
-                     <number>270</number>
+                     <number>15</number>
                     </attribute>
                     <column>
                      <property name="text">
@@ -345,6 +345,12 @@ QTabWidget::tab-bar
                     <property name="animated">
                      <bool>true</bool>
                     </property>
+                    <attribute name="headerDefaultSectionSize">
+                     <number>270</number>
+                    </attribute>
+                    <attribute name="headerMinimumSectionSize">
+                     <number>15</number>
+                    </attribute>
                     <column>
                      <property name="text">
                       <string notr="true">1</string>
