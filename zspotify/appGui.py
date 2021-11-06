@@ -60,7 +60,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.musicTabs.setCurrentIndex(0)
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.focus()
-        
+
 
     def show(self):
         super().show()
@@ -235,8 +235,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.libraryTabs.setCurrentIndex(i)
 
     def init_liked_view(self):
-        tracks = ZSpotify.load_tracks_url(SAVED_TRACKS_URL)
-        self.liked_tree.set_items(tracks)
+        worker = Worker(ZSpotify.load_tracks_url, SAVED_TRACKS_URL)
+        worker.signals.result.connect(self.liked_tree.set_items)
+        QThreadPool.globalInstance().start(worker)
 
     def init_downloads_view(self):
         try:
