@@ -31,8 +31,8 @@ Binaries
 
 - Python 3.9 or greater
 - ffmpeg*
-- vlc
 - Git**
+- vlc***
 
 Python packages:
 
@@ -44,10 +44,13 @@ Python packages:
 
 \*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 
+\*\*\*VLC can be installed from [videolan.org](https://www.videolan.org/vlc/) for all operating systems. You may need to restart your PC
+
 
 
 
 ```
+Install the requirements: pip install -r requirements.txt
 Run the GUI from within the zspotify directory: python appGui.py
 
 Run from main directory: python zspotify/appGui.py
