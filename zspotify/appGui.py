@@ -60,7 +60,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.musicTabs.setCurrentIndex(0)
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.focus()
-        self.download_tree.tree.sortItems(0,0)
+
 
 
 
@@ -293,6 +293,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
         for tree in self.library_trees:
             tree.set_header_spacing(270,270,270)
+            tree.tree.sortItems(0,0)
         for tree in self.search_trees:
             tree.set_header_spacing(65)
         self.songs_tree.set_header_spacing(65,-1,-1,-1,65)

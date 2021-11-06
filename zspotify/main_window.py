@@ -570,7 +570,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.musicTabs.setCurrentIndex(0)
-        self.libraryTabs.setCurrentIndex(0)
+        self.libraryTabs.setCurrentIndex(1)
         self.searchTabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -590,6 +590,7 @@ class Ui_MainWindow(object):
         self.downloadedTree.headerItem().setText(1, _translate("MainWindow", "Artists"))
         self.downloadedTree.headerItem().setText(2, _translate("MainWindow", "Album"))
         self.libraryTabs.setTabText(self.libraryTabs.indexOf(self.downloadedTab), _translate("MainWindow", "Downloaded"))
+        self.likedTree.setSortingEnabled(True)
         self.libraryTabs.setTabText(self.libraryTabs.indexOf(self.likedTab), _translate("MainWindow", "Liked"))
         self.musicTabs.setTabText(self.musicTabs.indexOf(self.libraryLayout), _translate("MainWindow", "Your Library"))
         self.songsTree.headerItem().setText(0, _translate("MainWindow", "Index"))

@@ -265,7 +265,7 @@ QTabWidget::tab-bar
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
                 <widget class="QWidget" name="downloadedTab">
                  <attribute name="title">
@@ -340,6 +340,9 @@ QTabWidget::tab-bar
                   <item>
                    <widget class="QTreeWidget" name="likedTree">
                     <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="sortingEnabled">
                      <bool>true</bool>
                     </property>
                     <property name="animated">
