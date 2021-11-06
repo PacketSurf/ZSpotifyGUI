@@ -60,9 +60,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.musicTabs.setCurrentIndex(0)
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.focus()
-
-
-
+        tab_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Tab,
+            self.libraryTabs,
+            context=QtCore.Qt.WidgetShortcut,
+            activated=self.on_press_tab)
 
     def show(self):
         super().show()
@@ -76,7 +77,6 @@ class Window(QMainWindow, Ui_MainWindow):
         login_dialog.finished.connect(self.on_login_finished)
         login_dialog.exec_()
 
-
     def on_login_finished(self, result):
         if result == 1:
             self.logged_in = True
@@ -88,21 +88,19 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.accountTypeLabel.setText("Free Account")
                 self.dlQualityLabel.setText("160kbps")
         self.login_dialog = None
-        self.init_likes_view()
-        #print(ZSpotify.load_tracks_url(SAVED_TRACKS_URL))
-        #play_track("6RGsTUL2nGjtSizbzYa6XY")
-
 
     def on_tab_change(self, index):
         i = self.musicTabs.currentIndex()
         library = self.tabs[i]
         self.selected_tab = library[index]
+        self.selected_tab.load_content()
         self.selected_tab.focus()
 
     def on_music_tab_change(self, index):
         tabs = self.tabs[index]
         i = self.tabWidgets[index].currentIndex()
         self.selected_tab = tabs[i]
+        self.selected_tab.load_content()
         self.selected_tab.focus()
 
     #run worker on thread that searches and return results through signal callback
@@ -209,7 +207,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.loginBtn.clicked.connect(self.open_login_dialog)
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
         self.download_controller.downloadComplete.connect(self.init_downloads_view)
-
+        self.liked_tree.load_function = self.init_liked_view
         for tree in self.trees:
             tree.signals.itemChanged.connect(self.update_item_info)
             tree.signals.onSelected.connect(self.update_item_labels)
@@ -233,7 +231,13 @@ class Window(QMainWindow, Ui_MainWindow):
         item = self.selected_tab.get_selected_item()
         if item: self.music_controller.on_press_play()
 
-    def init_likes_view(self):
+    def on_press_tab(self):
+        i = self.libraryTabs.getCurrentIndex()
+        i += 1
+        if i >= self.libraryTabs.count(): i = 0
+        self.libraryTabs.setCurrentIndex(i)
+
+    def init_liked_view(self):
         tracks = ZSpotify.load_tracks_url(SAVED_TRACKS_URL)
         self.liked_tree.set_items(tracks)
 

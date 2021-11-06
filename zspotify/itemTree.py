@@ -2,16 +2,14 @@ from PyQt5.QtWidgets import QTreeWidgetItem
 from PyQt5.QtCore import pyqtSignal, QObject
 from item import Item
 
-
 class ItemTree:
 
-
     def __init__(self, tree, tree_widget_builder = None):
-
         self.tree = tree
         self.items = []
         self.tree_items = {}
         self.selected_item = None
+        self.load_function = None
         self.signals = ItemTreeSignals()
         if tree_widget_builder == None:
             tree_widget_builder = lambda track: QTreeWidgetItem([str(track.index), track.title, track.artists, \
@@ -19,6 +17,8 @@ class ItemTree:
         self.tree_widget_builder = tree_widget_builder
         self.init_signals()
 
+    def load_content(self):
+        if self.load_function: self.load_function()
 
     def add_item(self, item):
         widget_item = self.tree_widget_builder(item)
