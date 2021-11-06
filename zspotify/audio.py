@@ -36,8 +36,10 @@ class MusicController:
         if self.audio_player.play(item):
             self.queue_next_song = False
             self.paused = False
-            self.window.playingInfo1.setText(f"{item.title}")
-            self.window.playingInfo2.setText(f"{item.artists}")
+            self.window.playingInfo1.setText(item.title)
+            self.window.playingInfo1.setToolTip(item.title)
+            self.window.playingInfo2.setText(item.artists)
+            self.window.playingInfo2.setToolTip(item.artists)
             self.set_button_icon(self.window.playBtn, PAUSE_ICON)
             self.awaiting_play = True
             self.item = item
