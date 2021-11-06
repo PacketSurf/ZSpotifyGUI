@@ -4,13 +4,25 @@
 
 # ZSpotifyGUI
 
-### A GUI for ZSpotify
+### A user-friendly desktop app for ZSpotify music downloader for Windows, MacOs, and Linux
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/12180913/138040605-c9d46e45-3830-4a4b-a7ac-c56bb0d76335.png">
 </p>
 
 [Discord Server](https://discord.gg/skVNQKtyFq) - [Matrix Server](https://matrix.to/#/#zspotify:matrix.org) - [Gitea Mirror](https://git.robinsmediateam.dev/Footsiefat/zspotify) - [Main Site](https://footsiefat.github.io/)
+
+
+
+Take full advantage of the power of ZSpotify with this graphical interface.
+- Find the music you want faster and easier.
+- Listen to your music directly in ZSpotify with it's fully featured music player.
+- Continue to search for music while downloading.
+- Queue up downloads so you can maximise your potential.
+- Your spotify likes and playlists sync into the client, allowing you to easily download them
+- Easily change settings such as real-time-download, download format, download directory, and search results
+
+
 
 ```
 Requirements:
@@ -31,6 +43,7 @@ Python packages:
 \*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it with [Homebrew](https://brew.sh) by running `brew install ffmpeg`.
 
 \*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
+
 
 ### Command line usage:
 

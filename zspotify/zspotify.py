@@ -94,7 +94,7 @@ class ZSpotify:
         counter = 1
         if resp[TRACKS] != None:
             for t in resp[TRACKS][ITEMS]:
-                artists = ' ,'.join([artist[NAME] for artist in t[ARTISTS]])
+                artists = ', '.join([artist[NAME] for artist in t[ARTISTS]])
                 url = t[ALBUM][IMAGES][1][URL]
                 duration = ms_to_time_str(t[DURATION])
                 track = Track(counter, t[ID], str(t[NAME]), artists, str(t[ALBUM][NAME]), \
@@ -108,7 +108,7 @@ class ZSpotify:
                     url = a[IMAGES][1][URL]
                 else:
                     url = ""
-                artists = ' ,'.join([artist[NAME] for artist in a[ARTISTS]])
+                artists = ', '.join([artist[NAME] for artist in a[ARTISTS]])
                 album = Album(counter, a[ID], a[NAME], artists, a[TOTAL_TRACKS], release_date=a[RELEASE_DATE], img=url)
                 results[ALBUMS].append(album)
                 counter += 1

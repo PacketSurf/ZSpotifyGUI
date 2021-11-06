@@ -1439,7 +1439,7 @@ QTabWidget::tab-bar
              <item row="2" column="0">
               <widget class="QLabel" name="label_5">
                <property name="text">
-                <string>Download in real time:</string>
+                <string>Download in Real Time:</string>
                </property>
               </widget>
              </item>
@@ -1447,6 +1447,29 @@ QTabWidget::tab-bar
               <widget class="QCheckBox" name="realTimeCheckBox">
                <property name="text">
                 <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Download Queue:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QComboBox" name="downloadQueueCombo">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>145</width>
+                 <height>0</height>
+                </size>
                </property>
               </widget>
              </item>

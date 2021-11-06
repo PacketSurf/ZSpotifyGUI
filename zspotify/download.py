@@ -22,20 +22,30 @@ class DownloadController(QObject):
         self.init_signals()
         self.item = None
         self.downloading = False
+        self.download_queue = []
 
-    def on_start_download(self):
-        item = self.window.selected_item
-        if not item or item.downloaded or self.downloading: return
+    def on_click_download(self):
+        if self.window.selected_item:
+            if self.window.selected_item in self.download_queue:
+                self.download_queue.remove(self.window.selected_item)
+                self.update_download_view(self.window.selected_item)
+                self.update_dl_queue_combo()
+                return
+            else:
+                self.download_queue.append(self.window.selected_item)
+                self.update_dl_queue_combo()
+                self.update_download_view(self.window.selected_item)
+        if not self.downloading and not self.item == self.download_queue[0]:
+            self.start_download(self.download_queue[0])
+
+    def start_download(self, item):
+        self.item = item
         self.downloading = True
         self.window.progressBar.setValue(0)
         self.window.progressBar.setEnabled(True)
         self.window.progressBar.show()
-
-        if type(item) == Artist:
-            self.window.downloadInfoLabel.setText(f"Downloading {item.name} albums...")
-        else:
-            self.window.downloadInfoLabel.setText(f"Downloading {item.title}...")
-        self.window.downloadBtn.setEnabled(False)
+        dl_info = self.get_item_info_string(item)
+        self.window.downloadInfoLabel.setText(f"Downloading: {dl_info}")
         tab = self.window.searchTabs.currentIndex()
         worker = Worker(self.download_item, item, update=self.update_dl_progress)
         worker.signals.finished.connect(self.on_download_complete)
@@ -63,12 +73,19 @@ class DownloadController(QObject):
         self.window.progressBar.hide()
         self.window.downloadInfoLabel.setText("")
         self.window.downloadBtn.setEnabled(True)
+        self.download_queue.pop(0)
+        self.update_dl_queue_combo()
         if self.item != None:
             self.item.downloaded = True
             self.downloadComplete.emit(self.item)
         self.item = None
         self.downloading = False
+        if self.window.selected_item:
+            self.update_download_view(self.window.selected_item)
         QApplication.processEvents()
+        if len(self.download_queue) > 0:
+            self.start_download(self.download_queue[0])
+
 
     def update_dl_progress(self, amount):
         perc = int(amount*100)
@@ -76,12 +93,21 @@ class DownloadController(QObject):
         self.window.progressBar.show()
         QApplication.processEvents()
 
+    def update_dl_queue_combo(self):
+        self.window.downloadQueueCombo.clear()
+        items = []
+        for item in self.download_queue:
+            text = self.get_item_info_string(item)
+            items.append(text)
+        items.reverse()
+        self.window.downloadQueueCombo.addItems(items)
+
     def change_dl_dir(self):
         dialog = QFileDialog(self.window)
         dialog.setFileMode(QFileDialog.Directory)
         if dialog.exec_():
             dir = dialog.selectedFiles()
-            ZSpotify.set_config(ROOT_PATH, dir[0])
+            if len(dir) > 0: ZSpotify.set_config(ROOT_PATH, dir[0])
 
     def update_download_format(self, index):
         format = self.window.fileFormatCombo.itemText(index)
@@ -97,7 +123,7 @@ class DownloadController(QObject):
                 return
         self.window.fileFormatCombo.setCurrentIndex(0)
         ZSpotify.set_config(DOWNLOAD_FORMAT, FORMATS[0])
-        #0 for off, 1 for on
+
     def set_real_time_dl(self, value):
         if value == 0:
             ZSpotify.set_config(DOWNLOAD_REAL_TIME, False)
@@ -109,18 +135,44 @@ class DownloadController(QObject):
             self.window.downloadBtn.setEnabled(False)
             self.window.downloadBtn.setText("Downloaded")
             return
+        elif len(self.download_queue) > 0:
+            self.window.downloadBtn.setEnabled(True)
+            if item in self.download_queue:
+                if self.download_queue[0] == item:
+                    self.window.downloadBtn.setText("Downloading")
+                    self.window.downloadBtn.setEnabled(False)
+                else:
+                    self.window.downloadBtn.setText("Remove From Queue")
+                return
+            self.window.downloadBtn.setText("Queue track")
+            if type(item) == Artist:
+                self.window.downloadBtn.setText("Queue Artist Albums")
+            elif type(item) == Album:
+                self.window.downloadBtn.setText("Queue Album")
+            elif type(item) == Playlist:
+                self.window.downloadBtn.setText("Queue Playlist")
         else:
             self.window.downloadBtn.setEnabled(True)
             self.window.downloadBtn.setText("Download")
-        if type(item) == Artist:
-            self.window.downloadBtn.setText("Download All Albums")
-        elif type(item) == Album:
-            self.window.downloadBtn.setText("Download Album")
-        elif type(item) == Playlist:
-            self.window.downloadBtn.setText("Download Playlist")
+            if type(item) == Artist:
+                self.window.downloadBtn.setText("Download All Albums")
+            elif type(item) == Album:
+                self.window.downloadBtn.setText("Download Album")
+            elif type(item) == Playlist:
+                self.window.downloadBtn.setText("Download Playlist")
+
+    def get_item_info_string(self, item):
+        info = ""
+        if "title" in item.__dict__.keys():
+            info += f"{item.title} - "
+        if "name" in item.__dict__.keys():
+            info += f"{item.name} - "
+        if "artists" in item.__dict__.keys():
+            info += item.artists
+        return info
 
     def init_signals(self):
-        self.window.downloadBtn.clicked.connect(self.on_start_download)
+        self.window.downloadBtn.clicked.connect(self.on_click_download)
         self.window.dirBtn.clicked.connect(self.change_dl_dir)
         self.window.realTimeCheckBox.stateChanged.connect(self.set_real_time_dl)
         self.window.fileFormatCombo.currentIndexChanged.connect(self.update_download_format)

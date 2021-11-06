@@ -61,7 +61,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.focus()
 
-
     def show(self):
         super().show()
         if not ZSpotify.login():
@@ -236,8 +235,15 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def init_liked_view(self):
         worker = Worker(ZSpotify.load_tracks_url, SAVED_TRACKS_URL)
-        worker.signals.result.connect(self.liked_tree.set_items)
+        worker.signals.result.connect(self.liked_view_result_handle)
         QThreadPool.globalInstance().start(worker)
+
+    def liked_view_result_handle(self, items):
+        for item in items:
+            if item in self.liked_tree.items:
+                continue
+            else:
+                 self.liked_tree.set_items(items)
 
     def init_downloads_view(self):
         try:
