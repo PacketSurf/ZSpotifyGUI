@@ -60,10 +60,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.musicTabs.setCurrentIndex(0)
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.focus()
-        tab_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Tab,
-            self.libraryTabs,
-            context=QtCore.Qt.WidgetShortcut,
-            activated=self.on_press_tab)
+        
 
     def show(self):
         super().show()

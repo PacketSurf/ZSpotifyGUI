@@ -73,6 +73,7 @@ class MusicController:
                 self.set_button_icon(self.window.shuffleBtn, SHUFFLE_ON_ICON)
                 self.shuffle_queue = self.playlist_tree.items.copy()
                 random.shuffle(self.shuffle_queue)
+
         else:
             self.set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
 
@@ -132,8 +133,8 @@ class MusicController:
         if self.shuffle and self.item in self.shuffle_queue:
             index = self.shuffle_queue.index(self.item)
             index += 1
-            if index == len(self.shuffle_queue):
-                self.shuffle_queue = random.shuffle(self.shuffle_queue)
+            if index >= len(self.shuffle_queue):
+                random.shuffle(self.shuffle_queue)
                 index = 0
             item = self.shuffle_queue[index]
         else:
