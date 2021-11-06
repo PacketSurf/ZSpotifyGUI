@@ -14,7 +14,7 @@
 
 
 
-Take full advantage of the power of ZSpotify with this graphical interface.
+Take full advantage of the power of ZSpotify with this user-friendly graphical interface.
 - Find the music you want faster and easier.
 - Listen to your music directly in ZSpotify with it's fully featured music player.
 - Continue to search for music while downloading.

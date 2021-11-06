@@ -9,3 +9,4 @@ pyqtdarktheme
 pydub
 protobuf
 python-vlc
+requests
