@@ -18,8 +18,8 @@ Take full advantage of the power of ZSpotify with this graphical interface.
 - Find the music you want faster and easier.
 - Listen to your music directly in ZSpotify with it's fully featured music player.
 - Continue to search for music while downloading.
-- Queue up downloads so you can maximise your potential.
-- Your spotify likes and playlists sync into the client, allowing you to easily download them
+- Queue up downloads so you can maximise your downloading potential.
+- Your spotify likes sync into the client, allowing you to easily download them
 - Easily change settings such as real-time-download, download format, download directory, and search results
 
 
@@ -45,12 +45,17 @@ Python packages:
 \*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 
 
-### Command line usage:
+
 
 ```
-Run the GUI by running appGui.py
+Run the GUI from within the zspotify directory: python appGui.py
 
-From main directory: python zspotify/appGui.py
+Run from main directory: python zspotify/appGui.py
+
+```
+
+### COMMAND LINE USAGE
+```
 
 
 Basic command line usage:
