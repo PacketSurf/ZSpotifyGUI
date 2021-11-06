@@ -118,17 +118,17 @@ BITRATE = 'BITRATE'
 
 SEARCH_RESULTS = 'SEARCH_RESULTS'
 
-PAUSE_ICON = '../resources/pauseIcon.png'
+PAUSE_ICON = 'Config/Resources/pauseIcon.png'
 
-PLAY_ICON = '../resources/playIcon.png'
+PLAY_ICON = 'Config/Resources/playIcon.png'
 
-VOL_ICON = '../resources/volIcon.png'
+VOL_ICON = 'Config/Resources/volIcon.png'
 
-MUTE_ICON = '../resources/mutedIcon.png'
+MUTE_ICON = 'Config/Resources/mutedIcon.png'
 
-SHUFFLE_ON_ICON = '../resources/shuffleOnIcon.png'
+SHUFFLE_ON_ICON = 'Config/Resources/shuffleOnIcon.png'
 
-SHUFFLE_OFF_ICON = '../resources/shuffleOffIcon.png'
+SHUFFLE_OFF_ICON = 'Config/Resources/shuffleOffIcon.png'
 
 FORMATS = ['mp3', 'ogg']
 

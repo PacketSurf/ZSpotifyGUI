@@ -45,7 +45,16 @@ Python packages:
 \*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 
 
-### Command line usage:
+
+
+
+```
+Install the requirements: pip install -r requirements.txt
+
+Run from main directory: python zspotify/appGui.py
+Or run the from within the zspotify directory: python appGui.py
+
+
 
 ```
 Run the GUI by running appGui.py

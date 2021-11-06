@@ -8,7 +8,7 @@ from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.uic import loadUi
 from librespot.audio.decoders import AudioQuality
 from librespot.core import Session
-from main_window import Ui_MainWindow
+from main_windowExe import Ui_MainWindow
 from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \

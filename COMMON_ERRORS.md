@@ -7,3 +7,10 @@ Below will contain sets of errors that you might get running zspotify. Below wil
 _Answer(s):_
 
 `pip install --upgrade protobuf`
+
+## FileNotFoundError: Could not find module C:\\path\\to\\libvlc.dll
+
+_Answer(s):_
+
+After installing VLC from [videolan.org](https://www.videolan.org/) it may be necessary to reboot your computer.
+It's been reported by Windows users that installing VLC from the Microsoft store helped solved their issues.
