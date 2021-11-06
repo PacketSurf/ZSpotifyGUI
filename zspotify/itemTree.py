@@ -52,6 +52,10 @@ class ItemTree:
         if self.tree.topLevelItemCount() > 0:
             self.tree.setCurrentItem(self.tree.topLevelItem(0))
 
+    def select_item(self, item):
+        index = self.item_index(item)
+        self.select_index(index)
+
     def select_index(self, index):
         if len(self.items) == 0 or index >= len(self.items) or index < 0: return None
         widget_item = self.tree.topLevelItem(index)

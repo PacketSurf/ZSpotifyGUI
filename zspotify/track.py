@@ -2,13 +2,14 @@ import os
 import re
 import time
 from typing import Any, Tuple, List
-
+from librespot.audio import HaltListener
+from librespot.audio.decoders import VorbisOnlyAudioQuality
 from librespot.audio.decoders import AudioQuality
 from librespot.metadata import TrackId
 from ffmpy import FFmpeg
 from pydub import AudioSegment
 from tqdm import tqdm
-
+import subprocess
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, TRACK_STATS_URL, SPLIT_ALBUM_DISCS, ROOT_PATH, DOWNLOAD_FORMAT, \
     CHUNK_SIZE, SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME
@@ -57,17 +58,28 @@ def get_song_duration(song_id: str) -> float:
     """ Retrieves duration of song in second as is on spotify """
 
     resp = ZSpotify.invoke_url(f'{TRACK_STATS_URL}{song_id}')
-
-    # get duration in miliseconds
     ms_duration = resp['duration_ms']
-    # convert to seconds
     duration = float(ms_duration)/1000
 
-    # debug
-    # print(duration)
-    # print(type(duration))
-
     return duration
+
+def play_track(spotify_id):
+    track_id = TrackId.from_base62(spotify_id)
+    stream = ZSpotify.SESSION.content_feeder().load(track_id,
+                                           VorbisOnlyAudioQuality(AudioQuality.HIGH),
+                                           False, None)
+    print(stream.track)
+    ffplay = subprocess.Popen(
+        ["ffplay", "-"],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+    )
+    while True:
+        byte = stream.input_stream.stream().read(5000)
+        if byte == -1:
+            return
+        ffplay.stdin.write(byte)
 
 # noinspection PyBroadException
 def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='', disable_progressbar=False, progress_callback=None) -> None:
@@ -123,6 +135,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                     create_download_directory(download_directory)
                     total_size = stream.input_stream.size
                     downloaded = 0
+                    total = 0
                     with open(filename, 'wb') as file, tqdm(
                             desc=song_name,
                             total=total_size,
@@ -143,7 +156,6 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                                     pause = get_segment_duration(p_bar)
                                 if pause:
                                     time.sleep(pause)
-
                     convert_audio_format(filename)
                     set_audio_tags(filename, artists, name, album_name,
                                 release_year, disc_number, track_number, spotify_id=scraped_song_id)
@@ -152,7 +164,6 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                     # add song id to download directory's .song_ids file
                     if not check_id:
                         add_to_directory_song_ids(download_directory, scraped_song_id)
-
 
                     if not ZSpotify.get_config(OVERRIDE_AUTO_WAIT):
                         time.sleep(ZSpotify.get_config(ANTI_BAN_WAIT_TIME))

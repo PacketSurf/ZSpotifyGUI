@@ -3,7 +3,7 @@ from const import ROOT_PATH
 class Item:
     def __init__(self, index, downloaded = False, path=""):
         self.index = index
-        self.downloaded = False
+        self.downloaded = downloaded
         self.path = path
 
 class Track(Item):

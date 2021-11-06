@@ -3,11 +3,7 @@ import time
 import requests
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThreadPool
-from PyQt5.QtWidgets import (
-
-    QApplication, QMainWindow, QDialog, QTreeWidget, QTreeWidgetItem, QFileDialog, QLineEdit
-
-)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTreeWidget, QTreeWidgetItem, QFileDialog, QLineEdit
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.uic import loadUi
 from librespot.audio.decoders import AudioQuality
@@ -21,6 +17,7 @@ from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALB
 from worker import Worker
 from audio import MusicController, find_local_tracks, get_track_file_as_item
 from download import DownloadController
+from track import play_track
 import qdarktheme
 from itemTree import ItemTree
 from item import Track, Artist, Album, Playlist
@@ -44,14 +41,13 @@ class Window(QMainWindow, Ui_MainWindow):
 
         self.libraryTabList = ["Downloaded", "Liked"]
         self.searchTabList = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
-
         self.library = {DOWNLOADED:[], LIKED:[]}
         self.init_info_labels()
         self.init_tree_views()
         self.init_results_amount_combo()
         self.init_downloads_view()
         self.tabs = [self.library_trees, self.search_trees]
-        self.tabWidgets = [self.libraryTabs, self.resultTabs]
+        self.tabWidgets = [self.libraryTabs, self.searchTabs]
         self.music_controller = MusicController(self)
         self.download_controller = DownloadController(self)
         self.init_signals()
@@ -60,7 +56,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.results = {}
         self.selected_tab = self.download_tree
         self.searchTabIndex = 1
-        self.resultTabs.setCurrentIndex(0)
+        self.searchTabs.setCurrentIndex(0)
         self.musicTabs.setCurrentIndex(0)
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.focus()
@@ -92,6 +88,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.accountTypeLabel.setText("Free Account")
                 self.dlQualityLabel.setText("160kbps")
         self.login_dialog = None
+        #play_track("6RGsTUL2nGjtSizbzYa6XY")
 
 
     def on_tab_change(self, index):
@@ -114,7 +111,7 @@ class Window(QMainWindow, Ui_MainWindow):
             worker.signals.result.connect(self.display_results)
             QThreadPool.globalInstance().start(worker)
             self.musicTabs.setCurrentIndex(1)
-            self.resultTabs.setCurrentIndex(0)
+            self.searchTabs.setCurrentIndex(0)
         elif not self.logged_in:
             self.open_login_dialog()
 
@@ -141,6 +138,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.info_labels[i].setText("")
                 self.info_labels[i].setToolTip("")
         if item.img != "": self.load_album_cover(item.img)
+        self.download_controller.update_download_view(item)
 
     def update_item_labels(self, headers):
         self.load_album_cover()
@@ -204,7 +202,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.searchBtn.clicked.connect(self.send_search_input)
         self.searchInput.returnPressed.connect(self.send_search_input)
         self.musicTabs.currentChanged.connect(self.on_music_tab_change)
-        self.resultTabs.currentChanged.connect(self.on_tab_change)
+        self.searchTabs.currentChanged.connect(self.on_tab_change)
         self.libraryTabs.currentChanged.connect(self.on_tab_change)
         self.loginBtn.clicked.connect(self.open_login_dialog)
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
@@ -234,7 +232,10 @@ class Window(QMainWindow, Ui_MainWindow):
         if item: self.music_controller.on_press_play()
 
     def init_downloads_view(self):
-        track_files = find_local_tracks()
+        try:
+            track_files = find_local_tracks()
+        except Exception as e:
+            print(e)
         self.library[DOWNLOADED] = []
         index = 0
         self.download_tree.clear()

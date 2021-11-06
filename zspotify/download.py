@@ -25,7 +25,7 @@ class DownloadController(QObject):
 
     def on_start_download(self):
         item = self.window.selected_item
-        if self.downloading or item == None: return
+        if not item or item.downloaded or self.downloading: return
         self.downloading = True
         self.window.progressBar.setValue(0)
         self.window.progressBar.setEnabled(True)
@@ -103,6 +103,21 @@ class DownloadController(QObject):
             ZSpotify.set_config(DOWNLOAD_REAL_TIME, False)
         else:
             ZSpotify.set_config(DOWNLOAD_REAL_TIME, True)
+
+    def update_download_view(self, item):
+        if item.downloaded:
+            self.window.downloadBtn.setEnabled(False)
+            self.window.downloadBtn.setText("Downloaded")
+            return
+        else:
+            self.window.downloadBtn.setEnabled(True)
+            self.window.downloadBtn.setText("Download")
+        if type(item) == Artist:
+            self.window.downloadBtn.setText("Download All Albums")
+        elif type(item) == Album:
+            self.window.downloadBtn.setText("Download Album")
+        elif type(item) == Playlist:
+            self.window.downloadBtn.setText("Download Playlist")
 
     def init_signals(self):
         self.window.downloadBtn.clicked.connect(self.on_start_download)

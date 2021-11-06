@@ -1,12 +1,13 @@
 import os
 import vlc
 import time
+import random
 import music_tag
 from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool
 from PyQt5.QtGui import QImage, QPixmap
 from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
-    VOL_ICON, MUTE_ICON
+    VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON
 from zspotify import ZSpotify
 from worker import Worker, MusicSignals
 from item import Track
@@ -23,6 +24,8 @@ class MusicController:
         self.audio_player = AudioPlayer(self.update_music_progress)
         self.item = None
         self.playlist_tree = None
+        self.shuffle = False
+        self.shuffle_queue = []
         self.init_signals()
         self.set_volume(self.window.volumeSlider.value())
         self.awaiting_play = False
@@ -33,12 +36,13 @@ class MusicController:
         if self.audio_player.play(item):
             self.queue_next_song = False
             self.paused = False
-            self.window.playingInfo1.setText(f"{item.title}  -")
-            self.window.playingInfo2.setText(f"  {item.artists}")
-            self.set_icon(PAUSE_ICON)
+            self.window.playingInfo1.setText(f"{item.title}")
+            self.window.playingInfo2.setText(f"{item.artists}")
+            self.set_button_icon(self.window.playBtn, PAUSE_ICON)
             self.awaiting_play = True
             self.item = item
             self.playlist_tree = playlist_tree
+            self.playlist_tree.select_item(item)
             self.start_progress_worker()
 
     def start_progress_worker(self):
@@ -48,17 +52,27 @@ class MusicController:
         QThreadPool.globalInstance().start(self.worker)
 
     def pause(self):
-        self.set_icon(PLAY_ICON)
+        self.set_button_icon(self.window.playBtn, PLAY_ICON)
         self.paused = True
         self.queue_next_song = False
         self.audio_player.pause()
 
     def unpause(self):
-        self.set_icon(PAUSE_ICON)
+        self.set_button_icon(self.window.playBtn, PAUSE_ICON)
         self.paused = False
         self.queue_next_song = True
         self.audio_player.unpause()
         self.start_progress_worker()
+
+    def toggle_shuffle(self):
+        self.shuffle = not self.shuffle
+        if self.shuffle:
+            if self.playlist_tree and self.playlist_tree.items:
+                self.set_button_icon(self.window.shuffleBtn, SHUFFLE_ON_ICON)
+                self.shuffle_queue = self.playlist_tree.items.copy()
+                random.shuffle(self.shuffle_queue)
+        else:
+            self.set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
 
 
 
@@ -113,7 +127,15 @@ class MusicController:
 
     def on_next(self):
         if not self.item and not self.playlist_tree: return
-        item = self.window.select_next_item(self.item, self.playlist_tree)
+        if self.shuffle and self.item in self.shuffle_queue:
+            index = self.shuffle_queue.index(self.item)
+            index += 1
+            if index == len(self.shuffle_queue):
+                self.shuffle_queue = random.shuffle(self.shuffle_queue)
+                index = 0
+            item = self.shuffle_queue[index]
+        else:
+            item = self.window.select_next_item(self.item, self.playlist_tree)
         if item: self.play(item, self.playlist_tree)
 
     def on_prev(self):
@@ -123,16 +145,21 @@ class MusicController:
                 self.awaiting_play = True
                 self.audio_player.restart()
                 return
-        item = self.window.select_prev_item(self.item, self.playlist_tree)
+        if self.shuffle and self.item in self.shuffle_queue:
+            index = self.shuffle_queue.index(self.item)
+            if index < 0:
+                return
+            item = self.shuffle_queue[index]
+        else:
+            item = self.window.select_prev_item(self.item, self.playlist_tree)
         if item: self.play(item, self.playlist_tree)
 
 
-    def set_icon(self, icon_path):
+    def set_button_icon(self, btn, icon_path):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(icon_path), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.window.playBtn.setIcon(icon)
-        self.window.playBtn.setIconSize(QtCore.QSize(24, 24))
-        self.audio_player.pause()
+        btn.setIcon(icon)
+        #btn.setIconSize(QtCore.QSize(24, 24))
 
     def set_vol_icon(self, icon_path):
         lbl = self.window.volIconLabel
@@ -148,6 +175,7 @@ class MusicController:
         self.window.volumeSlider.valueChanged.connect(self.set_volume)
         self.window.nextBtn.clicked.connect(self.on_next)
         self.window.prevBtn.clicked.connect(self.on_prev)
+        self.window.shuffleBtn.clicked.connect(self.toggle_shuffle)
 
 class AudioPlayer:
 

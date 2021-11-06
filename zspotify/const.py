@@ -126,6 +126,10 @@ VOL_ICON = '../resources/volIcon.png'
 
 MUTE_ICON = '../resources/mutedIcon.png'
 
+SHUFFLE_ON_ICON = '../resources/shuffleOnIcon.png'
+
+SHUFFLE_OFF_ICON = '../resources/shuffleOffIcon.png'
+
 FORMATS = ['mp3', 'ogg']
 
 
