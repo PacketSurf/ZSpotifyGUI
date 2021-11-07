@@ -3,6 +3,7 @@ import vlc
 import time
 import random
 import music_tag
+import logging
 from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool
 from PyQt5.QtGui import QImage, QPixmap
@@ -13,6 +14,8 @@ from worker import Worker, MusicSignals
 from item import Track
 from utils import ms_to_time_str
 from glob import glob
+
+logger = logging.getLogger(__name__)
 
 
 class MusicController:
@@ -34,20 +37,24 @@ class MusicController:
 
     def play(self, item, playlist_tree):
         if self.audio_player.play(item):
+            self.start_progress_worker()
             self.queue_next_song = False
             self.paused = False
             self.update_playing_info(item)
             self.set_button_icon(self.window.playBtn, PAUSE_ICON)
             self.awaiting_play = True
             self.item = item
+            if self.shuffle and self.playlist_tree != playlist_tree:
+                self.shuffle_queue = playlist_tree.items.copy()
+                random.shuffle(self.shuffle_queue)
             self.playlist_tree = playlist_tree
             self.playlist_tree.select_item(item)
-            self.start_progress_worker()
+
 
     def start_progress_worker(self):
         self.worker = Worker(self.run_progress_bar, update=self.update_music_progress, signals=MusicSignals())
         self.worker.signals.finished.connect(self.on_progress_finished)
-        self.worker.signals.error.connect(lambda e: print(e))
+        self.worker.signals.error.connect(lambda e: logging.error(e))
         QThreadPool.globalInstance().start(self.worker)
 
     def pause(self):
@@ -144,6 +151,7 @@ class MusicController:
                 return
         if self.shuffle and self.item in self.shuffle_queue:
             index = self.shuffle_queue.index(self.item)
+            index -= 1
             if index < 0:
                 return
             item = self.shuffle_queue[index]
@@ -199,9 +207,12 @@ class AudioPlayer:
         if self.audio_file != None:
             self.track = track
             self.playing = True
-            self.player = vlc.MediaPlayer(f"{self.root}{self.audio_file}")
-            self.set_volume(self.volume)
-            self.player.play()
+            try:
+                self.player = vlc.MediaPlayer(f"{self.root}{self.audio_file}")
+                self.set_volume(self.volume)
+                self.player.play()
+            except Exception as e:
+                logger.error(e)
             return True
         return False
 
@@ -247,9 +258,12 @@ def find_local_tracks():
     root = ZSpotify.get_config(ROOT_PATH)
     all_results = []
     for format in FORMATS:
-        ext = "*." + format
-        results = [y for x in os.walk(root) for y in glob(os.path.join(x[0], ext))]
-        all_results += results
+        try:
+            ext = "*." + format
+            results = [y for x in os.walk(root) for y in glob(os.path.join(x[0], ext))]
+            all_results += results
+        except Exception as e:
+            logger.error(e)
     files = [res.replace(root,"") for res in all_results]
     return files
 
@@ -269,6 +283,5 @@ def find_id_in_metadata(file_name):
     download_directory = os.path.join(os.path.dirname(
         __file__), ZSpotify.get_config(ROOT_PATH))
     file = f"{download_directory}/{file_name}"
-
     tag = music_tag.load_file(file)
     return str(tag[SPOTIFY_ID])

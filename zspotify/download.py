@@ -1,3 +1,4 @@
+import logging
 from zspotify import ZSpotify
 from playlist import download_playlist
 from album import download_album, download_artist_albums
@@ -7,6 +8,8 @@ from worker import Worker
 from const import TRACKS, ARTISTS, ALBUMS, PLAYLISTS, ROOT_PATH, DOWNLOAD_REAL_TIME, DOWNLOAD_FORMAT, FORMATS
 from PyQt5.QtCore import QThreadPool, QObject, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QFileDialog
+
+logger = logging.getLogger(__name__)
 
 class DownloadController(QObject):
 
@@ -65,6 +68,7 @@ class DownloadController(QObject):
             elif type(self.item) == Playlist:
                 download_playlist(self.item.id,progress_callback=signal)
         except Exception as e:
+            logger.error(e)
             print(e)
 
 

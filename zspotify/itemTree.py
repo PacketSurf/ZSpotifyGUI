@@ -38,6 +38,7 @@ class ItemTree:
             widget_item = self.tree_widget_builder(item)
             self.tree.setHeaderItem(widget_item)
         except Exception as e:
+            logging.error(e)
             print(e)
 
     def set_header_spacing(self, *args):

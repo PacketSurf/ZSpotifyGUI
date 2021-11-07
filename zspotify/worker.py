@@ -1,8 +1,10 @@
 import sys
 import traceback
+import logging
 from PyQt5.QtCore import QObject, pyqtSignal, QRunnable
 from const import TRACKS, ARTISTS, ALBUMS, PLAYLISTS
 
+logger = logging.getLogger(__name__)
 
 class WorkerSignals(QObject):
     finished = pyqtSignal()
@@ -40,6 +42,7 @@ class Worker(QRunnable):
         except:
             traceback.print_exc()
             exctype, value = sys.exc_info()[:2]
+            logger.error(f"{exctype} : {value} - {traceback.format_exc()}")
             self.signals.error.emit((exctype, value, traceback.format_exc()))
         else:
             self.signals.result.emit(result)  # Return the result of the processing

@@ -1,6 +1,7 @@
 import sys
 import time
 import requests
+import logging
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThreadPool
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTreeWidget, QTreeWidgetItem, QFileDialog, QLineEdit
@@ -24,6 +25,7 @@ from item import Track, Artist, Album, Playlist
 
 def main():
     ZSpotify.load_config()
+    logging.basicConfig(level=logging.INFO, filename="Config/main.log", format='%(asctime)s :: %(levelname)s :: %(message)s')
     app = QApplication(sys.argv)
     app.setApplicationName("ZSpotify")
     app.setStyleSheet(qdarktheme.load_stylesheet("dark"))
@@ -38,7 +40,6 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.retranslateUi(self)
-
         self.libraryTabList = ["Downloaded", "Liked"]
         self.searchTabList = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
         self.library = {DOWNLOADED:[], LIKED:[]}
@@ -48,7 +49,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.init_downloads_view()
         self.tabs = [self.library_trees, self.search_trees]
         self.tabWidgets = [self.libraryTabs, self.searchTabs]
-        self.music_controller = MusicController(self)
+        try:
+            self.music_controller = MusicController(self)
+        except Exception as e:
+            logging.critical(e)
         self.download_controller = DownloadController(self)
         self.init_signals()
         self.logged_in = False
@@ -249,7 +253,7 @@ class Window(QMainWindow, Ui_MainWindow):
         try:
             track_files = find_local_tracks()
         except Exception as e:
-            print(e)
+            logging.error(e)
         self.library[DOWNLOADED] = []
         index = 0
         self.download_tree.clear()
@@ -318,8 +322,6 @@ class Window(QMainWindow, Ui_MainWindow):
                 return
             if amount < amt: nextHighest = i
         self.resultAmountCombo.insertItem(nextHighest)
-
-
 
 
 

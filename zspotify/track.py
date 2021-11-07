@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import logging
 from typing import Any, Tuple, List
 from librespot.audio import HaltListener
 from librespot.audio.decoders import VorbisOnlyAudioQuality
@@ -17,7 +18,7 @@ from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_down
     get_directory_song_ids, add_to_directory_song_ids
 from zspotify import ZSpotify
 
-
+logger = logging.getLogger(__name__)
 
 def get_saved_tracks() -> list:
     """ Returns user's saved tracks """
@@ -68,7 +69,6 @@ def play_track(spotify_id):
     stream = ZSpotify.SESSION.content_feeder().load(track_id,
                                            VorbisOnlyAudioQuality(AudioQuality.HIGH),
                                            False, None)
-    print(stream.track)
     ffplay = subprocess.Popen(
         ["ffplay", "-"],
         stdin=subprocess.PIPE,
@@ -115,6 +115,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
 
     except Exception as e:
+        logger.error(e)
         print('###   SKIPPING SONG - FAILED TO QUERY METADATA   ###')
         print(e)
     else:
@@ -171,6 +172,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
             print('###   SKIPPING:', song_name,
                   '(GENERAL DOWNLOAD ERROR)   ###')
             print(e)
+            logger.error(e)
             if os.path.exists(filename):
                 os.remove(filename)
 
