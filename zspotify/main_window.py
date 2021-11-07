@@ -167,7 +167,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_12.setContentsMargins(5, 0, 5, 5)
         self.verticalLayout_12.setObjectName("verticalLayout_12")
         self.artistsTree = QtWidgets.QTreeWidget(self.artistsTab)
-        self.artistsTree.setStyleSheet("border: 0")
+        self.artistsTree.setStyleSheet("")
         self.artistsTree.setAutoScrollMargin(16)
         self.artistsTree.setAlternatingRowColors(True)
         self.artistsTree.setAnimated(True)
@@ -182,7 +182,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_13.setContentsMargins(5, 0, 5, 5)
         self.verticalLayout_13.setObjectName("verticalLayout_13")
         self.albumsTree = QtWidgets.QTreeWidget(self.albumsTab)
-        self.albumsTree.setStyleSheet("border:0")
+        self.albumsTree.setStyleSheet("")
         self.albumsTree.setAlternatingRowColors(True)
         self.albumsTree.setAnimated(True)
         self.albumsTree.setObjectName("albumsTree")
@@ -196,7 +196,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.setContentsMargins(5, 0, 5, 5)
         self.verticalLayout_14.setObjectName("verticalLayout_14")
         self.playlistsTree = QtWidgets.QTreeWidget(self.playlistsTab)
-        self.playlistsTree.setStyleSheet("border:0")
+        self.playlistsTree.setStyleSheet("")
         self.playlistsTree.setAlternatingRowColors(True)
         self.playlistsTree.setAnimated(True)
         self.playlistsTree.setObjectName("playlistsTree")
@@ -581,9 +581,9 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.musicTabs.setCurrentIndex(0)
+        self.musicTabs.setCurrentIndex(1)
         self.libraryTabs.setCurrentIndex(1)
-        self.searchTabs.setCurrentIndex(0)
+        self.searchTabs.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

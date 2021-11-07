@@ -234,7 +234,7 @@ QTabWidget::tab-bar
              <enum>QTabWidget::West</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -396,7 +396,7 @@ QTabWidget::tab-bar
                  <enum>QTabWidget::North</enum>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>3</number>
                 </property>
                 <property name="elideMode">
                  <enum>Qt::ElideRight</enum>
@@ -495,7 +495,7 @@ QTabWidget::tab-bar
                   <item>
                    <widget class="QTreeWidget" name="artistsTree">
                     <property name="styleSheet">
-                     <string notr="true">border: 0</string>
+                     <string notr="true"/>
                     </property>
                     <property name="autoScrollMargin">
                      <number>16</number>
@@ -546,7 +546,7 @@ QTabWidget::tab-bar
                   <item>
                    <widget class="QTreeWidget" name="albumsTree">
                     <property name="styleSheet">
-                     <string notr="true">border:0</string>
+                     <string notr="true"/>
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
@@ -609,7 +609,7 @@ QTabWidget::tab-bar
                   <item>
                    <widget class="QTreeWidget" name="playlistsTree">
                     <property name="styleSheet">
-                     <string notr="true">border:0</string>
+                     <string notr="true"/>
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
