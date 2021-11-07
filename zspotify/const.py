@@ -18,6 +18,8 @@ ARTIST = 'artist'
 
 ARTISTS = 'artists'
 
+ALBUMARTIST = 'albumartist'
+
 ARTWORK = 'artwork'
 
 TRACKS = 'tracks'
@@ -132,5 +134,6 @@ CONFIG_DEFAULT_SETTINGS = {
     'OVERRIDE_AUTO_WAIT': False,
     'CHUNK_SIZE': 50000,
     'SPLIT_ALBUM_DISCS': False,
-    'DOWNLOAD_REAL_TIME': False
+    'DOWNLOAD_REAL_TIME': False,
+    'LANGUAGE': 'en'
 }
