@@ -194,7 +194,7 @@
             <enum>Qt::RichText</enum>
            </property>
            <property name="pixmap">
-            <pixmap>../resources/ZSpotifyBannerTP.png</pixmap>
+            <pixmap>Config/Resources/ZSpotifyBannerTP.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -803,7 +803,7 @@ QTabWidget::tab-bar
                      </property>
                      <property name="icon">
                       <iconset>
-                       <normaloff>../resources/prevIcon.png</normaloff>../resources/prevIcon.png</iconset>
+                       <normaloff>Config/Resources/prevIcon.png</normaloff>Config/Resources/prevIcon.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -846,7 +846,7 @@ QTabWidget::tab-bar
                        </property>
                        <property name="icon">
                         <iconset>
-                         <normaloff>../resources/playIcon.png</normaloff>../resources/playIcon.png</iconset>
+                         <normaloff>Config/Resources/playIcon.png</normaloff>Config/Resources/playIcon.png</iconset>
                        </property>
                        <property name="iconSize">
                         <size>
@@ -874,7 +874,7 @@ QTabWidget::tab-bar
                      </property>
                      <property name="icon">
                       <iconset>
-                       <normaloff>../resources/nextIcon.png</normaloff>../resources/nextIcon.png</iconset>
+                       <normaloff>Config/Resources/nextIcon.png</normaloff>Config/Resources/nextIcon.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -896,7 +896,7 @@ QTabWidget::tab-bar
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normaloff>../resources/shuffleOffIcon.png</normaloff>../resources/shuffleOffIcon.png</iconset>
+                     <normaloff>Config/Resources/shuffleOffIcon.png</normaloff>Config/Resources/shuffleOffIcon.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -1169,7 +1169,7 @@ QTabWidget::tab-bar
                 <enum>Qt::RichText</enum>
                </property>
                <property name="pixmap">
-                <pixmap>../resources/cover_default.jpg</pixmap>
+                <pixmap>Config/Resources/cover_default.jpg</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
@@ -1571,7 +1571,7 @@ QTabWidget::tab-bar
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../resources/folderIcon.png</normaloff>../resources/folderIcon.png</iconset>
+                   <normaloff>Config/Resources/folderIcon.png</normaloff>Config/Resources/folderIcon.png</iconset>
                  </property>
                 </widget>
                </item>

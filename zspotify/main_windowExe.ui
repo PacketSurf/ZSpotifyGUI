@@ -1169,7 +1169,7 @@ QTabWidget::tab-bar
                 <enum>Qt::RichText</enum>
                </property>
                <property name="pixmap">
-                <pixmap>../resources/cover_default.jpg</pixmap>
+                <pixmap>Config/Resources/cover_default.jpg</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>

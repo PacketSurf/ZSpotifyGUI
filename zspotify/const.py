@@ -90,7 +90,7 @@ WINDOWS_SYSTEM = 'Windows'
 
 CREDENTIALS_JSON = 'credentials.json'
 
-CONFIG_FILE_PATH = '../zs_config.json'
+CONFIG_FILE_PATH = 'Config/zs_config.json'
 
 ROOT_PATH = 'ROOT_PATH'
 
@@ -108,8 +108,6 @@ OVERRIDE_AUTO_WAIT = 'OVERRIDE_AUTO_WAIT'
 
 CHUNK_SIZE = 'CHUNK_SIZE'
 
-COVER_DEFAULT = '../resources/cover_default.jpg'
-
 SPLIT_ALBUM_DISCS = 'SPLIT_ALBUM_DISCS'
 
 DOWNLOAD_REAL_TIME = 'DOWNLOAD_REAL_TIME'
@@ -117,6 +115,8 @@ DOWNLOAD_REAL_TIME = 'DOWNLOAD_REAL_TIME'
 BITRATE = 'BITRATE'
 
 SEARCH_RESULTS = 'SEARCH_RESULTS'
+
+COVER_DEFAULT = 'Config/Resources/cover_default.jpg'
 
 PAUSE_ICON = 'Config/Resources/pauseIcon.png'
 
@@ -154,11 +154,11 @@ EXT_MAP = {
 }
 
 CONFIG_DEFAULT_SETTINGS = {
-    'ROOT_PATH': '../ZSpotify Music/',
-    'ROOT_PODCAST_PATH': '../ZSpotify Podcasts/',
+    'ROOT_PATH': 'Config/ZSpotify Music/',
+    'ROOT_PODCAST_PATH': 'Config/ZSpotify Podcasts/',
     'SKIP_EXISTING_FILES': True,
     'DOWNLOAD_FORMAT': 'ogg',
-    'SEARCH_RESULTS': 10,
+    'SEARCH_RESULTS': 50,
     'FORCE_PREMIUM': False,
     'ANTI_BAN_WAIT_TIME': 1,
     'OVERRIDE_AUTO_WAIT': False,

@@ -42,6 +42,12 @@
          <height>70</height>
         </size>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>350</width>
+         <height>70</height>
+        </size>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -49,7 +55,7 @@
         <enum>Qt::RichText</enum>
        </property>
        <property name="pixmap">
-        <pixmap>../resources/ZSpotifyBannerTP.png</pixmap>
+        <pixmap>Config/Resources/ZSpotifyBannerTP.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>
