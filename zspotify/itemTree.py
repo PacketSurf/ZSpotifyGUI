@@ -18,7 +18,10 @@ class ItemTree:
         self.init_signals()
 
     def load_content(self):
-        if self.load_function: self.load_function()
+        try:
+            if self.load_function: self.load_function()
+        except Exception as e:
+            logging.error(e)
 
     def add_item(self, item):
         widget_item = self.tree_widget_builder(item)

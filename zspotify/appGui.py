@@ -88,6 +88,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.accountTypeLabel.setText("Free Account")
                 self.dlQualityLabel.setText("160kbps")
         self.login_dialog = None
+        self.liked_tree.load_function = self.init_liked_view
 
     def on_tab_change(self, index):
         i = self.musicTabs.currentIndex()
@@ -207,7 +208,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.loginBtn.clicked.connect(self.open_login_dialog)
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
         self.download_controller.downloadComplete.connect(self.init_downloads_view)
-        self.liked_tree.load_function = self.init_liked_view
         for tree in self.trees:
             tree.signals.itemChanged.connect(self.update_item_info)
             tree.signals.onSelected.connect(self.update_item_labels)
