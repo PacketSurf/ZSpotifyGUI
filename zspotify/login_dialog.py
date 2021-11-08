@@ -31,7 +31,7 @@ class Ui_LoginDialog(object):
         self.label_3.setMaximumSize(QtCore.QSize(350, 70))
         self.label_3.setText("")
         self.label_3.setTextFormat(QtCore.Qt.RichText)
-        self.label_3.setPixmap(QtGui.QPixmap("Config/Resources/ZSpotifyBannerTP.png"))
+        self.label_3.setPixmap(QtGui.QPixmap("Resources/ZSpotifyBannerTP.png"))
         self.label_3.setScaledContents(True)
         self.label_3.setObjectName("label_3")
         self.verticalLayout_2.addWidget(self.label_3)

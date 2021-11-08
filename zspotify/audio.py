@@ -131,7 +131,10 @@ class MusicController:
 
     def on_next(self):
         if not self.item and not self.playlist_tree: return
-        if self.shuffle and self.item in self.shuffle_queue:
+        if self.shuffle:
+            if self.item not in self.shuffle_queue:
+                self.shuffle_queue = self.playlist_tree.items.copy()
+                random.shuffle(self.shuffle_queue)
             index = self.shuffle_queue.index(self.item)
             index += 1
             if index >= len(self.shuffle_queue):

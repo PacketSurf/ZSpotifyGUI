@@ -55,7 +55,7 @@
         <enum>Qt::RichText</enum>
        </property>
        <property name="pixmap">
-        <pixmap>Config/Resources/ZSpotifyBannerTP.png</pixmap>
+        <pixmap>Resources/ZSpotifyBannerTP.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>

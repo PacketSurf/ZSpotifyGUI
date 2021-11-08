@@ -90,7 +90,7 @@ WINDOWS_SYSTEM = 'Windows'
 
 CREDENTIALS_JSON = 'credentials.json'
 
-CONFIG_FILE_PATH = 'Config/zs_config.json'
+CONFIG_FILE_PATH = 'zs_config.json'
 
 ROOT_PATH = 'ROOT_PATH'
 
@@ -116,19 +116,19 @@ BITRATE = 'BITRATE'
 
 SEARCH_RESULTS = 'SEARCH_RESULTS'
 
-COVER_DEFAULT = 'Config/Resources/cover_default.jpg'
+COVER_DEFAULT = 'Resources/cover_default.jpg'
 
-PAUSE_ICON = 'Config/Resources/pauseIcon.png'
+PAUSE_ICON = 'Resources/pauseIcon.png'
 
-PLAY_ICON = 'Config/Resources/playIcon.png'
+PLAY_ICON = 'Resources/playIcon.png'
 
-VOL_ICON = 'Config/Resources/volIcon.png'
+VOL_ICON = 'Resources/volIcon.png'
 
-MUTE_ICON = 'Config/Resources/mutedIcon.png'
+MUTE_ICON = 'Resources/mutedIcon.png'
 
-SHUFFLE_ON_ICON = 'Config/Resources/shuffleOnIcon.png'
+SHUFFLE_ON_ICON = 'Resources/shuffleOnIcon.png'
 
-SHUFFLE_OFF_ICON = 'Config/Resources/shuffleOffIcon.png'
+SHUFFLE_OFF_ICON = 'Resources/shuffleOffIcon.png'
 
 FORMATS = ['mp3', 'ogg']
 
@@ -154,8 +154,8 @@ EXT_MAP = {
 }
 
 CONFIG_DEFAULT_SETTINGS = {
-    'ROOT_PATH': 'Config/ZSpotify Music/',
-    'ROOT_PODCAST_PATH': 'Config/ZSpotify Podcasts/',
+    'ROOT_PATH': 'ZSpotify Music/',
+    'ROOT_PODCAST_PATH': 'ZSpotify Podcasts/',
     'SKIP_EXISTING_FILES': True,
     'DOWNLOAD_FORMAT': 'ogg',
     'SEARCH_RESULTS': 50,

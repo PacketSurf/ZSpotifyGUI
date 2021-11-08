@@ -25,7 +25,7 @@ from item import Track, Artist, Album, Playlist
 
 def main():
     ZSpotify.load_config()
-    logging.basicConfig(level=logging.INFO, filename="Config/main.log", format='%(asctime)s :: %(levelname)s :: %(message)s')
+    logging.basicConfig(level=logging.INFO, filename="main.log", format='%(asctime)s :: %(levelname)s :: %(message)s')
     app = QApplication(sys.argv)
     app.setApplicationName("ZSpotify")
     app.setStyleSheet(qdarktheme.load_stylesheet("dark"))
