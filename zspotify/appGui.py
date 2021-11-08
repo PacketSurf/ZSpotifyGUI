@@ -252,17 +252,17 @@ class Window(QMainWindow, Ui_MainWindow):
     def init_downloads_view(self):
         try:
             track_files = find_local_tracks()
+            self.library[DOWNLOADED] = []
+            index = 0
+            self.download_tree.clear()
+            for file in track_files:
+                track = get_track_file_as_item(file, index)
+                if track != None:
+                    self.library[DOWNLOADED].append(track)
+                    self.download_tree.add_item(track)
+                    index += 1
         except Exception as e:
             logging.error(e)
-        self.library[DOWNLOADED] = []
-        index = 0
-        self.download_tree.clear()
-        for file in track_files:
-            track = get_track_file_as_item(file, index)
-            if track != None:
-                self.library[DOWNLOADED].append(track)
-                self.download_tree.add_item(track)
-                index += 1
 
 
     def init_results_amount_combo(self):

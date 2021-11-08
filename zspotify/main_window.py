@@ -581,9 +581,9 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.musicTabs.setCurrentIndex(1)
+        self.musicTabs.setCurrentIndex(0)
         self.libraryTabs.setCurrentIndex(1)
-        self.searchTabs.setCurrentIndex(3)
+        self.searchTabs.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
