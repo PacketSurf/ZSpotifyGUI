@@ -770,9 +770,13 @@ QTabWidget::tab-bar
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_2">
+                  <widget class="QPushButton" name="repeatBtn">
                    <property name="text">
                     <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>Resources/repeatOffIcon.png</normaloff>Resources/repeatOffIcon.png</iconset>
                    </property>
                    <property name="flat">
                     <bool>true</bool>

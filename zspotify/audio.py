@@ -8,7 +8,7 @@ from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool
 from PyQt5.QtGui import QImage, QPixmap
 from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
-    VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON
+    VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON, REPEAT_ON_ICON, REPEAT_OFF_ICON
 from zspotify import ZSpotify
 from worker import Worker, MusicSignals
 from item import Track
@@ -22,21 +22,24 @@ class MusicController:
 
     def __init__(self, window):
         self.window = window
-        self.seeking = False
-        self.worker = None
-        self.audio_player = AudioPlayer(self.update_music_progress)
         self.item = None
         self.playlist_tree = None
         self.shuffle = False
+        self.repeat = False
         self.shuffle_queue = []
-        self.init_signals()
-        self.set_volume(self.window.volumeSlider.value())
         self.awaiting_play = False
         self.queue_next_song = False
         self.paused = False
+        self.seeking = False
+        self.worker = None
+        self.audio_player = AudioPlayer(self.update_music_progress)
+        self.init_signals()
+        self.set_volume(self.window.volumeSlider.value())
+
 
     def play(self, item, playlist_tree):
         if self.audio_player.play(item):
+            logger.info(f"Playing track: {item.id}")
             self.start_progress_worker()
             self.queue_next_song = False
             self.paused = False
@@ -72,6 +75,7 @@ class MusicController:
 
     def toggle_shuffle(self):
         self.shuffle = not self.shuffle
+        if self.repeat: self.toggle_repeat()
         if self.shuffle:
             if self.playlist_tree and self.playlist_tree.items:
                 self.set_button_icon(self.window.shuffleBtn, SHUFFLE_ON_ICON)
@@ -79,6 +83,13 @@ class MusicController:
                 random.shuffle(self.shuffle_queue)
         else:
             self.set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
+
+    def toggle_repeat(self):
+        self.repeat = not self.repeat
+        if self.repeat:
+            self.set_button_icon(self.window.repeatBtn, REPEAT_ON_ICON)
+        else:
+            self.set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
 
     def update_music_progress(self, perc, elapsed, total):
         if not self.seeking:
@@ -131,7 +142,9 @@ class MusicController:
 
     def on_next(self):
         if not self.item and not self.playlist_tree: return
-        if self.shuffle:
+        if self.repeat:
+            item = self.item
+        elif self.shuffle:
             if self.item not in self.shuffle_queue:
                 self.shuffle_queue = self.playlist_tree.items.copy()
                 random.shuffle(self.shuffle_queue)
@@ -188,6 +201,7 @@ class MusicController:
         self.window.nextBtn.clicked.connect(self.on_next)
         self.window.prevBtn.clicked.connect(self.on_prev)
         self.window.shuffleBtn.clicked.connect(self.toggle_shuffle)
+        self.window.repeatBtn.clicked.connect(self.toggle_repeat)
 
 class AudioPlayer:
 

@@ -122,6 +122,17 @@ class ItemTree:
         item = self.get_selected_item()
         self.signals.doubleClicked.emit(item, self)
 
+    def create_popup_menu(self, parent=None):
+        self.popup_menu = QtGui.QMenu(parent)
+        self.popup_menu.addAction("New", lambda a: print("nice"))
+        self.popup_menu.addAction("Rename", lambda a: print("nice"))
+        self.popup_menu.addSeparator()
+        self.popup_menu.addAction("Delete", lambda a: print("nooice"))
+
+    def on_context_menu(self, pos):
+        node = self.treeWidget.mapToGlobal(pos)
+        self.popup_menu.exec_(self.treeWidget.mapToGlobal(pos))
+
     def init_signals(self):
         self.tree.currentItemChanged.connect(self.on_item_changed)
         self.tree.itemDoubleClicked.connect(self.on_double_clicked)

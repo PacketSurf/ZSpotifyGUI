@@ -130,6 +130,10 @@ SHUFFLE_ON_ICON = 'Resources/shuffleOnIcon.png'
 
 SHUFFLE_OFF_ICON = 'Resources/shuffleOffIcon.png'
 
+REPEAT_ON_ICON = "Resources/repeatOnIcon.png"
+
+REPEAT_OFF_ICON = "Resources/repeatOffIcon.png"
+
 FORMATS = ['mp3', 'ogg']
 
 

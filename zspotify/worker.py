@@ -31,6 +31,7 @@ class Worker(QRunnable):
 
     def run(self):
         try:
+            logger.info("Attempting to start worker thread.")
             if "update" in self.kwargs.keys():
                 result = self.fn(
                     self.signals.update.emit, *self.args, **self.kwargs
