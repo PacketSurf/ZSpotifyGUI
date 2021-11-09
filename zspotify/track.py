@@ -92,9 +92,10 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
         filename = os.path.join(
             download_directory, f'{song_name}.{EXT_MAP.get(ZSpotify.get_config(DOWNLOAD_FORMAT).lower())}')
 
+        archive_directory = os.path.join(os.path.dirname(__file__), ZSpotify.get_config(ROOT_PATH))
         check_name = os.path.isfile(filename) and os.path.getsize(filename)
         check_id = scraped_song_id in get_directory_song_ids(download_directory)
-        check_all_time = scraped_song_id in get_previously_downloaded(scraped_song_id, ZSpotify.get_config(ROOT_PATH))
+        check_all_time = scraped_song_id in get_previously_downloaded(scraped_song_id, archive_directory)
 
         # a song with the same name is installed
         if not check_id and check_name:
@@ -120,7 +121,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
                 elif check_all_time and ZSpotify.get_config(SKIP_PREVIOUSLY_DOWNLOADED):
                     print('\n###   SKIPPING:', song_name,
-                        '(SONG ALREADY INSTALLED ONCE)   ###')
+                        '(SONG ALREADY DOWNLOADED ONCE)   ###')
 
                 else:
                     if track_id != scraped_song_id:
@@ -154,8 +155,8 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                     set_music_thumbnail(filename, image_url)
 
                     # add song id to archive file
-                    if ZSpotify.get_config(SKIP_ALL_TIME_INSTALLED):
-                        add_to_archive(scraped_song_id, ZSpotify.get_config(ROOT_PATH))
+                    if ZSpotify.get_config(SKIP_PREVIOUSLY_DOWNLOADED):
+                        add_to_archive(scraped_song_id, archive_directory)
                     # add song id to download directory's .song_ids file
                     if not check_id:
                         add_to_directory_song_ids(download_directory, scraped_song_id)
