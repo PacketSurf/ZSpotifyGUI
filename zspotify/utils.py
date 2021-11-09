@@ -27,8 +27,8 @@ def create_download_directory(download_path: str) -> None:
         with open(hidden_file_path, 'w', encoding='utf-8') as f:
             pass
 
-def get_all_time_installed(song_id: str, archive_directory: str) -> List[str]:
-    """ Returns list of all time installed songs """
+def get_previously_downloaded(song_id: str, archive_directory: str) -> List[str]:
+    """ Returns list of all time downloaded songs """
 
     ids = []
     archive_path = os.path.join(archive_directory, '.song_archive')

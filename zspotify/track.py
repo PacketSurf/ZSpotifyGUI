@@ -12,9 +12,9 @@ from tqdm import tqdm
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, TRACK_STATS_URL, SPLIT_ALBUM_DISCS, ROOT_PATH, DOWNLOAD_FORMAT, \
     CHUNK_SIZE, SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME, \
-    SKIP_ALL_TIME_INSTALLED
+    SKIP_PREVIOUSLY_DOWNLOADED
 from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_download_directory, \
-    get_directory_song_ids, add_to_directory_song_ids, get_all_time_installed, add_to_archive
+    get_directory_song_ids, add_to_directory_song_ids, get_previously_downloaded, add_to_archive
 from zspotify import ZSpotify
 
 
@@ -94,7 +94,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
         check_name = os.path.isfile(filename) and os.path.getsize(filename)
         check_id = scraped_song_id in get_directory_song_ids(download_directory)
-        check_all_time = scraped_song_id in get_all_time_installed(scraped_song_id, ZSpotify.get_config(ROOT_PATH))
+        check_all_time = scraped_song_id in get_previously_downloaded(scraped_song_id, ZSpotify.get_config(ROOT_PATH))
 
         # a song with the same name is installed
         if not check_id and check_name:
@@ -118,7 +118,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                     print('\n###   SKIPPING:', song_name,
                         '(SONG ALREADY EXISTS)   ###')
 
-                elif check_all_time and ZSpotify.get_config(SKIP_ALL_TIME_INSTALLED):
+                elif check_all_time and ZSpotify.get_config(SKIP_PREVIOUSLY_DOWNLOADED):
                     print('\n###   SKIPPING:', song_name,
                         '(SONG ALREADY INSTALLED ONCE)   ###')
 
