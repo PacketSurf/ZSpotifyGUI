@@ -11,9 +11,10 @@ from tqdm import tqdm
 
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, TRACK_STATS_URL, SPLIT_ALBUM_DISCS, ROOT_PATH, DOWNLOAD_FORMAT, \
-    CHUNK_SIZE, SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME
+    CHUNK_SIZE, SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME, \
+    SKIP_PREVIOUSLY_DOWNLOADED
 from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_download_directory, \
-    get_directory_song_ids, add_to_directory_song_ids
+    get_directory_song_ids, add_to_directory_song_ids, get_previously_downloaded, add_to_archive
 from zspotify import ZSpotify
 
 
@@ -91,8 +92,10 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
         filename = os.path.join(
             download_directory, f'{song_name}.{EXT_MAP.get(ZSpotify.get_config(DOWNLOAD_FORMAT).lower())}')
 
+        archive_directory = os.path.join(os.path.dirname(__file__), ZSpotify.get_config(ROOT_PATH))
         check_name = os.path.isfile(filename) and os.path.getsize(filename)
         check_id = scraped_song_id in get_directory_song_ids(download_directory)
+        check_all_time = scraped_song_id in get_previously_downloaded(scraped_song_id, archive_directory)
 
         # a song with the same name is installed
         if not check_id and check_name:
@@ -115,6 +118,11 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                 if check_id and check_name and ZSpotify.get_config(SKIP_EXISTING_FILES):
                     print('\n###   SKIPPING:', song_name,
                         '(SONG ALREADY EXISTS)   ###')
+
+                elif check_all_time and ZSpotify.get_config(SKIP_PREVIOUSLY_DOWNLOADED):
+                    print('\n###   SKIPPING:', song_name,
+                        '(SONG ALREADY DOWNLOADED ONCE)   ###')
+
                 else:
                     if track_id != scraped_song_id:
                         track_id = scraped_song_id
@@ -146,6 +154,9 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                                 release_year, disc_number, track_number)
                     set_music_thumbnail(filename, image_url)
 
+                    # add song id to archive file
+                    if ZSpotify.get_config(SKIP_PREVIOUSLY_DOWNLOADED):
+                        add_to_archive(scraped_song_id, archive_directory)
                     # add song id to download directory's .song_ids file
                     if not check_id:
                         add_to_directory_song_ids(download_directory, scraped_song_id)

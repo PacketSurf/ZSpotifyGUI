@@ -12,7 +12,6 @@ import requests
 from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
     WINDOWS_SYSTEM, ALBUMARTIST
 
-
 class MusicFormat(str, Enum):
     MP3 = 'mp3',
     OGG = 'ogg',
@@ -27,6 +26,30 @@ def create_download_directory(download_path: str) -> None:
     if not os.path.isfile(hidden_file_path):
         with open(hidden_file_path, 'w', encoding='utf-8') as f:
             pass
+
+def get_previously_downloaded(song_id: str, archive_directory: str) -> List[str]:
+    """ Returns list of all time downloaded songs """
+
+    ids = []
+    archive_path = os.path.join(archive_directory, '.song_archive')
+
+    if os.path.exists(archive_path):
+        with open(archive_path, 'r', encoding='utf-8') as f:
+            ids = [line.strip() for line in f.readlines()]
+
+    return ids
+
+def add_to_archive(song_id: str, archive_directory: str) -> None:
+    """ Adds song id to all time installed songs archive """
+
+    archive_path = os.path.join(archive_directory, '.song_archive')
+
+    if os.path.exists(archive_path):
+        with open(archive_path, 'a', encoding='utf-8') as f:
+            f.write(f'{song_id}\n')
+    else:
+        with open(archive_path, 'w', encoding='utf-8') as f:
+            f.write(f'{song_id}\n')
 
 def get_directory_song_ids(download_path: str) -> List[str]:
     """ Gets song ids of songs in directory """
