@@ -13,7 +13,8 @@ from tqdm import tqdm
 import subprocess
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, TRACK_STATS_URL, SPLIT_ALBUM_DISCS, ROOT_PATH, DOWNLOAD_FORMAT, \
-    CHUNK_SIZE, SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME
+    CHUNK_SIZE, SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME,\
+    FFMPEG_EXE
 from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_download_directory, \
     get_directory_song_ids, add_to_directory_song_ids
 from zspotify import ZSpotify
@@ -209,11 +210,18 @@ def convert_audio_format(filename) -> None:
     output_params = ['-c:a', file_codec]
     if bitrate:
         output_params += ['-b:a', bitrate]
-    ff_m = FFmpeg(
-        global_options=['-y', '-hide_banner', '-loglevel error'],
-        inputs={temp_filename: None},
-        outputs={filename: output_params}
-    )
+    if not FFMPEG_EXE == "":
+        ff_m = FFmpeg(executable=FFMPEG_EXE,
+            global_options=['-y', '-hide_banner', '-loglevel error'],
+            inputs={temp_filename: None},
+            outputs={filename: output_params}
+        )
+    else:
+        ff_m = FFmpeg(
+            global_options=['-y', '-hide_banner', '-loglevel error'],
+            inputs={temp_filename: None},
+            outputs={filename: output_params}
+        )
     ff_m.run()
     if os.path.exists(temp_filename):
         os.remove(temp_filename)

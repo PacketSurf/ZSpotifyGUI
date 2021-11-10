@@ -14,7 +14,7 @@ from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
     OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS,\
-    DOWNLOADED, LIKED, DOWNLOAD_FORMAT, SAVED_TRACKS_URL
+    DOWNLOADED, LIKED, DOWNLOAD_FORMAT, SAVED_TRACKS_URL, LOG_FILE
 from worker import Worker
 from audio import MusicController, find_local_tracks, get_track_file_as_item
 from download import DownloadController
@@ -23,7 +23,7 @@ import qdarktheme
 from itemTree import ItemTree
 from item import Track, Artist, Album, Playlist
 
-logging.basicConfig(level=logging.INFO, filename="main.log", format='%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s')
+logging.basicConfig(level=logging.INFO, filename=LOG_FILE, format='%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s')
 
 def main():
     ZSpotify.load_config()
@@ -33,6 +33,7 @@ def main():
     win = Window()
     win.show()
     sys.exit(app.exec())
+
 
 
 class Window(QMainWindow, Ui_MainWindow):
@@ -48,8 +49,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.init_tree_views()
         self.init_results_amount_combo()
         self.init_downloads_view()
-        self.tabs = [self.library_trees, self.search_trees]
-        self.tabWidgets = [self.libraryTabs, self.searchTabs]
+        self.tabs = [self.library_trees, self.search_trees, self.queue_trees]
+        self.tabWidgets = [self.libraryTabs, self.searchTabs, self.queueTabs]
         try:
             self.music_controller = MusicController(self)
         except Exception as e:
@@ -89,7 +90,6 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.accountTypeLabel.setText("Free Account")
                 self.dlQualityLabel.setText("160kbps")
         self.login_dialog = None
-        self.liked_tree.load_function = self.init_liked_view
 
     def on_tab_change(self, index):
         i = self.musicTabs.currentIndex()
@@ -206,13 +206,19 @@ class Window(QMainWindow, Ui_MainWindow):
         self.musicTabs.currentChanged.connect(self.on_music_tab_change)
         self.searchTabs.currentChanged.connect(self.on_tab_change)
         self.libraryTabs.currentChanged.connect(self.on_tab_change)
+        self.queueTabs.currentChanged.connect(self.on_tab_change)
         self.loginBtn.clicked.connect(self.open_login_dialog)
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
         self.download_controller.downloadComplete.connect(self.init_downloads_view)
+        self.listenQueueBtn.clicked.connect(self.show_queue_view)
         for tree in self.trees:
+            #if tree == self.queue_tree:
+            #    tree.signals
             tree.signals.itemChanged.connect(self.update_item_info)
             tree.signals.onSelected.connect(self.update_item_labels)
             tree.signals.doubleClicked.connect(self.music_controller.play)
+            tree.signals.onListenQueued.connect(self.music_controller.queue_track)
+            #tree.signals.onDownloadQueued.connect(self.download_controller.)
             return_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Return,
                 tree.tree,
                 context=QtCore.Qt.WidgetShortcut,
@@ -265,6 +271,15 @@ class Window(QMainWindow, Ui_MainWindow):
         except Exception as e:
             logging.error(e)
 
+    def init_queue_view(self):
+        if not self.music_controller: return
+        queue = self.music_controller.listen_queue
+        queue += self.music_controller.shuffle_queue
+        self.queue_tree.set_items(queue)
+
+    def show_queue_view(self):
+        self.musicTabs.setCurrentIndex(2)
+        self.queueTabs.setCurrentIndex(0)
 
     def init_results_amount_combo(self):
         amount = int(ZSpotify.get_config(SEARCH_RESULTS))
@@ -299,12 +314,22 @@ class Window(QMainWindow, Ui_MainWindow):
 
         self.liked_tree = ItemTree(self.likedTree, lambda track: QTreeWidgetItem([track.title, track.artists, track.album]))
         self.liked_tree.set_header_item(Track("", 0, "Title", "Artists", "Albums"))
+        self.liked_tree.load_function = self.init_liked_view
+
+        self.queue_tree = ItemTree(self.queueTree, lambda track: QTreeWidgetItem([track.title, track.artists, track.album]), False)
+        self.queue_tree.set_header_item(Track("", 0, "Title", "Artists", "Albums"))
+        self.queue_tree.load_function = self.init_queue_view
 
         self.search_trees = [self.songs_tree, self.artists_tree, self.albums_tree, self.playlists_tree]
         self.library_trees = [self.download_tree, self.liked_tree]
-        self.trees = [self.songs_tree, self.artists_tree, self.albums_tree, self.playlists_tree, self.download_tree, self.liked_tree]
+        self.queue_trees = [self.queue_tree]
+        self.trees = [self.songs_tree, self.artists_tree, self.albums_tree, self.playlists_tree, \
+            self.download_tree, self.liked_tree, self.queue_tree]
 
         for tree in self.library_trees:
+            tree.set_header_spacing(270,270,270)
+            tree.tree.sortItems(0,0)
+        for tree in self.queue_trees:
             tree.set_header_spacing(270,270,270)
             tree.tree.sortItems(0,0)
         for tree in self.search_trees:
@@ -324,7 +349,7 @@ class Window(QMainWindow, Ui_MainWindow):
             if amount < amt: nextHighest = i
         self.resultAmountCombo.insertItem(nextHighest)
 
-
+    #def load_images
 
 class LoginDialog(QDialog, Ui_LoginDialog):
 

@@ -8,7 +8,8 @@ from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool
 from PyQt5.QtGui import QImage, QPixmap
 from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
-    VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON, REPEAT_ON_ICON, REPEAT_OFF_ICON
+    VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON, REPEAT_ON_ICON, REPEAT_OFF_ICON, NEXT_ICON, PREV_ICON,\
+    LISTEN_QUEUE_ICON
 from zspotify import ZSpotify
 from worker import Worker, MusicSignals
 from item import Track
@@ -26,6 +27,7 @@ class MusicController:
         self.playlist_tree = None
         self.shuffle = False
         self.repeat = False
+        self.listen_queue = []
         self.shuffle_queue = []
         self.awaiting_play = False
         self.queue_next_song = False
@@ -35,6 +37,12 @@ class MusicController:
         self.audio_player = AudioPlayer(self.update_music_progress)
         self.init_signals()
         self.set_volume(self.window.volumeSlider.value())
+        self.set_button_icon(self.window.playBtn, PLAY_ICON)
+        self.set_button_icon(self.window.nextBtn, NEXT_ICON)
+        self.set_button_icon(self.window.prevBtn, PREV_ICON)
+        self.set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
+        self.set_button_icon(self.window.playBtn, REPEAT_OFF_ICON)
+        self.set_button_icon(self.window.listenQueueBtn, LISTEN_QUEUE_ICON)
 
 
     def play(self, item, playlist_tree):
@@ -47,10 +55,10 @@ class MusicController:
             self.set_button_icon(self.window.playBtn, PAUSE_ICON)
             self.awaiting_play = True
             self.item = item
-            if self.shuffle and self.playlist_tree != playlist_tree:
+            if self.shuffle and self.playlist_tree != playlist_tree and playlist_tree.can_play:
                 self.shuffle_queue = playlist_tree.items.copy()
                 random.shuffle(self.shuffle_queue)
-            self.playlist_tree = playlist_tree
+            if playlist_tree.can_play: self.playlist_tree = playlist_tree
             self.playlist_tree.select_item(item)
 
 
@@ -72,6 +80,20 @@ class MusicController:
         self.queue_next_song = True
         self.audio_player.unpause()
         self.start_progress_worker()
+
+    def queue_track(self, item, index=-1):
+        if not item: return
+        if index == -1:
+            self.listen_queue.append(item)
+        else:
+             self.listen_queue.insert(index,item)
+
+    def remove_track(self, item):
+        if not item: return
+        if item in self.shuffle_queue:
+            self.shuffle_queue.remove(item)
+        if item in self.listen_queue:
+            self.listen_queue.remove(item)
 
     def toggle_shuffle(self):
         self.shuffle = not self.shuffle
@@ -144,8 +166,11 @@ class MusicController:
         if not self.item and not self.playlist_tree: return
         if self.repeat:
             item = self.item
+        elif len(self.listen_queue) > 0:
+            item = self.listen_queue[0]
+            self.listen_queue.pop(0)
         elif self.shuffle:
-            if self.item not in self.shuffle_queue:
+            if self.item not in self.shuffle_queue and self.playlist_tree.can_shuffle:
                 self.shuffle_queue = self.playlist_tree.items.copy()
                 random.shuffle(self.shuffle_queue)
             index = self.shuffle_queue.index(self.item)
@@ -290,7 +315,7 @@ def get_track_file_as_item(file, index):
     download_directory = os.path.join(os.path.dirname(
         __file__), ZSpotify.get_config(ROOT_PATH))
     download_directory = download_directory.replace("zspotify/../", "")
-    path = f"{download_directory}/{file}"
+    path = f"{download_directory}{file}"
     tag = music_tag.load_file(path)
     track = Track(index, str(tag[SPOTIFY_ID]), str(tag[TRACKTITLE]), str(tag[ARTIST]), \
         album=str(tag[ALBUM]), downloaded=True, path=path)

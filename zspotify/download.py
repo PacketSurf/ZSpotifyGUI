@@ -26,6 +26,7 @@ class DownloadController(QObject):
         self.item = None
         self.downloading = False
         self.download_queue = []
+        
 
     def on_click_download(self):
         if self.window.selected_item:

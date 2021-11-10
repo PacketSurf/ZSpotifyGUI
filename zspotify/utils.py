@@ -5,13 +5,14 @@ import subprocess
 import time
 from enum import Enum
 from typing import List, Tuple
-
+import logging
 import music_tag
 import requests
 
 from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
     WINDOWS_SYSTEM, SPOTIFY_ID
 
+logger = logging.getLogger(__name__)
 
 class MusicFormat(str, Enum):
     MP3 = 'mp3',
@@ -233,9 +234,16 @@ def fix_filename(name):
     return re.sub(r'[/\\:|<>"?*\0-\x1f]|^(AUX|COM[1-9]|CON|LPT[1-9]|NUL|PRN)(?![^.])|^\s|[\s.]$', "_", name, flags=re.IGNORECASE)
 
 def ms_to_time_str(ms):
-
     min = int((ms/(60*1000))%60)
     sec = str(int((ms/1000)%60))
     if len(sec) == 1:
         sec = f"0{sec}"
     return f"{min}:{sec[:2]}"
+
+def delete_file(path):
+    try:
+        os.remove(path)
+        logging.info(f"Deleted file: {path}")
+    except Exception as e:
+        print(e)
+        logging.error(f"Error deleting file: {e}")

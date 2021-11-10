@@ -1,3 +1,16 @@
+import os
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
 SAVED_TRACKS_URL = 'https://api.spotify.com/v1/me/tracks'
 
 TRACKS_URL = 'https://api.spotify.com/v1/tracks'
@@ -90,7 +103,7 @@ WINDOWS_SYSTEM = 'Windows'
 
 CREDENTIALS_JSON = 'credentials.json'
 
-CONFIG_FILE_PATH = 'zs_config.json'
+CONFIG_FILE_PATH = '../zs_config.json'
 
 ROOT_PATH = 'ROOT_PATH'
 
@@ -116,23 +129,38 @@ BITRATE = 'BITRATE'
 
 SEARCH_RESULTS = 'SEARCH_RESULTS'
 
-COVER_DEFAULT = 'Resources/cover_default.jpg'
+LOG_FILE = 'main.log'
 
-PAUSE_ICON = 'Resources/pauseIcon.png'
+LOGO_BANNER = resource_path('Resources/ZSpotifyBannerTP.png')
 
-PLAY_ICON = 'Resources/playIcon.png'
+COVER_DEFAULT = resource_path('Resources/cover_default.jpg')
 
-VOL_ICON = 'Resources/volIcon.png'
+PAUSE_ICON = resource_path('Resources/pauseIcon.png')
 
-MUTE_ICON = 'Resources/mutedIcon.png'
+PLAY_ICON = resource_path('Resources/playIcon.png')
 
-SHUFFLE_ON_ICON = 'Resources/shuffleOnIcon.png'
+VOL_ICON = resource_path('Resources/volIcon.png')
 
-SHUFFLE_OFF_ICON = 'Resources/shuffleOffIcon.png'
+MUTE_ICON = resource_path('Resources/mutedIcon.png')
 
-REPEAT_ON_ICON = "Resources/repeatOnIcon.png"
+SHUFFLE_ON_ICON = resource_path('Resources/shuffleOnIcon.png')
 
-REPEAT_OFF_ICON = "Resources/repeatOffIcon.png"
+SHUFFLE_OFF_ICON = resource_path('Resources/shuffleOffIcon.png')
+
+REPEAT_ON_ICON = resource_path("Resources/repeatOnIcon.png")
+
+REPEAT_OFF_ICON = resource_path("Resources/repeatOffIcon.png")
+
+LISTEN_QUEUE_ICON = resource_path('Resources/listenQueueIcon.png')
+
+NEXT_ICON = resource_path("Resources/nextIcon.png")
+
+PREV_ICON =resource_path("Resources/prevIcon.png")
+
+try:
+    FFMPEG_EXE = os.path.join(sys._MEIPASS, "ffmpeg.exe")
+except Exception as e:
+    FFMPEG_EXE = ""
 
 FORMATS = ['mp3', 'ogg']
 

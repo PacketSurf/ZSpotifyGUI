@@ -234,7 +234,7 @@ QTabWidget::tab-bar
              <enum>QTabWidget::West</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -265,7 +265,7 @@ QTabWidget::tab-bar
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="downloadedTab">
                  <attribute name="title">
@@ -385,7 +385,7 @@ QTabWidget::tab-bar
                <number>1</number>
               </property>
               <property name="bottomMargin">
-               <number>3</number>
+               <number>1</number>
               </property>
               <item>
                <widget class="QTabWidget" name="searchTabs">
@@ -396,7 +396,7 @@ QTabWidget::tab-bar
                  <enum>QTabWidget::North</enum>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>2</number>
                 </property>
                 <property name="elideMode">
                  <enum>Qt::ElideRight</enum>
@@ -641,6 +641,79 @@ QTabWidget::tab-bar
                     <column>
                      <property name="text">
                       <string>Total Tracks</string>
+                     </property>
+                    </column>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="queueTabLayout">
+             <attribute name="title">
+              <string>Queue</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <property name="leftMargin">
+               <number>3</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
+               <number>3</number>
+              </property>
+              <item>
+               <widget class="QTabWidget" name="queueTabs">
+                <property name="currentIndex">
+                 <number>0</number>
+                </property>
+                <widget class="QWidget" name="queueTreeTab">
+                 <attribute name="title">
+                  <string>Queue</string>
+                 </attribute>
+                 <layout class="QVBoxLayout" name="verticalLayout_18">
+                  <property name="leftMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>3</number>
+                  </property>
+                  <item>
+                   <widget class="QTreeWidget" name="queueTree">
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <attribute name="headerDefaultSectionSize">
+                     <number>270</number>
+                    </attribute>
+                    <attribute name="headerMinimumSectionSize">
+                     <number>15</number>
+                    </attribute>
+                    <column>
+                     <property name="text">
+                      <string>Title</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Artists</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Album</string>
                      </property>
                     </column>
                    </widget>
@@ -1030,6 +1103,26 @@ QTabWidget::tab-bar
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="listenQueueBtn">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>Resources/iconmonstr-text-26-64.png</normaloff>Resources/iconmonstr-text-26-64.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="volIconLabel">
