@@ -163,6 +163,8 @@ NEXT_ICON = resource_path("Resources/nextIcon.png")
 
 PREV_ICON =resource_path("Resources/prevIcon.png")
 
+DIR_ICON = resource_path("Resources/folderIcon.png")
+
 try:
     FFMPEG_EXE = os.path.join(Path(sys._MEIPASS), "ffmpeg.exe")
 except Exception as e:

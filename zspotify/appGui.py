@@ -14,7 +14,7 @@ from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
     OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS,\
-    DOWNLOADED, LIKED, DOWNLOAD_FORMAT, SAVED_TRACKS_URL, LOG_FILE
+    DOWNLOADED, LIKED, DOWNLOAD_FORMAT, SAVED_TRACKS_URL, LOG_FILE, LOGO_BANNER
 from worker import Worker
 from audio import MusicController, find_local_tracks, get_track_file_as_item
 from download import DownloadController
@@ -22,6 +22,7 @@ from track import play_track
 import qdarktheme
 from itemTree import ItemTree
 from item import Track, Artist, Album, Playlist
+from view import set_button_icon, set_label_image
 
 logging.basicConfig(level=logging.INFO, filename=LOG_FILE, format='%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s')
 
@@ -41,6 +42,7 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         self.retranslateUi(self)
+        set_label_image(self.bannerLabel, LOGO_BANNER)
         self.libraryTabList = ["Downloaded", "Liked"]
         self.searchTabList = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
         self.library = {DOWNLOADED:[], LIKED:[]}
@@ -346,6 +348,7 @@ class LoginDialog(QDialog, Ui_LoginDialog):
         self.setupUi(self)
         self.retranslateUi(self)
         self.init_signals()
+        set_label_image(self.bannerLabel, LOGO_BANNER)
         self.passwordInput.setEchoMode(QLineEdit.EchoMode.Password)
 
     def send_login(self):

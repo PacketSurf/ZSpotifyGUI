@@ -15,6 +15,7 @@ from worker import Worker, MusicSignals
 from item import Item, Track
 from utils import ms_to_time_str
 from glob import glob
+from view import set_button_icon, set_label_image
 
 logger = logging.getLogger(__name__)
 
@@ -40,12 +41,12 @@ class MusicController(QObject):
         self.audio_player = AudioPlayer(self.update_music_progress)
         self.init_signals()
         self.set_volume(self.window.volumeSlider.value())
-        self.set_button_icon(self.window.playBtn, PLAY_ICON)
-        self.set_button_icon(self.window.nextBtn, NEXT_ICON)
-        self.set_button_icon(self.window.prevBtn, PREV_ICON)
-        self.set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
-        self.set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
-        self.set_button_icon(self.window.listenQueueBtn, LISTEN_QUEUE_ICON)
+        set_button_icon(self.window.playBtn, PLAY_ICON)
+        set_button_icon(self.window.nextBtn, NEXT_ICON)
+        set_button_icon(self.window.prevBtn, PREV_ICON)
+        set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
+        set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
+        set_button_icon(self.window.listenQueueBtn, LISTEN_QUEUE_ICON)
 
 
     def play(self, item, playlist_tree):
@@ -147,8 +148,8 @@ class MusicController(QObject):
     def set_volume(self, value):
         self.audio_player.set_volume(value)
         if value == 0:
-            self.set_vol_icon(MUTE_ICON)
-        else: self.set_vol_icon(VOL_ICON)
+            set_label_image(self.window.volIconLabel, MUTE_ICON)
+        else: set_label_image(self.window.volIconLabel, VOL_ICON)
 
     def on_press_play(self):
         if self.audio_player.is_playing():

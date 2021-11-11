@@ -174,7 +174,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="bannerLabel">
            <property name="minimumSize">
             <size>
              <width>300</width>
