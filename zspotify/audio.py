@@ -5,23 +5,26 @@ import random
 import music_tag
 import logging
 from PyQt5 import QtCore, QtGui, QtTest
-from PyQt5.QtCore import pyqtSignal, QThreadPool
+from PyQt5.QtCore import pyqtSignal, QThreadPool, QObject
 from PyQt5.QtGui import QImage, QPixmap
 from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
     VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON, REPEAT_ON_ICON, REPEAT_OFF_ICON, NEXT_ICON, PREV_ICON,\
     LISTEN_QUEUE_ICON
 from zspotify import ZSpotify
 from worker import Worker, MusicSignals
-from item import Track
+from item import Item, Track
 from utils import ms_to_time_str
 from glob import glob
 
 logger = logging.getLogger(__name__)
 
 
-class MusicController:
+class MusicController(QObject):
+
+    onPlay = pyqtSignal(Item)
 
     def __init__(self, window):
+        super().__init__()
         self.window = window
         self.item = None
         self.playlist_tree = None
@@ -60,6 +63,7 @@ class MusicController:
                 random.shuffle(self.shuffle_queue)
             if playlist_tree.can_play: self.playlist_tree = playlist_tree
             self.playlist_tree.select_item(item)
+            self.onPlay.emit(item)
 
 
     def start_progress_worker(self):
@@ -199,6 +203,13 @@ class MusicController:
         else:
             item = self.window.select_prev_item(self.item, self.playlist_tree)
         if item: self.play(item, self.playlist_tree)
+
+    def on_play_queue_song(self):
+        if not self.window.selected_item: return
+        item = self.window.selected_item
+        if item in self.shuffle_queue:
+            self.shuffle_queue
+
 
     def update_playing_info(self, item):
         self.window.playingInfo1.setText(item.title)

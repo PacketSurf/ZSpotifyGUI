@@ -1,14 +1,20 @@
 import os
+import logging
+from pathlib import Path
+import sys
+
+logger = logging.getLogger(__name__)
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        base_path = Path(sys._MEIPASS)
+        logger.info(base_path)
+    else:
+        base_path = Path(__file__).parent
+        logger.error(base_path)
     return os.path.join(base_path, relative_path)
+
 
 
 SAVED_TRACKS_URL = 'https://api.spotify.com/v1/me/tracks'

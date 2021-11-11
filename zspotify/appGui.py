@@ -35,7 +35,6 @@ def main():
     sys.exit(app.exec())
 
 
-
 class Window(QMainWindow, Ui_MainWindow):
 
     def __init__(self, parent=None):
@@ -211,14 +210,15 @@ class Window(QMainWindow, Ui_MainWindow):
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
         self.download_controller.downloadComplete.connect(self.init_downloads_view)
         self.listenQueueBtn.clicked.connect(self.show_queue_view)
+        self.music_controller.onPlay.connect(self.queue_tree.load_function)
         for tree in self.trees:
-            #if tree == self.queue_tree:
-            #    tree.signals
+            if tree == self.queue_tree:
+                tree.signals.doubleClicked.connect(self.music_controller.on_play_queue_song)
             tree.signals.itemChanged.connect(self.update_item_info)
             tree.signals.onSelected.connect(self.update_item_labels)
             tree.signals.doubleClicked.connect(self.music_controller.play)
             tree.signals.onListenQueued.connect(self.music_controller.queue_track)
-            #tree.signals.onDownloadQueued.connect(self.download_controller.)
+            tree.signals.onDownloadQueued.connect(self.download_controller.on_click_download)
             return_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Return,
                 tree.tree,
                 context=QtCore.Qt.WidgetShortcut,
@@ -273,7 +273,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def init_queue_view(self):
         if not self.music_controller: return
-        queue = self.music_controller.listen_queue
+        queue = self.music_controller.listen_queue.copy()
         queue += self.music_controller.shuffle_queue
         self.queue_tree.set_items(queue)
 
@@ -338,18 +338,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.albums_tree.set_header_spacing(65,-1,-1,80)
         self.playlists_tree.set_header_spacing(65,-1,-1,80)
 
-    def init_search_results_combo(self):
-        amount = int(ZSpotify.get_config(SEARCH_RESULTS))
-        nextHighest = 0
-        for i in range(self.resultAmountCombo.count()):
-            amt = int(self.resultAmountCombo.itemText(i))
-            if amt == amount:
-                self.resultAmountCombo.setCurrentIndex(i)
-                return
-            if amount < amt: nextHighest = i
-        self.resultAmountCombo.insertItem(nextHighest)
-
-    #def load_images
 
 class LoginDialog(QDialog, Ui_LoginDialog):
 

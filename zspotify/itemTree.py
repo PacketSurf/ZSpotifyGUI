@@ -131,7 +131,8 @@ class ItemTree:
 
     def on_double_clicked(self,widget_item, item):
         item = self.get_selected_item()
-        self.signals.doubleClicked.emit(item, self)
+        if item:
+            self.signals.doubleClicked.emit(item, self)
 
     def on_delete_item(self):
         self.signals.onDeleted.emit(self.selected_item, self.tree)
@@ -153,7 +154,7 @@ class ItemTree:
         if not self.selected_item: return
         node = self.tree.mapToGlobal(pos)
         self.popup_menu = QMenu(None)
-        self.popup_menu.addAction("Add to listen queue", self.on_listen_queue)
+        if self.selected_item.downloaded: self.popup_menu.addAction("Add to listen queue", self.on_listen_queue)
         if not self.selected_item.downloaded: self.popup_menu.addAction("Add to download queue", self.on_download_item)
         self.popup_menu.addSeparator()
         self.popup_menu.addAction("Delete", self.on_delete_item)
