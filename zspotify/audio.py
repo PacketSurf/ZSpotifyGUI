@@ -44,7 +44,7 @@ class MusicController(QObject):
         self.set_button_icon(self.window.nextBtn, NEXT_ICON)
         self.set_button_icon(self.window.prevBtn, PREV_ICON)
         self.set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
-        self.set_button_icon(self.window.playBtn, REPEAT_OFF_ICON)
+        self.set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
         self.set_button_icon(self.window.listenQueueBtn, LISTEN_QUEUE_ICON)
 
 

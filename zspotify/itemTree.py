@@ -154,10 +154,13 @@ class ItemTree:
         if not self.selected_item: return
         node = self.tree.mapToGlobal(pos)
         self.popup_menu = QMenu(None)
-        if self.selected_item.downloaded: self.popup_menu.addAction("Add to listen queue", self.on_listen_queue)
-        if not self.selected_item.downloaded: self.popup_menu.addAction("Add to download queue", self.on_download_item)
-        self.popup_menu.addSeparator()
-        self.popup_menu.addAction("Delete", self.on_delete_item)
+        if self.selected_item.downloaded:
+            self.popup_menu.addAction("Add to listen queue", self.on_listen_queue)
+        else:
+             self.popup_menu.addAction("Add to download queue", self.on_download_item)
+        if self.selected_item.downloaded:
+            self.popup_menu.addSeparator()
+            self.popup_menu.addAction("Delete", self.on_delete_item)
         self.popup_menu.exec_(self.tree.mapToGlobal(pos))
 
     def init_signals(self):
