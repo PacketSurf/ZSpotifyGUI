@@ -1,5 +1,6 @@
 from librespot.audio.decoders import AudioQuality
 from tabulate import tabulate
+import os
 
 from album import download_album, download_artist_albums
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
@@ -29,29 +30,20 @@ def client(args) -> None:
             print('[ DETECTED FREE ACCOUNT - USING HIGH QUALITY ]\n\n')
         ZSpotify.DOWNLOAD_QUALITY = AudioQuality.HIGH
 
-    if args.urls:
-        for spotify_url in args.urls:
-            track_id, album_id, playlist_id, episode_id, show_id, artist_id = regex_input_for_urls(
-                spotify_url)
+    if args.download:
+        urls = []
+        filename = args.download
+        if os.path.exists(filename):
+            with open(filename, 'r', encoding='utf-8') as file:
+                urls.extend([line.strip() for line in file.readlines()])
 
-            if track_id is not None:
-                download_track(track_id)
-            elif artist_id is not None:
-                download_artist_albums(artist_id)
-            elif album_id is not None:
-                download_album(album_id)
-            elif playlist_id is not None:
-                playlist_songs = get_playlist_songs(playlist_id)
-                name, _ = get_playlist_info(playlist_id)
-                for song in playlist_songs:
-                    download_track(song[TRACK][ID],
-                                   fix_filename(name) + '/')
-                    print('\n')
-            elif episode_id is not None:
-                download_episode(episode_id)
-            elif show_id is not None:
-                for episode in get_show_episodes(show_id):
-                    download_episode(episode)
+            download_from_urls(urls)
+
+        else:
+            print(f'File {filename} not found.\n')
+
+    if args.urls:
+        download_from_urls(args.urls)
 
     if args.playlist:
         download_from_user_playlist()
@@ -70,28 +62,43 @@ def client(args) -> None:
         while len(search_text) == 0:
             search_text = input('Enter search or URL: ')
 
+        if not download_from_urls([search_text]):
+            search(search_text)
+
+def download_from_urls(urls: list[str]) -> bool:
+    """ Downloads from a list of spotify urls """
+    download = False
+
+    for spotify_url in urls:
         track_id, album_id, playlist_id, episode_id, show_id, artist_id = regex_input_for_urls(
-            search_text)
+            spotify_url)
 
         if track_id is not None:
+            download = True
             download_track(track_id)
         elif artist_id is not None:
+            download = True
             download_artist_albums(artist_id)
         elif album_id is not None:
+            download = True
             download_album(album_id)
         elif playlist_id is not None:
+            download = True
             playlist_songs = get_playlist_songs(playlist_id)
             name, _ = get_playlist_info(playlist_id)
             for song in playlist_songs:
-                download_track(song[TRACK][ID], fix_filename(name) + '/')
+                download_track(song[TRACK][ID],
+                               fix_filename(name) + '/')
                 print('\n')
         elif episode_id is not None:
+            download = True
             download_episode(episode_id)
         elif show_id is not None:
+            download = True
             for episode in get_show_episodes(show_id):
                 download_episode(episode)
-        else:
-            search(search_text)
+
+    return download
 
 
 def search(search_term):
