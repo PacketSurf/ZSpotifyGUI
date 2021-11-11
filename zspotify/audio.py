@@ -132,7 +132,7 @@ class MusicController(QObject):
     def run_progress_bar(self, signal, *args, **kwargs):
         while(self.audio_player.is_playing() or self.awaiting_play):
             self.awaiting_play = False
-            if self.audio_player.player.get_length() > 0:
+            if self.audio_player and self.audio_player.player.get_length() > 0:
                 signal(self.audio_player.get_elapsed_percent(), self.audio_player.player.get_time(), \
                     self.audio_player.player.get_length())
             QtTest.QTest.qWait(100)
