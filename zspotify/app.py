@@ -1,5 +1,6 @@
 from librespot.audio.decoders import AudioQuality
 from tabulate import tabulate
+import os
 
 from album import download_album, download_artist_albums
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
@@ -28,6 +29,39 @@ def client(args) -> None:
         if not args.no_splash:
             print('[ DETECTED FREE ACCOUNT - USING HIGH QUALITY ]\n\n')
         ZSpotify.DOWNLOAD_QUALITY = AudioQuality.HIGH
+
+    if args.download:
+        urls = []
+        filename = args.download
+        if os.path.exists(filename):
+            with open(filename, 'r', encoding='utf-8') as file:
+                urls.extend([line.strip() for line in file.readlines()])
+
+            for spotify_url in urls:
+                track_id, album_id, playlist_id, episode_id, show_id, artist_id = regex_input_for_urls(
+                    spotify_url)
+
+                if track_id is not None:
+                    download_track(track_id)
+                elif artist_id is not None:
+                    download_artist_albums(artist_id)
+                elif album_id is not None:
+                    download_album(album_id)
+                elif playlist_id is not None:
+                    playlist_songs = get_playlist_songs(playlist_id)
+                    name, _ = get_playlist_info(playlist_id)
+                    for song in playlist_songs:
+                        download_track(song[TRACK][ID],
+                                       fix_filename(name) + '/')
+                        print('\n')
+                elif episode_id is not None:
+                    download_episode(episode_id)
+                elif show_id is not None:
+                    for episode in get_show_episodes(show_id):
+                        download_episode(episode)
+
+        else:
+            print(f'File {filename} not found.\n')
 
     if args.urls:
         for spotify_url in args.urls:
