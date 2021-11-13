@@ -209,18 +209,12 @@ def convert_audio_format(filename) -> None:
     output_params = ['-c:a', file_codec]
     if bitrate:
         output_params += ['-b:a', bitrate]
-    if not FFMPEG_EXE == "":
-        ff_m = FFmpeg(executable=FFMPEG_EXE,
-            global_options=['-y', '-hide_banner', '-loglevel error'],
-            inputs={temp_filename: None},
-            outputs={filename: output_params}
-        )
-    else:
-        ff_m = FFmpeg(
-            global_options=['-y', '-hide_banner', '-loglevel error'],
-            inputs={temp_filename: None},
-            outputs={filename: output_params}
-        )
+
+    ff_m = FFmpeg(
+        global_options=['-y', '-hide_banner', '-loglevel error'],
+        inputs={temp_filename: None},
+        outputs={filename: output_params}
+    )
     ff_m.run()
     if os.path.exists(temp_filename):
         os.remove(temp_filename)
