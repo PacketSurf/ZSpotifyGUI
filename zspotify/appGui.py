@@ -266,7 +266,7 @@ class Window(QMainWindow, Ui_MainWindow):
             self.download_tree.clear()
             for file in track_files:
                 track = get_track_file_as_item(file, index)
-                if track != None:
+                if track:
                     self.library[DOWNLOADED].append(track)
                     self.download_tree.add_item(track)
                     index += 1

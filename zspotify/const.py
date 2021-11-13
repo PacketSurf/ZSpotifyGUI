@@ -1,3 +1,11 @@
+import sys
+
+OS = sys.platform
+
+if OS == "win32":
+    OS_PRE = "/"
+else:
+    OS_PRE = ""
 
 SAVED_TRACKS_URL = 'https://api.spotify.com/v1/me/tracks'
 
@@ -119,33 +127,33 @@ SEARCH_RESULTS = 'SEARCH_RESULTS'
 
 LOG_FILE = 'main.log'
 
-LOGO_BANNER = 'Resources/ZSpotifyBannerTP.png'
+LOGO_BANNER = f'{OS_PRE}Resources/ZSpotifyBannerTP.png'
 
-COVER_DEFAULT = 'Resources/cover_default.jpg'
+COVER_DEFAULT = f'{OS_PRE}Resources/cover_default.jpg'
 
-PAUSE_ICON = 'Resources/pauseIcon.png'
+PAUSE_ICON = f'{OS_PRE}Resources/pauseIcon.png'
 
-PLAY_ICON = 'Resources/playIcon.png'
+PLAY_ICON = f'{OS_PRE}Resources/playIcon.png'
 
-VOL_ICON = 'Resources/volIcon.png'
+VOL_ICON = f'{OS_PRE}Resources/volIcon.png'
 
-MUTE_ICON = 'Resources/mutedIcon.png'
+MUTE_ICON = f'{OS_PRE}Resources/mutedIcon.png'
 
-SHUFFLE_ON_ICON = 'Resources/shuffleOnIcon.png'
+SHUFFLE_ON_ICON = f'{OS_PRE}Resources/shuffleOnIcon.png'
 
-SHUFFLE_OFF_ICON = 'Resources/shuffleOffIcon.png'
+SHUFFLE_OFF_ICON = f'{OS_PRE}Resources/shuffleOffIcon.png'
 
-REPEAT_ON_ICON = 'Resources/repeatOnIcon.png'
+REPEAT_ON_ICON = f'{OS_PRE}Resources/repeatOnIcon.png'
 
-REPEAT_OFF_ICON = 'Resources/repeatOffIcon.png'
+REPEAT_OFF_ICON = f'{OS_PRE}Resources/repeatOffIcon.png'
 
-LISTEN_QUEUE_ICON = 'Resources/listenQueueIcon.png'
+LISTEN_QUEUE_ICON = f'{OS_PRE}Resources/listenQueueIcon.png'
 
-NEXT_ICON = 'Resources/nextIcon.png'
+NEXT_ICON = f'{OS_PRE}Resources/nextIcon.png'
 
-PREV_ICON = 'Resources/prevIcon.png'
+PREV_ICON = f'{OS_PRE}Resources/prevIcon.png'
 
-DIR_ICON = 'Resources/folderIcon.png'
+DIR_ICON = f'{OS_PRE}Resources/folderIcon.png'
 
 FORMATS = ['mp3', 'ogg']
 

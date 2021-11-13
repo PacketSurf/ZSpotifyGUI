@@ -4,6 +4,7 @@ import time
 import random
 import music_tag
 import logging
+from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool, QObject
 from PyQt5.QtGui import QImage, QPixmap
@@ -262,7 +263,7 @@ class AudioPlayer:
             self.track = track
             self.playing = True
             try:
-                self.player = vlc.MediaPlayer(f"{self.root}{self.audio_file}")
+                self.player = vlc.MediaPlayer(f"{self.audio_file}")
                 self.set_volume(self.volume)
                 self.player.play()
             except Exception as e:
@@ -318,24 +319,17 @@ def find_local_tracks():
             all_results += results
         except Exception as e:
             logger.error(e)
-    files = [res.replace(root,"") for res in all_results]
-    return files
+    return all_results
 
 def get_track_file_as_item(file, index):
     for format in FORMATS:
-        if format in file: continue
-    download_directory = os.path.join(os.path.dirname(
-        __file__), ZSpotify.get_config(ROOT_PATH))
-    download_directory = download_directory.replace("zspotify/../", "")
-    path = f"{download_directory}{file}"
-    tag = music_tag.load_file(path)
-    track = Track(index, str(tag[SPOTIFY_ID]), str(tag[TRACKTITLE]), str(tag[ARTIST]), \
-        album=str(tag[ALBUM]), downloaded=True, path=path)
-    return track
+        if format in file:
+            tag = music_tag.load_file(file)
+            track = Track(index, str(tag[SPOTIFY_ID]), str(tag[TRACKTITLE]), str(tag[ARTIST]), \
+                album=str(tag[ALBUM]), downloaded=True, path=Path(file))
+            return track
+    return None
 
-def find_id_in_metadata(file_name):
-    download_directory = os.path.join(os.path.dirname(
-        __file__), ZSpotify.get_config(ROOT_PATH))
-    file = f"{download_directory}/{file_name}"
-    tag = music_tag.load_file(file)
+def find_id_in_metadata(path):
+    tag = music_tag.load_file(path)
     return str(tag[SPOTIFY_ID])
