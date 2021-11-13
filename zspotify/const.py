@@ -46,6 +46,8 @@ AUTHORIZATION = 'Authorization'
 
 IS_PLAYABLE = 'is_playable'
 
+DURATION_MS = 'duration_ms'
+
 TRACK_NUMBER = 'track_number'
 
 DISC_NUMBER = 'disc_number'

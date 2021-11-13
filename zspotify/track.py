@@ -12,7 +12,7 @@ from tqdm import tqdm
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, TRACK_STATS_URL, SPLIT_ALBUM_DISCS, ROOT_PATH, DOWNLOAD_FORMAT, \
     CHUNK_SIZE, SKIP_EXISTING_FILES, ANTI_BAN_WAIT_TIME, OVERRIDE_AUTO_WAIT, BITRATE, CODEC_MAP, EXT_MAP, DOWNLOAD_REAL_TIME, \
-    SKIP_PREVIOUSLY_DOWNLOADED
+    SKIP_PREVIOUSLY_DOWNLOADED, DURATION_MS
 from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_download_directory, \
     get_directory_song_ids, add_to_directory_song_ids, get_previously_downloaded, add_to_archive
 from zspotify import ZSpotify
@@ -35,7 +35,7 @@ def get_saved_tracks() -> list:
     return songs
 
 
-def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any, Any]:
+def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any, Any, int]:
     """ Retrieves metadata for downloaded songs """
     info = ZSpotify.invoke_url(f'{TRACKS_URL}?ids={song_id}&market=from_token')
 
@@ -50,8 +50,9 @@ def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any
     track_number = info[TRACKS][0][TRACK_NUMBER]
     scraped_song_id = info[TRACKS][0][ID]
     is_playable = info[TRACKS][0][IS_PLAYABLE]
+    duration_ms = info[TRACKS][0][DURATION_MS]
 
-    return artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable
+    return artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable, duration_ms
 
 def get_song_duration(song_id: str) -> float:
     """ Retrieves duration of song in second as is on spotify """
@@ -75,7 +76,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
     try:
         (artists, album_name, name, image_url, release_year, disc_number,
-         track_number, scraped_song_id, is_playable) = get_song_info(track_id)
+         track_number, scraped_song_id, is_playable, duration_ms) = get_song_info(track_id)
 
         if ZSpotify.get_config(SPLIT_ALBUM_DISCS):
             download_directory = os.path.join(os.path.dirname(
@@ -140,14 +141,12 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                             unit_divisor=1024,
                             disable=disable_progressbar
                     ) as p_bar:
+                        pause = duration_ms / ZSpotify.get_config(CHUNK_SIZE)
                         for chunk in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
                             data = stream.input_stream.stream().read(ZSpotify.get_config(CHUNK_SIZE))
                             p_bar.update(file.write(data))
                             if ZSpotify.get_config(DOWNLOAD_REAL_TIME):
-                                if chunk == 0:
-                                    pause = get_segment_duration(p_bar)
-                                if pause:
-                                    time.sleep(pause)
+                                time.sleep(pause)
 
                     convert_audio_format(filename)
                     set_audio_tags(filename, artists, name, album_name,
@@ -169,18 +168,6 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
             print(e)
             if os.path.exists(filename):
                 os.remove(filename)
-
-
-def get_segment_duration(segment):
-    """ Returns playback duration of given audio segment """
-    sound = AudioSegment(
-        data = segment,
-        sample_width = 2,
-        frame_rate = 44100,
-        channels = 2
-    )
-    duration = len(sound) / 5000
-    return duration
 
 
 def convert_audio_format(filename) -> None:
