@@ -1,20 +1,3 @@
-import os
-import logging
-from pathlib import Path
-import sys
-
-logger = logging.getLogger(__name__)
-
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        base_path = Path(sys._MEIPASS)
-        logger.info(base_path)
-    else:
-        base_path = Path(__file__).parent
-        logger.error(base_path)
-    return os.path.join(base_path, relative_path)
-
 
 SAVED_TRACKS_URL = 'https://api.spotify.com/v1/me/tracks'
 
@@ -136,42 +119,33 @@ SEARCH_RESULTS = 'SEARCH_RESULTS'
 
 LOG_FILE = 'main.log'
 
-LOGO_BANNER = resource_path('Resources/ZSpotifyBannerTP.png')
+LOGO_BANNER = 'Resources/ZSpotifyBannerTP.png'
 
-COVER_DEFAULT = resource_path('Resources/cover_default.jpg')
+COVER_DEFAULT = 'Resources/cover_default.jpg'
 
-PAUSE_ICON = resource_path('Resources/pauseIcon.png')
+PAUSE_ICON = 'Resources/pauseIcon.png'
 
-PLAY_ICON = resource_path('Resources/playIcon.png')
+PLAY_ICON = 'Resources/playIcon.png'
 
-VOL_ICON = resource_path('Resources/volIcon.png')
+VOL_ICON = 'Resources/volIcon.png'
 
-MUTE_ICON = resource_path('Resources/mutedIcon.png')
+MUTE_ICON = 'Resources/mutedIcon.png'
 
-SHUFFLE_ON_ICON = resource_path('Resources/shuffleOnIcon.png')
+SHUFFLE_ON_ICON = 'Resources/shuffleOnIcon.png'
 
-SHUFFLE_OFF_ICON = resource_path('Resources/shuffleOffIcon.png')
+SHUFFLE_OFF_ICON = 'Resources/shuffleOffIcon.png'
 
-REPEAT_ON_ICON = resource_path("Resources/repeatOnIcon.png")
+REPEAT_ON_ICON = 'Resources/repeatOnIcon.png'
 
-REPEAT_OFF_ICON = resource_path("Resources/repeatOffIcon.png")
+REPEAT_OFF_ICON = 'Resources/repeatOffIcon.png'
 
-LISTEN_QUEUE_ICON = resource_path('Resources/listenQueueIcon.png')
+LISTEN_QUEUE_ICON = 'Resources/listenQueueIcon.png'
 
-NEXT_ICON = resource_path("Resources/nextIcon.png")
+NEXT_ICON = 'Resources/nextIcon.png'
 
-PREV_ICON =resource_path("Resources/prevIcon.png")
+PREV_ICON = 'Resources/prevIcon.png'
 
-DIR_ICON = resource_path("Resources/folderIcon.png")
-
-#MUSIC_PATH = str(os.path.join(Path.home(), "Music"))
-#print(MUSIC_PATH)
-#print(str(os.path.join(MUSIC_PATH, "ZSpotify Music/")))
-
-try:
-    FFMPEG_EXE = os.path.join(Path(sys._MEIPASS), "ffmpeg.exe")
-except Exception as e:
-    FFMPEG_EXE = ""
+DIR_ICON = 'Resources/folderIcon.png'
 
 FORMATS = ['mp3', 'ogg']
 
