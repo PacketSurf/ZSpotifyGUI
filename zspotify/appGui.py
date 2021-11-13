@@ -367,4 +367,7 @@ class LoginDialog(QDialog, Ui_LoginDialog):
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        logging.exception(f"Main crashed. Error: {e}")
