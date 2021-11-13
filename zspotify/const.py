@@ -16,7 +16,6 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-
 SAVED_TRACKS_URL = 'https://api.spotify.com/v1/me/tracks'
 
 TRACKS_URL = 'https://api.spotify.com/v1/tracks'
@@ -109,7 +108,7 @@ WINDOWS_SYSTEM = 'Windows'
 
 CREDENTIALS_JSON = 'credentials.json'
 
-CONFIG_FILE_PATH = '../zs_config.json'
+CONFIG_FILE_PATH = 'zs_config.json'
 
 ROOT_PATH = 'ROOT_PATH'
 
@@ -164,6 +163,10 @@ NEXT_ICON = resource_path("Resources/nextIcon.png")
 PREV_ICON =resource_path("Resources/prevIcon.png")
 
 DIR_ICON = resource_path("Resources/folderIcon.png")
+
+#MUSIC_PATH = str(os.path.join(Path.home(), "Music"))
+#print(MUSIC_PATH)
+#print(str(os.path.join(MUSIC_PATH, "ZSpotify Music/")))
 
 try:
     FFMPEG_EXE = os.path.join(Path(sys._MEIPASS), "ffmpeg.exe")
