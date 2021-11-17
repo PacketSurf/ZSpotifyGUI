@@ -65,7 +65,7 @@ Pull the official docker image (automatically updates):
 Or build the docker image yourself from the Dockerfile:
   docker build -t zspotify .
 Create and run a container from the image:
-  docker run --rm -v "$PWD/ZSpotify Music:/ZSpotify Music" -v "$PWD/ZSpotify Podcasts:/ZSpotify Podcasts" -it zspotify
+  docker run --rm -u $(id -u):$(id -g) -v "$PWD/zspotify:/app" -v "$PWD/zs_config.json:/zs_config.json" -v "$PWD/ZSpotify Music:/ZSpotify Music" -v "$PWD/ZSpotify Podcasts:/ZSpotify Podcasts" -it zspotify
 ```
 
 ### Google Colab
