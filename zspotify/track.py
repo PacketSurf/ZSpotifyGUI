@@ -176,7 +176,7 @@ def convert_audio_format(filename) -> None:
     os.replace(filename, temp_filename)
 
     download_format = ZSpotify.get_config(DOWNLOAD_FORMAT).lower()
-    file_codec = CODEC_MAP.get(download_format, "copy")
+    file_codec = CODEC_MAP.get(download_format, 'copy')
     if file_codec != 'copy':
         bitrate = ZSpotify.get_config(BITRATE)
         if not bitrate:

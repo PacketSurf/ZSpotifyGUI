@@ -2,7 +2,7 @@ from tqdm import tqdm
 
 from const import ITEMS, ID, TRACK, NAME
 from track import download_track
-from utils import fix_filename
+from utils import fix_filename, split_input
 from zspotify import ZSpotify
 
 MY_PLAYLISTS_URL = 'https://api.spotify.com/v1/me/playlists'
@@ -69,17 +69,18 @@ def download_from_user_playlist():
         print(str(count) + ': ' + playlist[NAME].strip())
         count += 1
 
+    selection = ''
     print('\n> SELECT A PLAYLIST BY ID')
     print('> SELECT A RANGE BY ADDING A DASH BETWEEN BOTH ID\'s')
+    print('> OR PARTICULAR OPTIONS BY ADDING A COMMA BETWEEN ID\'s')
     print('> For example, typing 10 to get one playlist or 10-20 to get\nevery playlist from 10-20 (inclusive)\n')
+    print('> Or type 10,12,15,18 to get those playlists in particular')
+    while len(selection) == 0:
+        selection = str(input('ID(s): '))
+    playlist_choices = map(int, split_input(selection))
 
-    playlist_choices = map(int, input('ID(s): ').split('-'))
-
-    start = next(playlist_choices) - 1
-    end = next(playlist_choices, start + 1)
-
-    for playlist_number in range(start, end):
-        playlist = playlists[playlist_number]
+    for playlist_number in playlist_choices:
+        playlist = playlists[playlist_number - 1]
         print(f'Downloading {playlist[NAME].strip()}')
         download_playlist(playlist)
 
