@@ -20,6 +20,7 @@ LANGUAGE = 'LANGUAGE'
 BITRATE = 'BITRATE'
 SONG_ARCHIVE = 'SONG_ARCHIVE'
 CREDENTIALS_LOCATION = 'CREDENTIALS_LOCATION'
+OUTPUT = 'OUTPUT'
 
 CONFIG_VALUES = {
     ROOT_PATH:                  { 'default': '../ZSpotify Music/',    'type': str,  'arg': '--root-path'                  },
@@ -37,8 +38,14 @@ CONFIG_VALUES = {
     BITRATE:                    { 'default': '',                      'type': str,  'arg': '--bitrate'                    },
     SONG_ARCHIVE:               { 'default': '.song_archive',         'type': str,  'arg': '--song-archive'               },
     CREDENTIALS_LOCATION:       { 'default': 'credentials.json',      'type': str,  'arg': '--credentials-location'       },
+    OUTPUT:                     { 'default': '',                      'type': str,  'arg': '--output'                     },
 }
 
+OUTPUT_DEFAULT_PLAYLIST = '{playlist}/{artist} - {song_name}.{ext}'
+OUTPUT_DEFAULT_PLAYLIST_EXT = '{playlist}/{playlist_num} - {artist} - {song_name}.{ext}'
+OUTPUT_DEFAULT_LIKED_SONGS = 'Liked Songs/{artist} - {song_name}.{ext}'
+OUTPUT_DEFAULT_SINGLE = '{artist} - {song_name}.{ext}'
+OUTPUT_DEFAULT_ALBUM = '{artist}/{album}/{album_num} - {artist} - {song_name}.{ext}'
 
 class Config:
     Values = {}
@@ -165,3 +172,20 @@ class Config:
     @classmethod
     def get_credentials_location(cls) -> str:
         return cls.get(CREDENTIALS_LOCATION)
+
+    @classmethod
+    def get_output(cls, mode: str) -> str:
+        v = cls.get(OUTPUT)
+        if v:
+            return v
+        if mode == 'playlist':
+            return OUTPUT_DEFAULT_PLAYLIST
+        if mode == 'extplaylist':
+            return OUTPUT_DEFAULT_PLAYLIST_EXT
+        if mode == 'liked':
+            return OUTPUT_DEFAULT_LIKED_SONGS
+        if mode == 'single':
+            return OUTPUT_DEFAULT_SINGLE
+        if mode == 'album':
+            return OUTPUT_DEFAULT_ALBUM
+        raise ValueError()

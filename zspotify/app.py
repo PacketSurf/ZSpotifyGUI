@@ -54,7 +54,7 @@ def client(args) -> None:
                 print(
                     '###   SKIPPING:  SONG DOES NOT EXIST ON SPOTIFY ANYMORE   ###')
             else:
-                download_track(song[TRACK][ID], 'Liked Songs/')
+                download_track('liked', song[TRACK][ID])
             print('\n')
 
     if args.search_spotify:
@@ -75,7 +75,7 @@ def download_from_urls(urls: list[str]) -> bool:
 
         if track_id is not None:
             download = True
-            download_track(track_id)
+            download_track('single', track_id)
         elif artist_id is not None:
             download = True
             download_artist_albums(artist_id)
@@ -87,8 +87,7 @@ def download_from_urls(urls: list[str]) -> bool:
             playlist_songs = get_playlist_songs(playlist_id)
             name, _ = get_playlist_info(playlist_id)
             for song in playlist_songs:
-                download_track(song[TRACK][ID],
-                               fix_filename(name) + '/')
+                download_track('playlist', song[TRACK][ID], extra_keys={'playlist': name})
                 print('\n')
         elif episode_id is not None:
             download = True
@@ -273,7 +272,7 @@ def search(search_term):
                 print_pos = dics.index(dic) + 1
                 if print_pos == position:
                     if dic['type'] == TRACK:
-                        download_track(dic[ID])
+                        download_track('single', dic[ID])
                     elif dic['type'] == ALBUM:
                         download_album(dic[ID])
                     elif dic['type'] == ARTIST:

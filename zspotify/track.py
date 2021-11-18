@@ -69,39 +69,45 @@ def get_song_duration(song_id: str) -> float:
     return duration
 
 # noinspection PyBroadException
-def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='', disable_progressbar=False) -> None:
+def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=False) -> None:
     """ Downloads raw song audio from Spotify """
 
     try:
+        output_template = ZSpotify.CONFIG.get_output(mode)
+
         (artists, album_name, name, image_url, release_year, disc_number,
          track_number, scraped_song_id, is_playable, duration_ms) = get_song_info(track_id)
 
-        if ZSpotify.CONFIG.get_split_album_discs():
-            download_directory = os.path.join(os.path.dirname(
-                __file__), ZSpotify.CONFIG.get_root_path(), extra_paths, f'Disc {disc_number}')
-        else:
-            download_directory = os.path.join(os.path.dirname(
-                __file__), ZSpotify.CONFIG.get_root_path(), extra_paths)
-
         song_name = fix_filename(artists[0]) + ' - ' + fix_filename(name)
-        if prefix:
-            song_name = f'{prefix_value.zfill(2)} - {song_name}' if prefix_value.isdigit(
-            ) else f'{prefix_value} - {song_name}'
 
-        filename = os.path.join(
-            download_directory, f'{song_name}.{EXT_MAP.get(ZSpotify.CONFIG.get_download_format().lower())}')
+        for k in extra_keys:
+            output_template = output_template.replace("{"+k+"}", fix_filename(extra_keys[k]))
+
+        output_template = output_template.replace("{artist}", fix_filename(artists[0]))
+        output_template = output_template.replace("{album}", fix_filename(album_name))
+        output_template = output_template.replace("{song_name}", fix_filename(name))
+        output_template = output_template.replace("{release_year}", fix_filename(release_year))
+        output_template = output_template.replace("{disc_number}", fix_filename(disc_number))
+        output_template = output_template.replace("{track_number}", fix_filename(track_number))
+        output_template = output_template.replace("{id}", fix_filename(scraped_song_id))
+        output_template = output_template.replace("{track_id}", fix_filename(track_id))
+        output_template = output_template.replace("{ext}", EXT_MAP.get(ZSpotify.CONFIG.get_download_format().lower()))
+
+        filename = os.path.join(os.path.dirname(__file__), ZSpotify.CONFIG.get_root_path(), output_template)
+        filedir = os.path.dirname(filename)
 
         check_name = os.path.isfile(filename) and os.path.getsize(filename)
-        check_id = scraped_song_id in get_directory_song_ids(download_directory)
+        check_id = scraped_song_id in get_directory_song_ids(filedir)
         check_all_time = scraped_song_id in get_previously_downloaded()
 
         # a song with the same name is installed
         if not check_id and check_name:
-            c = len([file for file in os.listdir(download_directory)
-                     if re.search(f'^{song_name}_', file)]) + 1
+            c = len([file for file in os.listdir(filedir) if re.search(f'^{filename}_', str(file))]) + 1
 
-            filename = os.path.join(
-                download_directory, f'{song_name}_{c}.{EXT_MAP.get(ZSpotify.CONFIG.get_download_format())}')
+            fname = os.path.splitext(os.path.basename(filename))[0]
+            ext = os.path.splitext(os.path.basename(filename))[1]
+
+            filename = os.path.join(filedir, f'{fname}_{c}{ext}')
 
 
     except Exception as e:
@@ -127,7 +133,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                     track_id = TrackId.from_base62(track_id)
                     stream = ZSpotify.get_content_stream(
                         track_id, ZSpotify.DOWNLOAD_QUALITY)
-                    create_download_directory(download_directory)
+                    create_download_directory(filedir)
                     total_size = stream.input_stream.size
 
                     with open(filename, 'wb') as file, tqdm(
@@ -155,7 +161,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                         add_to_archive(scraped_song_id, artists[0], name)
                     # add song id to download directory's .song_ids file
                     if not check_id:
-                        add_to_directory_song_ids(download_directory, scraped_song_id)
+                        add_to_directory_song_ids(filedir, scraped_song_id)
 
                     if not ZSpotify.CONFIG.get_anti_ban_wait_time():
                         time.sleep(ZSpotify.CONFIG.get_anti_ban_wait_time())
