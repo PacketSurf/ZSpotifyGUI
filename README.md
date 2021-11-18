@@ -32,7 +32,6 @@ WINDOWS:
 
 MAC:
   - Download the latest mac zip file from [Releases](https://github.com/PacketSurf/releases).
-  - If you don't have VLC installed already, be sure to get the version packaged with VLC included.
   - Make sure the zip file you downloaded is inside your Downloads folder.
   - Open the Terminal application and paste the following exactly:
   ```
