@@ -42,7 +42,12 @@ class Config:
     @classmethod
     def load(cls, args) -> None:
         app_dir = os.path.dirname(__file__)
-        true_config_file_path = os.path.join(app_dir, CONFIG_FILE_PATH)
+
+        config_fp = CONFIG_FILE_PATH
+        if args.config_location:
+            config_fp = args.config_location
+
+        true_config_file_path = os.path.join(app_dir, config_fp)
 
         if not os.path.exists(true_config_file_path):
             with open(true_config_file_path, 'w', encoding='utf-8') as config_file:
