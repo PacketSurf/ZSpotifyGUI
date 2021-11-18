@@ -3,51 +3,75 @@ import vlc
 import time
 import random
 import music_tag
+import logging
+from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtTest
-from PyQt5.QtCore import pyqtSignal, QThreadPool
+from PyQt5.QtCore import pyqtSignal, QThreadPool, QObject
 from PyQt5.QtGui import QImage, QPixmap
 from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
-    VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON
+    VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON, REPEAT_ON_ICON, REPEAT_OFF_ICON, NEXT_ICON, PREV_ICON,\
+    LISTEN_QUEUE_ICON
 from zspotify import ZSpotify
 from worker import Worker, MusicSignals
-from item import Track
+from item import Item, Track
 from utils import ms_to_time_str
 from glob import glob
+from view import set_button_icon, set_label_image
+
+logger = logging.getLogger(__name__)
 
 
-class MusicController:
+class MusicController(QObject):
+
+    onPlay = pyqtSignal(Item)
 
     def __init__(self, window):
+        super().__init__()
         self.window = window
-        self.seeking = False
-        self.worker = None
-        self.audio_player = AudioPlayer(self.update_music_progress)
         self.item = None
         self.playlist_tree = None
         self.shuffle = False
+        self.repeat = False
+        self.listen_queue = []
         self.shuffle_queue = []
-        self.init_signals()
-        self.set_volume(self.window.volumeSlider.value())
         self.awaiting_play = False
         self.queue_next_song = False
         self.paused = False
+        self.seeking = False
+        self.worker = None
+        self.audio_player = AudioPlayer(self.update_music_progress)
+        self.init_signals()
+        self.set_volume(self.window.volumeSlider.value())
+        set_button_icon(self.window.playBtn, PLAY_ICON)
+        set_button_icon(self.window.nextBtn, NEXT_ICON)
+        set_button_icon(self.window.prevBtn, PREV_ICON)
+        set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
+        set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
+        set_button_icon(self.window.listenQueueBtn, LISTEN_QUEUE_ICON)
+
 
     def play(self, item, playlist_tree):
         if self.audio_player.play(item):
+            logger.info(f"Playing track: {item.id}")
+            self.start_progress_worker()
             self.queue_next_song = False
             self.paused = False
             self.update_playing_info(item)
             self.set_button_icon(self.window.playBtn, PAUSE_ICON)
             self.awaiting_play = True
             self.item = item
-            self.playlist_tree = playlist_tree
+            if self.shuffle and self.playlist_tree != playlist_tree and playlist_tree.can_play:
+                self.shuffle_queue = playlist_tree.items.copy()
+                random.shuffle(self.shuffle_queue)
+            if playlist_tree.can_play: self.playlist_tree = playlist_tree
             self.playlist_tree.select_item(item)
-            self.start_progress_worker()
+            self.onPlay.emit(item)
+
 
     def start_progress_worker(self):
         self.worker = Worker(self.run_progress_bar, update=self.update_music_progress, signals=MusicSignals())
         self.worker.signals.finished.connect(self.on_progress_finished)
-        self.worker.signals.error.connect(lambda e: print(e))
+        self.worker.signals.error.connect(lambda e: logging.error(e))
         QThreadPool.globalInstance().start(self.worker)
 
     def pause(self):
@@ -63,8 +87,23 @@ class MusicController:
         self.audio_player.unpause()
         self.start_progress_worker()
 
+    def queue_track(self, item, index=-1):
+        if not item: return
+        if index == -1:
+            self.listen_queue.append(item)
+        else:
+             self.listen_queue.insert(index,item)
+
+    def remove_track(self, item):
+        if not item: return
+        if item in self.shuffle_queue:
+            self.shuffle_queue.remove(item)
+        if item in self.listen_queue:
+            self.listen_queue.remove(item)
+
     def toggle_shuffle(self):
         self.shuffle = not self.shuffle
+        if self.repeat: self.toggle_repeat()
         if self.shuffle:
             if self.playlist_tree and self.playlist_tree.items:
                 self.set_button_icon(self.window.shuffleBtn, SHUFFLE_ON_ICON)
@@ -72,6 +111,13 @@ class MusicController:
                 random.shuffle(self.shuffle_queue)
         else:
             self.set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
+
+    def toggle_repeat(self):
+        self.repeat = not self.repeat
+        if self.repeat:
+            self.set_button_icon(self.window.repeatBtn, REPEAT_ON_ICON)
+        else:
+            self.set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
 
     def update_music_progress(self, perc, elapsed, total):
         if not self.seeking:
@@ -88,7 +134,7 @@ class MusicController:
     def run_progress_bar(self, signal, *args, **kwargs):
         while(self.audio_player.is_playing() or self.awaiting_play):
             self.awaiting_play = False
-            if self.audio_player.player.get_length() > 0:
+            if self.audio_player and self.audio_player.player.get_length() > 0:
                 signal(self.audio_player.get_elapsed_percent(), self.audio_player.player.get_time(), \
                     self.audio_player.player.get_length())
             QtTest.QTest.qWait(100)
@@ -103,8 +149,8 @@ class MusicController:
     def set_volume(self, value):
         self.audio_player.set_volume(value)
         if value == 0:
-            self.set_vol_icon(MUTE_ICON)
-        else: self.set_vol_icon(VOL_ICON)
+            set_label_image(self.window.volIconLabel, MUTE_ICON)
+        else: set_label_image(self.window.volIconLabel, VOL_ICON)
 
     def on_press_play(self):
         if self.audio_player.is_playing():
@@ -124,7 +170,15 @@ class MusicController:
 
     def on_next(self):
         if not self.item and not self.playlist_tree: return
-        if self.shuffle and self.item in self.shuffle_queue:
+        if self.repeat:
+            item = self.item
+        elif len(self.listen_queue) > 0:
+            item = self.listen_queue[0]
+            self.listen_queue.pop(0)
+        elif self.shuffle:
+            if self.item not in self.shuffle_queue and self.playlist_tree.can_shuffle:
+                self.shuffle_queue = self.playlist_tree.items.copy()
+                random.shuffle(self.shuffle_queue)
             index = self.shuffle_queue.index(self.item)
             index += 1
             if index >= len(self.shuffle_queue):
@@ -144,12 +198,20 @@ class MusicController:
                 return
         if self.shuffle and self.item in self.shuffle_queue:
             index = self.shuffle_queue.index(self.item)
+            index -= 1
             if index < 0:
                 return
             item = self.shuffle_queue[index]
         else:
             item = self.window.select_prev_item(self.item, self.playlist_tree)
         if item: self.play(item, self.playlist_tree)
+
+    def on_play_queue_song(self):
+        if not self.window.selected_item: return
+        item = self.window.selected_item
+        if item in self.shuffle_queue:
+            self.shuffle_queue
+
 
     def update_playing_info(self, item):
         self.window.playingInfo1.setText(item.title)
@@ -177,6 +239,7 @@ class MusicController:
         self.window.nextBtn.clicked.connect(self.on_next)
         self.window.prevBtn.clicked.connect(self.on_prev)
         self.window.shuffleBtn.clicked.connect(self.toggle_shuffle)
+        self.window.repeatBtn.clicked.connect(self.toggle_repeat)
 
 class AudioPlayer:
 
@@ -199,9 +262,12 @@ class AudioPlayer:
         if self.audio_file != None:
             self.track = track
             self.playing = True
-            self.player = vlc.MediaPlayer(f"{self.root}{self.audio_file}")
-            self.set_volume(self.volume)
-            self.player.play()
+            try:
+                self.player = vlc.MediaPlayer(f"{self.audio_file}")
+                self.set_volume(self.volume)
+                self.player.play()
+            except Exception as e:
+                logger.error(e)
             return True
         return False
 
@@ -247,28 +313,23 @@ def find_local_tracks():
     root = ZSpotify.get_config(ROOT_PATH)
     all_results = []
     for format in FORMATS:
-        ext = "*." + format
-        results = [y for x in os.walk(root) for y in glob(os.path.join(x[0], ext))]
-        all_results += results
-    files = [res.replace(root,"") for res in all_results]
-    return files
+        try:
+            ext = "*." + format
+            results = [y for x in os.walk(root) for y in glob(os.path.join(x[0], ext))]
+            all_results += results
+        except Exception as e:
+            logger.error(e)
+    return all_results
 
 def get_track_file_as_item(file, index):
     for format in FORMATS:
-        if format in file: continue
-    download_directory = os.path.join(os.path.dirname(
-        __file__), ZSpotify.get_config(ROOT_PATH))
-    download_directory = download_directory.replace("zspotify/../", "")
-    path = f"{download_directory}/{file}"
+        if format in file:
+            tag = music_tag.load_file(file)
+            track = Track(index, str(tag[SPOTIFY_ID]), str(tag[TRACKTITLE]), str(tag[ARTIST]), \
+                album=str(tag[ALBUM]), downloaded=True, path=Path(file))
+            return track
+    return None
+
+def find_id_in_metadata(path):
     tag = music_tag.load_file(path)
-    track = Track(index, str(tag[SPOTIFY_ID]), str(tag[TRACKTITLE]), str(tag[ARTIST]), \
-        album=str(tag[ALBUM]), downloaded=True, path=path)
-    return track
-
-def find_id_in_metadata(file_name):
-    download_directory = os.path.join(os.path.dirname(
-        __file__), ZSpotify.get_config(ROOT_PATH))
-    file = f"{download_directory}/{file_name}"
-
-    tag = music_tag.load_file(file)
     return str(tag[SPOTIFY_ID])

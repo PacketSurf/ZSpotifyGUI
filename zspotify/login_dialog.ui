@@ -35,8 +35,14 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="bannerLabel">
        <property name="minimumSize">
+        <size>
+         <width>350</width>
+         <height>70</height>
+        </size>
+       </property>
+       <property name="maximumSize">
         <size>
          <width>350</width>
          <height>70</height>
@@ -49,7 +55,7 @@
         <enum>Qt::RichText</enum>
        </property>
        <property name="pixmap">
-        <pixmap>../resources/ZSpotifyBannerTP.png</pixmap>
+        <pixmap>Resources/ZSpotifyBannerTP.png</pixmap>
        </property>
        <property name="scaledContents">
         <bool>true</bool>

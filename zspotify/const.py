@@ -1,3 +1,4 @@
+
 SAVED_TRACKS_URL = 'https://api.spotify.com/v1/me/tracks'
 
 TRACKS_URL = 'https://api.spotify.com/v1/tracks'
@@ -21,6 +22,8 @@ TRACKTITLE = 'tracktitle'
 ARTIST = 'artist'
 
 ARTISTS = 'artists'
+
+ALBUMARTIST = 'albumartist'
 
 ARTWORK = 'artwork'
 
@@ -47,6 +50,8 @@ OFFSET = 'offset'
 AUTHORIZATION = 'Authorization'
 
 IS_PLAYABLE = 'is_playable'
+
+DURATION_MS = 'duration_ms'
 
 TRACK_NUMBER = 'track_number'
 
@@ -90,13 +95,15 @@ WINDOWS_SYSTEM = 'Windows'
 
 CREDENTIALS_JSON = 'credentials.json'
 
-CONFIG_FILE_PATH = '../zs_config.json'
+CONFIG_FILE_PATH = 'zs_config.json'
 
 ROOT_PATH = 'ROOT_PATH'
 
 ROOT_PODCAST_PATH = 'ROOT_PODCAST_PATH'
 
 SKIP_EXISTING_FILES = 'SKIP_EXISTING_FILES'
+
+SKIP_PREVIOUSLY_DOWNLOADED = 'SKIP_PREVIOUSLY_DOWNLOADED'
 
 DOWNLOAD_FORMAT = 'DOWNLOAD_FORMAT'
 
@@ -108,8 +115,6 @@ OVERRIDE_AUTO_WAIT = 'OVERRIDE_AUTO_WAIT'
 
 CHUNK_SIZE = 'CHUNK_SIZE'
 
-COVER_DEFAULT = '../resources/cover_default.jpg'
-
 SPLIT_ALBUM_DISCS = 'SPLIT_ALBUM_DISCS'
 
 DOWNLOAD_REAL_TIME = 'DOWNLOAD_REAL_TIME'
@@ -118,20 +123,37 @@ BITRATE = 'BITRATE'
 
 SEARCH_RESULTS = 'SEARCH_RESULTS'
 
-PAUSE_ICON = '../resources/pauseIcon.png'
+LOG_FILE = 'main.log'
 
-PLAY_ICON = '../resources/playIcon.png'
+LOGO_BANNER = 'Resources/ZSpotifyBannerTP.png'
 
-VOL_ICON = '../resources/volIcon.png'
+COVER_DEFAULT = 'Resources/cover_default.jpg'
 
-MUTE_ICON = '../resources/mutedIcon.png'
+PAUSE_ICON = 'Resources/pauseIcon.png'
 
-SHUFFLE_ON_ICON = '../resources/shuffleOnIcon.png'
+PLAY_ICON = 'Resources/playIcon.png'
 
-SHUFFLE_OFF_ICON = '../resources/shuffleOffIcon.png'
+VOL_ICON = 'Resources/volIcon.png'
+
+MUTE_ICON = 'Resources/mutedIcon.png'
+
+SHUFFLE_ON_ICON = 'Resources/shuffleOnIcon.png'
+
+SHUFFLE_OFF_ICON = 'Resources/shuffleOffIcon.png'
+
+REPEAT_ON_ICON = 'Resources/repeatOnIcon.png'
+
+REPEAT_OFF_ICON = 'Resources/repeatOffIcon.png'
+
+LISTEN_QUEUE_ICON = 'Resources/listenQueueIcon.png'
+
+NEXT_ICON = 'Resources/nextIcon.png'
+
+PREV_ICON = 'Resources/prevIcon.png'
+
+DIR_ICON = 'Resources/folderIcon.png'
 
 FORMATS = ['mp3', 'ogg']
-
 
 CODEC_MAP = {
     'aac': 'aac',
@@ -154,15 +176,17 @@ EXT_MAP = {
 }
 
 CONFIG_DEFAULT_SETTINGS = {
-    'ROOT_PATH': '../ZSpotify Music/',
-    'ROOT_PODCAST_PATH': '../ZSpotify Podcasts/',
+    'ROOT_PATH': 'ZSpotify Music/',
+    'ROOT_PODCAST_PATH': 'ZSpotify Podcasts/',
     'SKIP_EXISTING_FILES': True,
+    'SKIP_PREVIOUSLY_DOWNLOADED': False,
     'DOWNLOAD_FORMAT': 'ogg',
-    'SEARCH_RESULTS': 10,
+    'SEARCH_RESULTS': 50,
     'FORCE_PREMIUM': False,
     'ANTI_BAN_WAIT_TIME': 1,
     'OVERRIDE_AUTO_WAIT': False,
     'CHUNK_SIZE': 50000,
     'SPLIT_ALBUM_DISCS': False,
-    'DOWNLOAD_REAL_TIME': False
+    'DOWNLOAD_REAL_TIME': False,
+    'LANGUAGE': 'en'
 }

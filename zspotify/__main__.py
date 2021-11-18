@@ -28,6 +28,9 @@ if __name__ == '__main__':
                        dest='search_spotify',
                        action='store_true',
                        help='Loads search prompt to find then download a specific track, album or playlist')
+    group.add_argument('-d', '--download',
+                       type=str,
+                       help='Downloads tracks, playlists and albums from the URLs written in the file passed.')
 
     parser.set_defaults(func=client)
 

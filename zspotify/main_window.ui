@@ -174,7 +174,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="bannerLabel">
            <property name="minimumSize">
             <size>
              <width>300</width>
@@ -194,7 +194,7 @@
             <enum>Qt::RichText</enum>
            </property>
            <property name="pixmap">
-            <pixmap>../resources/ZSpotifyBannerTP.png</pixmap>
+            <pixmap>Resources/ZSpotifyBannerTP.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -234,7 +234,7 @@ QTabWidget::tab-bar
              <enum>QTabWidget::West</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <property name="tabBarAutoHide">
              <bool>true</bool>
@@ -265,7 +265,7 @@ QTabWidget::tab-bar
 }</string>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="downloadedTab">
                  <attribute name="title">
@@ -385,7 +385,7 @@ QTabWidget::tab-bar
                <number>1</number>
               </property>
               <property name="bottomMargin">
-               <number>3</number>
+               <number>1</number>
               </property>
               <item>
                <widget class="QTabWidget" name="searchTabs">
@@ -396,7 +396,7 @@ QTabWidget::tab-bar
                  <enum>QTabWidget::North</enum>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>2</number>
                 </property>
                 <property name="elideMode">
                  <enum>Qt::ElideRight</enum>
@@ -495,7 +495,7 @@ QTabWidget::tab-bar
                   <item>
                    <widget class="QTreeWidget" name="artistsTree">
                     <property name="styleSheet">
-                     <string notr="true">border: 0</string>
+                     <string notr="true"/>
                     </property>
                     <property name="autoScrollMargin">
                      <number>16</number>
@@ -546,7 +546,7 @@ QTabWidget::tab-bar
                   <item>
                    <widget class="QTreeWidget" name="albumsTree">
                     <property name="styleSheet">
-                     <string notr="true">border:0</string>
+                     <string notr="true"/>
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
@@ -609,7 +609,7 @@ QTabWidget::tab-bar
                   <item>
                    <widget class="QTreeWidget" name="playlistsTree">
                     <property name="styleSheet">
-                     <string notr="true">border:0</string>
+                     <string notr="true"/>
                     </property>
                     <property name="alternatingRowColors">
                      <bool>true</bool>
@@ -641,6 +641,79 @@ QTabWidget::tab-bar
                     <column>
                      <property name="text">
                       <string>Total Tracks</string>
+                     </property>
+                    </column>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="queueTabLayout">
+             <attribute name="title">
+              <string>Queue</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <property name="leftMargin">
+               <number>3</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>3</number>
+              </property>
+              <property name="bottomMargin">
+               <number>3</number>
+              </property>
+              <item>
+               <widget class="QTabWidget" name="queueTabs">
+                <property name="currentIndex">
+                 <number>0</number>
+                </property>
+                <widget class="QWidget" name="queueTreeTab">
+                 <attribute name="title">
+                  <string>Queue</string>
+                 </attribute>
+                 <layout class="QVBoxLayout" name="verticalLayout_18">
+                  <property name="leftMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>3</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>3</number>
+                  </property>
+                  <item>
+                   <widget class="QTreeWidget" name="queueTree">
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <attribute name="headerDefaultSectionSize">
+                     <number>270</number>
+                    </attribute>
+                    <attribute name="headerMinimumSectionSize">
+                     <number>15</number>
+                    </attribute>
+                    <column>
+                     <property name="text">
+                      <string>Title</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Artists</string>
+                     </property>
+                    </column>
+                    <column>
+                     <property name="text">
+                      <string>Album</string>
                      </property>
                     </column>
                    </widget>
@@ -770,9 +843,13 @@ QTabWidget::tab-bar
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_2">
+                  <widget class="QPushButton" name="repeatBtn">
                    <property name="text">
                     <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>Resources/repeatOffIcon.png</normaloff>Resources/repeatOffIcon.png</iconset>
                    </property>
                    <property name="flat">
                     <bool>true</bool>
@@ -803,7 +880,7 @@ QTabWidget::tab-bar
                      </property>
                      <property name="icon">
                       <iconset>
-                       <normaloff>../resources/prevIcon.png</normaloff>../resources/prevIcon.png</iconset>
+                       <normaloff>Resources/prevIcon.png</normaloff>Resources/prevIcon.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -846,7 +923,7 @@ QTabWidget::tab-bar
                        </property>
                        <property name="icon">
                         <iconset>
-                         <normaloff>../resources/playIcon.png</normaloff>../resources/playIcon.png</iconset>
+                         <normaloff>Resources/playIcon.png</normaloff>Resources/playIcon.png</iconset>
                        </property>
                        <property name="iconSize">
                         <size>
@@ -874,7 +951,7 @@ QTabWidget::tab-bar
                      </property>
                      <property name="icon">
                       <iconset>
-                       <normaloff>../resources/nextIcon.png</normaloff>../resources/nextIcon.png</iconset>
+                       <normaloff>Resources/nextIcon.png</normaloff>Resources/nextIcon.png</iconset>
                      </property>
                      <property name="iconSize">
                       <size>
@@ -896,7 +973,7 @@ QTabWidget::tab-bar
                    </property>
                    <property name="icon">
                     <iconset>
-                     <normaloff>../resources/shuffleOffIcon.png</normaloff>../resources/shuffleOffIcon.png</iconset>
+                     <normaloff>Resources/shuffleOffIcon.png</normaloff>Resources/shuffleOffIcon.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -1028,6 +1105,26 @@ QTabWidget::tab-bar
               </spacer>
              </item>
              <item>
+              <widget class="QPushButton" name="listenQueueBtn">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>Resources/iconmonstr-text-26-64.png</normaloff>Resources/iconmonstr-text-26-64.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="flat">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="volIconLabel">
                <property name="minimumSize">
                 <size>
@@ -1048,7 +1145,7 @@ QTabWidget::tab-bar
                 <enum>Qt::RichText</enum>
                </property>
                <property name="pixmap">
-                <pixmap>../resources/volIcon.png</pixmap>
+                <pixmap>Resources/volIcon.png</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
@@ -1169,7 +1266,7 @@ QTabWidget::tab-bar
                 <enum>Qt::RichText</enum>
                </property>
                <property name="pixmap">
-                <pixmap>../resources/cover_default.jpg</pixmap>
+                <pixmap>Config/Resources/cover_default.jpg</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
@@ -1571,7 +1668,7 @@ QTabWidget::tab-bar
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../resources/folderIcon.png</normaloff>../resources/folderIcon.png</iconset>
+                   <normaloff>Resources/folderIcon.png</normaloff>Resources/folderIcon.png</iconset>
                  </property>
                 </widget>
                </item>

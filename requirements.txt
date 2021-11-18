@@ -2,6 +2,7 @@ ffmpy
 git+https://github.com/kokarare1212/librespot-python
 music_tag
 Pillow
+requests
 tqdm
 tabulate
 PyQt5

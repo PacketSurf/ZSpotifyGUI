@@ -1,15 +1,19 @@
-from PyQt5.QtWidgets import QTreeWidgetItem
+#from PyQt5.QtGui import QtGui
+from PyQt5.QtWidgets import QTreeWidgetItem, QMenu, QApplication, QTreeWidget
 from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt5.QtCore import Qt
 from item import Item
+from utils import delete_file
 
 class ItemTree:
 
-    def __init__(self, tree, tree_widget_builder = None):
+    def __init__(self, tree, tree_widget_builder = None, can_play = True):
         self.tree = tree
         self.items = []
         self.tree_items = {}
         self.selected_item = None
         self.load_function = None
+        self.can_play = can_play
         self.signals = ItemTreeSignals()
         if tree_widget_builder == None:
             tree_widget_builder = lambda track: QTreeWidgetItem([str(track.index), track.title, track.artists, \
@@ -18,7 +22,10 @@ class ItemTree:
         self.init_signals()
 
     def load_content(self):
-        if self.load_function: self.load_function()
+        try:
+            if self.load_function: self.load_function()
+        except Exception as e:
+            logging.error(e)
 
     def add_item(self, item):
         widget_item = self.tree_widget_builder(item)
@@ -26,6 +33,12 @@ class ItemTree:
         self.tree_items[item] = widget_item
         self.tree.addTopLevelItem(widget_item)
 
+    def remove_item(self, item):
+        self.items.remove(item)
+        if item in self.tree_items:
+            index = self.item_index(item)
+            if index != -1 : self.tree.takeTopLevelItem(index)
+            self.tree_items.pop(item, None)
 
     def set_items(self, items):
         if items == None or len(items) <= 0: return
@@ -38,6 +51,7 @@ class ItemTree:
             widget_item = self.tree_widget_builder(item)
             self.tree.setHeaderItem(widget_item)
         except Exception as e:
+            logging.error(e)
             print(e)
 
     def set_header_spacing(self, *args):
@@ -106,8 +120,9 @@ class ItemTree:
 
     def on_item_changed(self, widget_item, old):
         #self.itemChanged.emit()
-        if widget_item == None: return
+        if not widget_item: return
         self.selected_item = self.get_selected_item()
+        if not self.selected_item: return
         headers = self.get_headers()
         labels = []
         for i in range(widget_item.columnCount()):
@@ -116,13 +131,48 @@ class ItemTree:
 
     def on_double_clicked(self,widget_item, item):
         item = self.get_selected_item()
-        self.signals.doubleClicked.emit(item, self)
+        if item:
+            self.signals.doubleClicked.emit(item, self)
+
+    def on_delete_item(self):
+        self.signals.onDeleted.emit(self.selected_item, self.tree)
+        if not self.selected_item.path == "":
+            delete_file(self.selected_item.path)
+        if not self.selected_item: return
+        self.remove_item(self.selected_item)
+
+
+    def on_download_item(self):
+        if not self.selected_item or self.selected_item.downloaded: return
+        self.signals.onDownloadQueued.emit(self.selected_item)
+
+    def on_listen_queue(self):
+        if not self.selected_item: return
+        self.signals.onListenQueued.emit(self.selected_item)
+
+    def on_context_menu(self, pos):
+        if not self.selected_item: return
+        node = self.tree.mapToGlobal(pos)
+        self.popup_menu = QMenu(None)
+        if self.selected_item.downloaded:
+            self.popup_menu.addAction("Add to listen queue", self.on_listen_queue)
+        else:
+             self.popup_menu.addAction("Add to download queue", self.on_download_item)
+        if self.selected_item.downloaded:
+            self.popup_menu.addSeparator()
+            self.popup_menu.addAction("Delete", self.on_delete_item)
+        self.popup_menu.exec_(self.tree.mapToGlobal(pos))
 
     def init_signals(self):
         self.tree.currentItemChanged.connect(self.on_item_changed)
         self.tree.itemDoubleClicked.connect(self.on_double_clicked)
+        self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree.customContextMenuRequested.connect(self.on_context_menu)
 
 class ItemTreeSignals(QObject):
     doubleClicked = pyqtSignal(Item, ItemTree)
     itemChanged = pyqtSignal(Item, list, list)
     onSelected = pyqtSignal(list)
+    onDeleted = pyqtSignal(Item, QTreeWidget)
+    onListenQueued = pyqtSignal(Item)
+    onDownloadQueued = pyqtSignal(Item)

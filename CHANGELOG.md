@@ -1,4 +1,13 @@
 ## **Changelog:**
+
+**v0.1 (10 Nov 2021):**
+- Started logging updates to GUI
+- Can now right click songs and see a list of options such as delete, download, add to listen queue, etc..
+- Added shuffle function to music player
+- Added repeat function to music player
+- Added listen queue to music player
+
+
 **v2.4 (27 Oct 20212):**
 - Added realtime downloading support to avoid account suspensions.
 - Fix for downloading by artist.
@@ -26,7 +35,7 @@
 - Added Docker file.
 - Added CONTRIBUTING.md.
 - Fixed artist names getting cutoff in metadata.
-- Removed data sanitization of metadata tags. 
+- Removed data sanitization of metadata tags.
 
 **v2.1 (23 Oct 2021):**
 - Moved configuration from hard-coded values to separate zs_config.json file.

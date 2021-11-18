@@ -10,7 +10,7 @@ import json
 import os
 import os.path
 from typing import Any
-
+import logging
 import requests
 from librespot.audio.decoders import VorbisOnlyAudioQuality, AudioQuality
 from librespot.core import Session
@@ -22,7 +22,7 @@ from const import CREDENTIALS_JSON, TYPE, ITEMS, \
 from utils import MusicFormat, ms_to_time_str
 from item import Track, Album, Artist, Playlist
 
-
+logger = logging.getLogger(__name__)
 
 class ZSpotify:
     SESSION: Session = None
@@ -40,12 +40,13 @@ class ZSpotify:
             try:
                 cls.SESSION = Session.Builder().stored_file().create()
             except:
+                logger.info("No credentials file found. New login details required.")
                 return False
         elif username != "" and password != "":
             try:
                 cls.SESSION = Session.Builder().user_pass(username, password).create();
             except Exception as e:
-                print(e)
+                logger.error(e)
                 return False
         else: return
         if ZSpotify.check_premium():
@@ -94,44 +95,55 @@ class ZSpotify:
         counter = 1
         if resp[TRACKS] != None:
             for t in resp[TRACKS][ITEMS]:
-                artists = ', '.join([artist[NAME] for artist in t[ARTISTS]])
-                url = t[ALBUM][IMAGES][1][URL]
-                duration = ms_to_time_str(t[DURATION])
-                track = Track(counter, t[ID], str(t[NAME]), artists, str(t[ALBUM][NAME]), \
-                    release_date=t[ALBUM][RELEASE_DATE], duration=duration, img=url)
-                results[TRACKS].append(track)
-                counter += 1
+                try:
+                    artists = ', '.join([artist[NAME] for artist in t[ARTISTS]])
+                    url = t[ALBUM][IMAGES][1][URL]
+                    duration = ms_to_time_str(t[DURATION])
+                    track = Track(counter, t[ID], str(t[NAME]), artists, str(t[ALBUM][NAME]), \
+                        release_date=t[ALBUM][RELEASE_DATE], duration=duration, img=url)
+                    results[TRACKS].append(track)
+                    counter += 1
+                except Exception as e:
+                    logger.error(e)
         counter = 1
         if resp[ALBUMS] != None:
             for a in resp[ALBUMS][ITEMS]:
-                if len(a[IMAGES]) > 1:
-                    url = a[IMAGES][1][URL]
-                else:
-                    url = ""
-                artists = ', '.join([artist[NAME] for artist in a[ARTISTS]])
-                album = Album(counter, a[ID], a[NAME], artists, a[TOTAL_TRACKS], release_date=a[RELEASE_DATE], img=url)
-                results[ALBUMS].append(album)
-                counter += 1
+                try:
+                    if len(a[IMAGES]) > 1:
+                        url = a[IMAGES][1][URL]
+                    else:
+                        url = ""
+                    artists = ', '.join([artist[NAME] for artist in a[ARTISTS]])
+                    album = Album(counter, a[ID], a[NAME], artists, a[TOTAL_TRACKS], release_date=a[RELEASE_DATE], img=url)
+                    results[ALBUMS].append(album)
+                    counter += 1
+                except Exception as e:
+                    logger.error(e)
         counter = 1
         if resp[ARTISTS] != None:
             for ar in resp[ARTISTS][ITEMS]:
-                if len(ar[IMAGES]) >= 1:
-                    url = ar[IMAGES][1][URL]
-                else: url = ""
-                artist = Artist(counter, ar[ID], ar[NAME], img=url)
-                results[ARTISTS].append(artist)
-                counter += 1
+                try:
+                    if len(ar[IMAGES]) >= 1:
+                        url = ar[IMAGES][1][URL]
+                    else: url = ""
+                    artist = Artist(counter, ar[ID], ar[NAME], img=url)
+                    results[ARTISTS].append(artist)
+                    counter += 1
+                except Exception as e:
+                    logger.error(e)
         counter = 1
         if resp[ARTISTS] != None:
             for playlist in resp[PLAYLISTS][ITEMS]:
-                if len(playlist[IMAGES]) > 0:
-                    url = playlist[IMAGES][0][URL]
-                else:
-                    url = ""
-                playlist = Playlist(counter, playlist[ID], playlist[NAME], playlist[OWNER][DISPLAY_NAME], playlist[TRACKS][TOTAL], img=url)
-                results[PLAYLISTS].append(playlist)
-                counter += 1
-
+                try:
+                    if len(playlist[IMAGES]) > 0:
+                        url = playlist[IMAGES][0][URL]
+                    else:
+                        url = ""
+                    playlist = Playlist(counter, playlist[ID], playlist[NAME], playlist[OWNER][DISPLAY_NAME], playlist[TRACKS][TOTAL], img=url)
+                    results[PLAYLISTS].append(playlist)
+                    counter += 1
+                except Exception as e:
+                    logger.error(e)
         return results
 
     @classmethod
@@ -172,11 +184,16 @@ class ZSpotify:
     @classmethod
     def get_auth_header(cls):
         return {
-            AUTHORIZATION: f'Bearer {cls.__get_auth_token()}'}
+            'Authorization': f'Bearer {cls.__get_auth_token()}',
+            'Accept-Language': f'{cls.CONFIG.get("LANGUAGE")}'
+        }
 
     @classmethod
     def get_auth_header_and_params(cls, limit, offset):
-        return {AUTHORIZATION: f'Bearer {cls.__get_auth_token()}'}, {LIMIT: limit, OFFSET: offset}
+        return {
+            'Authorization': f'Bearer {cls.__get_auth_token()}',
+            'Accept-Language': f'{cls.CONFIG.get("LANGUAGE")}'
+        }, {LIMIT: limit, OFFSET: offset}
 
     @classmethod
     def send_url(cls, url):

@@ -1,12 +1,16 @@
+import logging
 from zspotify import ZSpotify
 from playlist import download_playlist
 from album import download_album, download_artist_albums
 from track import download_track
 from item import Item, Track, Artist, Album, Playlist
 from worker import Worker
-from const import TRACKS, ARTISTS, ALBUMS, PLAYLISTS, ROOT_PATH, DOWNLOAD_REAL_TIME, DOWNLOAD_FORMAT, FORMATS
+from const import TRACKS, ARTISTS, ALBUMS, PLAYLISTS, ROOT_PATH, DOWNLOAD_REAL_TIME, DOWNLOAD_FORMAT, FORMATS, DIR_ICON
 from PyQt5.QtCore import QThreadPool, QObject, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QFileDialog
+from view import set_button_icon
+
+logger = logging.getLogger(__name__)
 
 class DownloadController(QObject):
 
@@ -23,6 +27,8 @@ class DownloadController(QObject):
         self.item = None
         self.downloading = False
         self.download_queue = []
+        set_button_icon(self.window.dirBtn, DIR_ICON)
+
 
     def on_click_download(self):
         if self.window.selected_item:
@@ -65,6 +71,7 @@ class DownloadController(QObject):
             elif type(self.item) == Playlist:
                 download_playlist(self.item.id,progress_callback=signal)
         except Exception as e:
+            logger.error(e)
             print(e)
 
 

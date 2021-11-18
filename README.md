@@ -1,13 +1,10 @@
-![Stars](https://img.shields.io/github/stars/Footsiefat/zspotify.svg)
-![Forks](https://img.shields.io/github/forks/Footsiefat/zspotify.svg)
-![Size](https://img.shields.io/github/repo-size/Footsiefat/zspotify)
 
 # ZSpotifyGUI
 
 ### A user-friendly desktop app for ZSpotify music downloader for Windows, MacOs, and Linux
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/12180913/138040605-c9d46e45-3830-4a4b-a7ac-c56bb0d76335.png">
+  <img src="https://user-images.githubusercontent.com/35679186/141209937-049e8a52-95fd-4028-aa6c-d70670cd0171.png">
 </p>
 
 [Discord Server](https://discord.gg/skVNQKtyFq) - [Matrix Server](https://matrix.to/#/#zspotify:matrix.org) - [Gitea Mirror](https://git.robinsmediateam.dev/Footsiefat/zspotify) - [Main Site](https://footsiefat.github.io/)
@@ -22,22 +19,32 @@ Take full advantage of the power of ZSpotify with this user-friendly graphical i
 - Your spotify likes sync into the client, allowing you to easily download them
 - Easily change settings such as real-time-download, download format, download directory, and search results
 
+<br/>
+<br/>
+<h3>EASY INSTALLATION</h3>
 
 
-```
-Requirements:
+WINDOWS:
+  - Download the latest windows installer from [Releases](https://github.com/PacketSurf/releases).
+  - Run the installer and follow the installation instructions.
+  - You will find ZSpotify in your start menu, and Desktop (if chosen).
 
-Binaries
 
-- Python 3.9 or greater
-- ffmpeg*
-- Git**
-- vlc***
+MAC:
+  - Download the latest mac zip file from [Releases](https://github.com/PacketSurf/releases).
+  - Make sure the zip file you downloaded is inside your Downloads folder.
+  - Open the Terminal application and paste the following exactly:
+  ```
+  cd Downloads/;unzip ZSpotifyMacOs.zip; cd ZSpotifyGUI/;sudo chmod u+x install.sh;./install.sh
+  ```
+  - You will be asked to enter a password to complete the installation. Please note that when typing your password, nothing     will appear on screen. Just type the password and press enter, and if it is valid the installation will continue.
+  - You will find the ZSpotify launcher in your Applications folder, or alternatively in the ZSpotify folder located in your Home folder
 
-Python packages:
+<br/>
+<br/>
 
-- pip install -r requirements.txt
-
+<h4>Command Line Usage</h4>
+Alternatively, you may also launch the program directly. Within the zspotify directory run:
 ```
 
 \*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it with [Homebrew](https://brew.sh) by running `brew install ffmpeg`.
@@ -92,7 +99,7 @@ Pull the official docker image (automatically updates):
 Or build the docker image yourself from the Dockerfile:
   docker build -t zspotify .
 Create and run a container from the image:
-  docker run --rm -v "$PWD/ZSpotify Music:/ZSpotify Music" -v "$PWD/ZSpotify Podcasts:/ZSpotify Podcasts" -it zspotify
+  docker run --rm -u $(id -u):$(id -g) -v "$PWD/zspotify:/app" -v "$PWD/zs_config.json:/zs_config.json" -v "$PWD/ZSpotify Music:/ZSpotify Music" -v "$PWD/ZSpotify Podcasts:/ZSpotify Podcasts" -it zspotify
 ```
 
 ### Google Colab
@@ -110,9 +117,9 @@ This option is much slower and is only recommended for premium users who wish to
 
 **Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
 
-### What do I do if I see "Your session has been terminated"?
+### Why is my program freezing/why are search results not showing up"?
 
-If you see this, don't worry! Just try logging back in. If you see the incorrect username or password error, reset your password and you should be able to log back in and continue using Spotify.
+There are currently some issues with losing connection to the Spotify API. Unfortunately until we can find a fix, your best option is to restart the program, and it will work correctly again. If problems persist, please contact us at the Discord server.
 
 ### Contributing
 

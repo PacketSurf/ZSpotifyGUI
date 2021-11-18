@@ -5,13 +5,13 @@ import subprocess
 import time
 from enum import Enum
 from typing import List, Tuple
-
+import logging
 import music_tag
 import requests
 
 from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
-    WINDOWS_SYSTEM, SPOTIFY_ID
-
+    WINDOWS_SYSTEM, ALBUMARTIST, SPOTIFY_ID
+logger = logging.getLogger(__name__)
 
 class MusicFormat(str, Enum):
     MP3 = 'mp3',
@@ -27,6 +27,30 @@ def create_download_directory(download_path: str) -> None:
     if not os.path.isfile(hidden_file_path):
         with open(hidden_file_path, 'w', encoding='utf-8') as f:
             pass
+
+def get_previously_downloaded(song_id: str, archive_directory: str) -> List[str]:
+    """ Returns list of all time downloaded songs """
+
+    ids = []
+    archive_path = os.path.join(archive_directory, '.song_archive')
+
+    if os.path.exists(archive_path):
+        with open(archive_path, 'r', encoding='utf-8') as f:
+            ids = [line.strip() for line in f.readlines()]
+
+    return ids
+
+def add_to_archive(song_id: str, archive_directory: str) -> None:
+    """ Adds song id to all time installed songs archive """
+
+    archive_path = os.path.join(archive_directory, '.song_archive')
+
+    if os.path.exists(archive_path):
+        with open(archive_path, 'a', encoding='utf-8') as f:
+            f.write(f'{song_id}\n')
+    else:
+        with open(archive_path, 'w', encoding='utf-8') as f:
+            f.write(f'{song_id}\n')
 
 def get_directory_song_ids(download_path: str) -> List[str]:
     """ Gets song ids of songs in directory """
@@ -102,6 +126,7 @@ def clear() -> None:
 def set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number, spotify_id="") -> None:
     """ sets music_tag metadata """
     tags = music_tag.load_file(filename)
+    tags[ALBUMARTIST] = artists[0]
     tags[ARTIST] = conv_artist_format(artists)
     tags[TRACKTITLE] = name
     tags[ALBUM] = album_name
@@ -233,9 +258,16 @@ def fix_filename(name):
     return re.sub(r'[/\\:|<>"?*\0-\x1f]|^(AUX|COM[1-9]|CON|LPT[1-9]|NUL|PRN)(?![^.])|^\s|[\s.]$', "_", name, flags=re.IGNORECASE)
 
 def ms_to_time_str(ms):
-
     min = int((ms/(60*1000))%60)
     sec = str(int((ms/1000)%60))
     if len(sec) == 1:
         sec = f"0{sec}"
     return f"{min}:{sec[:2]}"
+
+def delete_file(path):
+    try:
+        os.remove(path)
+        logging.info(f"Deleted file: {path}")
+    except Exception as e:
+        print(e)
+        logging.error(f"Error deleting file: {e}")
