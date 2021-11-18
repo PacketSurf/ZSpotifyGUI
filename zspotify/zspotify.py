@@ -16,10 +16,9 @@ import requests
 from librespot.audio.decoders import VorbisOnlyAudioQuality
 from librespot.core import Session
 
-from const import CREDENTIALS_JSON, TYPE, \
+from const import TYPE, \
     PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, \
     PLAYLIST_READ_PRIVATE, USER_LIBRARY_READ
-from utils import MusicFormat
 from config import Config
 
 
@@ -36,9 +35,11 @@ class ZSpotify:
     def login(cls):
         """ Authenticates with Spotify and saves credentials to a file """
 
-        if os.path.isfile(CREDENTIALS_JSON):
+        cred_location = os.path.join(os.getcwd(), Config.get_credentials_location())
+
+        if os.path.isfile(cred_location):
             try:
-                cls.SESSION = Session.Builder().stored_file().create()
+                cls.SESSION = Session.Builder().stored_file(cred_location).create()
                 return
             except RuntimeError:
                 pass

@@ -80,8 +80,6 @@ USER_LIBRARY_READ = 'user-library-read'
 
 WINDOWS_SYSTEM = 'Windows'
 
-CREDENTIALS_JSON = 'credentials.json'
-
 CODEC_MAP = {
     'aac': 'aac',
     'fdk_aac': 'libfdk_aac',

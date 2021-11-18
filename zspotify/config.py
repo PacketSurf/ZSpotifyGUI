@@ -19,6 +19,7 @@ DOWNLOAD_REAL_TIME = 'DOWNLOAD_REAL_TIME'
 LANGUAGE = 'LANGUAGE'
 BITRATE = 'BITRATE'
 SONG_ARCHIVE = 'SONG_ARCHIVE'
+CREDENTIALS_LOCATION = 'CREDENTIALS_LOCATION'
 
 CONFIG_VALUES = {
     ROOT_PATH:                  { 'default': '../ZSpotify Music/',    'type': str,  'arg': '--root-path'                  },
@@ -35,6 +36,7 @@ CONFIG_VALUES = {
     LANGUAGE:                   { 'default': 'en',                    'type': str,  'arg': '--language'                   },
     BITRATE:                    { 'default': '',                      'type': str,  'arg': '--bitrate'                    },
     SONG_ARCHIVE:               { 'default': '.song_archive',         'type': str,  'arg': '--song-archive'               },
+    CREDENTIALS_LOCATION:       { 'default': 'credentials.json',      'type': str,  'arg': '--credentials-location'       },
 }
 
 
@@ -76,8 +78,6 @@ class Config:
         for key in CONFIG_VALUES:
             if key.lower() in vars(args) and vars(args)[key.lower()] is not None:
                 cls.Values[key] = cls.parse_arg_value(key, vars(args)[key.lower()])
-
-        print(cls.Values, ' ', '\n')
 
     @classmethod
     def get_default_json(cls) -> Any:
@@ -161,3 +161,7 @@ class Config:
     @classmethod
     def get_song_archive(cls) -> str:
         return cls.get(SONG_ARCHIVE)
+
+    @classmethod
+    def get_credentials_location(cls) -> str:
+        return cls.get(CREDENTIALS_LOCATION)
