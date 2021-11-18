@@ -179,13 +179,28 @@ class Config:
         if v:
             return v
         if mode == 'playlist':
+            if cls.get_split_album_discs():
+                split = os.path.split(OUTPUT_DEFAULT_PLAYLIST)
+                return os.path.join(split[0], 'Disc {disc_number}', split[0])
             return OUTPUT_DEFAULT_PLAYLIST
         if mode == 'extplaylist':
+            if cls.get_split_album_discs():
+                split = os.path.split(OUTPUT_DEFAULT_PLAYLIST_EXT)
+                return os.path.join(split[0], 'Disc {disc_number}', split[0])
             return OUTPUT_DEFAULT_PLAYLIST_EXT
         if mode == 'liked':
+            if cls.get_split_album_discs():
+                split = os.path.split(OUTPUT_DEFAULT_LIKED_SONGS)
+                return os.path.join(split[0], 'Disc {disc_number}', split[0])
             return OUTPUT_DEFAULT_LIKED_SONGS
         if mode == 'single':
+            if cls.get_split_album_discs():
+                split = os.path.split(OUTPUT_DEFAULT_SINGLE)
+                return os.path.join(split[0], 'Disc {disc_number}', split[0])
             return OUTPUT_DEFAULT_SINGLE
         if mode == 'album':
+            if cls.get_split_album_discs():
+                split = os.path.split(OUTPUT_DEFAULT_ALBUM)
+                return os.path.join(split[0], 'Disc {disc_number}', split[0])
             return OUTPUT_DEFAULT_ALBUM
         raise ValueError()
