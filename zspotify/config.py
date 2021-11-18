@@ -20,19 +20,19 @@ LANGUAGE = 'LANGUAGE'
 BITRATE = 'BITRATE'
 
 CONFIG_VALUES = {
-    ROOT_PATH:                  { 'default': '../ZSpotify Music/',    'type': 'str',  'arg': '--root-path'                  },
-    ROOT_PODCAST_PATH:          { 'default': '../ZSpotify Podcasts/', 'type': 'str',  'arg': '--root-podcast-path'          },
-    SKIP_EXISTING_FILES:        { 'default': True,                    'type': 'bool', 'arg': '--skip-existing-files'        },
-    SKIP_PREVIOUSLY_DOWNLOADED: { 'default': False,                   'type': 'bool', 'arg': '--skip-previously-downloaded' },
-    DOWNLOAD_FORMAT:            { 'default': 'ogg',                   'type': 'str',  'arg': '--download-format'            },
-    FORCE_PREMIUM:              { 'default': False,                   'type': 'bool', 'arg': '--force-premium'              },
-    ANTI_BAN_WAIT_TIME:         { 'default': 1,                       'type': 'int',  'arg': '--anti-ban-wait-time'         },
-    OVERRIDE_AUTO_WAIT:         { 'default': False,                   'type': 'bool', 'arg': '--override-auto-wait'         },
-    CHUNK_SIZE:                 { 'default': 50000,                   'type': 'int',  'arg': '--chunk-size'                 },
-    SPLIT_ALBUM_DISCS:          { 'default': False,                   'type': 'bool', 'arg': '--split-album-discs'          },
-    DOWNLOAD_REAL_TIME:         { 'default': False,                   'type': 'bool', 'arg': '--download-real-time'         },
-    LANGUAGE:                   { 'default': 'en',                    'type': 'str',  'arg': '--language'                   },
-    BITRATE:                    { 'default': '',                      'type': 'str',  'arg': '--bitrate'                    },
+    ROOT_PATH:                  { 'default': '../ZSpotify Music/',    'type': str,  'arg': '--root-path'                  },
+    ROOT_PODCAST_PATH:          { 'default': '../ZSpotify Podcasts/', 'type': str,  'arg': '--root-podcast-path'          },
+    SKIP_EXISTING_FILES:        { 'default': 'True',                  'type': bool, 'arg': '--skip-existing-files'        },
+    SKIP_PREVIOUSLY_DOWNLOADED: { 'default': 'False',                 'type': bool, 'arg': '--skip-previously-downloaded' },
+    DOWNLOAD_FORMAT:            { 'default': 'ogg',                   'type': str,  'arg': '--download-format'            },
+    FORCE_PREMIUM:              { 'default': 'False',                 'type': bool, 'arg': '--force-premium'              },
+    ANTI_BAN_WAIT_TIME:         { 'default': '1',                     'type': int,  'arg': '--anti-ban-wait-time'         },
+    OVERRIDE_AUTO_WAIT:         { 'default': 'False',                 'type': bool, 'arg': '--override-auto-wait'         },
+    CHUNK_SIZE:                 { 'default': '50000',                 'type': int,  'arg': '--chunk-size'                 },
+    SPLIT_ALBUM_DISCS:          { 'default': 'False',                 'type': bool, 'arg': '--split-album-discs'          },
+    DOWNLOAD_REAL_TIME:         { 'default': 'False',                 'type': bool, 'arg': '--download-real-time'         },
+    LANGUAGE:                   { 'default': 'en',                    'type': str,  'arg': '--language'                   },
+    BITRATE:                    { 'default': '',                      'type': str,  'arg': '--bitrate'                    },
 }
 
 
@@ -49,23 +49,56 @@ class Config:
 
         true_config_file_path = os.path.join(app_dir, config_fp)
 
+        # Load config from zs_config.json
+
         if not os.path.exists(true_config_file_path):
             with open(true_config_file_path, 'w', encoding='utf-8') as config_file:
                 json.dump(cls.get_default_json(), config_file, indent=4)
             cls.Values = cls.get_default_json()
         else:
             with open(true_config_file_path, encoding='utf-8') as config_file:
-                cls.Values = json.load(config_file)
+                jsonvalues = json.load(config_file)
+                cls.Values = {}
+                for key in CONFIG_VALUES:
+                    if key in jsonvalues:
+                        cls.Values[key] = cls.parse_arg_value(key, jsonvalues[key])
+
+        # Add default values for missing keys
+
         for key in CONFIG_VALUES:
             if key not in cls.Values:
-                cls.Values[key] = CONFIG_VALUES[key].default
+                cls.Values[key] = cls.parse_arg_value(key, CONFIG_VALUES[key]['default'])
+
+        # Override config from commandline arguments
+
+        for key in CONFIG_VALUES:
+            if key.lower() in vars(args) and vars(args)[key.lower()] is not None:
+                cls.Values[key] = cls.parse_arg_value(key, vars(args)[key.lower()])
+
+        print(cls.Values, ' ', '\n')
 
     @classmethod
     def get_default_json(cls) -> Any:
         r = {}
         for key in CONFIG_VALUES:
-            r[key] = CONFIG_VALUES[key].default
+            r[key] = CONFIG_VALUES[key]['default']
         return r
+
+    @classmethod
+    def parse_arg_value(cls, key, value) -> Any:
+        if type(value) == CONFIG_VALUES[key]['type']:
+            return value
+        if CONFIG_VALUES[key]['type'] == str:
+            return str(value)
+        if CONFIG_VALUES[key]['type'] == int:
+            return int(value)
+        if CONFIG_VALUES[key]['type'] == bool:
+            if str(value).lower() in ['yes', 'true', '1']:
+                return True
+            if str(value).lower() in ['no', 'false', '0']:
+                return False
+            raise ValueError("Not a boolean: " + value)
+        raise ValueError("Unknown Type: " + value)
 
     @classmethod
     def get(cls, key) -> Any:
