@@ -33,7 +33,7 @@ WINDOWS:
 MAC:
   - Download the latest mac zip file from [Releases](https://github.com/PacketSurf/releases).
   - Make sure the zip file you downloaded is inside your Downloads folder.
-  - Open the Terminal application and paste the following exactly:
+  - Open the Terminal application and paste the following command, then press enter:
   ```
   cd Downloads/;unzip ZSpotifyMacOs.zip; cd ZSpotifyGUI/;sudo chmod u+x install.sh;./install.sh
   ```
@@ -43,8 +43,9 @@ MAC:
 <br/>
 <br/>
 
-<h4>Command Line Usage</h4>
-Alternatively, you may also launch the program directly. Within the zspotify directory run:
+<h3>MANUAL INSTALLATION<h3/>
+..coming soon..
+
 ```
 
 \*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it with [Homebrew](https://brew.sh) by running `brew install ffmpeg`.
@@ -53,20 +54,12 @@ Alternatively, you may also launch the program directly. Within the zspotify dir
 
 \*\*\*VLC can be installed from [videolan.org](https://www.videolan.org/vlc/) for all operating systems. You may need to restart your PC
 
-
-
-
-```
-Install the requirements: pip install -r requirements.txt
-Run the GUI from within the zspotify directory: python appGui.py
-
-Run from main directory: python zspotify/appGui.py
-
 ```
 
+```
 ### COMMAND LINE USAGE
 ```
-
+<h4>Command Line Usage</h4>
 
 Basic command line usage:
   python zspotify <track/album/playlist/episode/artist url>   Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded. Can take multiple urls.
