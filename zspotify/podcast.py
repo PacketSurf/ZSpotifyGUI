@@ -79,7 +79,7 @@ def download_episode(episode_id) -> None:
 
         download_directory = os.path.join(
             os.path.dirname(__file__),
-            ZSpotify.CONFIG.getRootPodcastPath(),
+            ZSpotify.CONFIG.get_root_podcast_path(),
             extra_paths,
         )
         download_directory = os.path.realpath(download_directory)
@@ -96,7 +96,7 @@ def download_episode(episode_id) -> None:
             if (
                 os.path.isfile(filepath)
                 and os.path.getsize(filepath) == total_size
-                and ZSpotify.CONFIG.getSkipExistingFiles()
+                and ZSpotify.CONFIG.get_skip_existing_files()
             ):
                 print(
                     "\n###   SKIPPING:",
@@ -114,9 +114,9 @@ def download_episode(episode_id) -> None:
                 unit_scale=True,
                 unit_divisor=1024
             ) as bar:
-                for _ in range(int(total_size / ZSpotify.CONFIG.getChunkSize()) + 1):
+                for _ in range(int(total_size / ZSpotify.CONFIG.get_chunk_size()) + 1):
                     bar.update(file.write(
-                        stream.input_stream.stream().read(ZSpotify.CONFIG.getChunkSize())))
+                        stream.input_stream.stream().read(ZSpotify.CONFIG.get_chunk_size())))
         else:
             filepath = os.path.join(download_directory, f"{filename}.mp3")
             download_podcast_directly(direct_download_url, filepath)

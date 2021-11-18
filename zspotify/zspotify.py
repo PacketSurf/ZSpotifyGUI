@@ -26,7 +26,7 @@ from config import Config
 class ZSpotify:
     SESSION: Session = None
     DOWNLOAD_QUALITY = None
-    CONFIG = Config()
+    CONFIG: Config = Config()
 
     def __init__(self, args):
         ZSpotify.CONFIG.load(args)
@@ -65,14 +65,14 @@ class ZSpotify:
     def get_auth_header(cls):
         return {
             'Authorization': f'Bearer {cls.__get_auth_token()}',
-            'Accept-Language': f'{cls.CONFIG.getLanguage()}'
+            'Accept-Language': f'{cls.CONFIG.get_language()}'
         }
 
     @classmethod
     def get_auth_header_and_params(cls, limit, offset):
         return {
             'Authorization': f'Bearer {cls.__get_auth_token()}',
-            'Accept-Language': f'{cls.CONFIG.getLanguage()}'
+            'Accept-Language': f'{cls.CONFIG.get_language()}'
         }, {LIMIT: limit, OFFSET: offset}
 
     @classmethod
@@ -89,4 +89,4 @@ class ZSpotify:
     @classmethod
     def check_premium(cls) -> bool:
         """ If user has spotify premium return true """
-        return (cls.SESSION.get_user_attribute(TYPE) == PREMIUM) or cls.CONFIG.getForcePremium()
+        return (cls.SESSION.get_user_attribute(TYPE) == PREMIUM) or cls.CONFIG.get_force_premium()
