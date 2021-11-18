@@ -25,13 +25,13 @@ Take full advantage of the power of ZSpotify with this user-friendly graphical i
 
 
 WINDOWS:
-  - Download the latest Windows installer from [Releases](https://github.com/PacketSurf/releases).
+  - Download the latest Windows installer from [Releases](https://github.com/PacketSurf/ZSpotifyGUI/releases).
   - Run the installer and follow the installation instructions.
   - You will find ZSpotify in your start menu, and Desktop (if chosen).
   - If you did not have VLC installed already, you will need to restart your PC after installation. If you already had it, then a restart is not necessary.
 
 MAC:
-  - Download the latest MacOs zip file from [Releases](https://github.com/PacketSurf/releases).
+  - Download the latest MacOs zip file from [Releases](https://github.com/PacketSurf/ZSpotifyGUI/releases).
   - Make sure the zip file you downloaded is inside your Downloads folder.
   - Open the Terminal application and paste the following command, then press enter:
   ```
