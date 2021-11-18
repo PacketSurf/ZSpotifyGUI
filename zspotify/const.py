@@ -23,6 +23,8 @@ ARTIST = 'artist'
 
 ARTISTS = 'artists'
 
+ALBUMARTIST = 'albumartist'
+
 ARTWORK = 'artwork'
 
 TRACKS = 'tracks'
@@ -48,6 +50,8 @@ OFFSET = 'offset'
 AUTHORIZATION = 'Authorization'
 
 IS_PLAYABLE = 'is_playable'
+
+DURATION_MS = 'duration_ms'
 
 TRACK_NUMBER = 'track_number'
 
@@ -98,6 +102,8 @@ ROOT_PATH = 'ROOT_PATH'
 ROOT_PODCAST_PATH = 'ROOT_PODCAST_PATH'
 
 SKIP_EXISTING_FILES = 'SKIP_EXISTING_FILES'
+
+SKIP_PREVIOUSLY_DOWNLOADED = 'SKIP_PREVIOUSLY_DOWNLOADED'
 
 DOWNLOAD_FORMAT = 'DOWNLOAD_FORMAT'
 
@@ -173,6 +179,7 @@ CONFIG_DEFAULT_SETTINGS = {
     'ROOT_PATH': 'ZSpotify Music/',
     'ROOT_PODCAST_PATH': 'ZSpotify Podcasts/',
     'SKIP_EXISTING_FILES': True,
+    'SKIP_PREVIOUSLY_DOWNLOADED': False,
     'DOWNLOAD_FORMAT': 'ogg',
     'SEARCH_RESULTS': 50,
     'FORCE_PREMIUM': False,
@@ -180,5 +187,6 @@ CONFIG_DEFAULT_SETTINGS = {
     'OVERRIDE_AUTO_WAIT': False,
     'CHUNK_SIZE': 50000,
     'SPLIT_ALBUM_DISCS': False,
-    'DOWNLOAD_REAL_TIME': False
+    'DOWNLOAD_REAL_TIME': False,
+    'LANGUAGE': 'en'
 }
