@@ -36,7 +36,7 @@ MAC:
   - Make sure the zip file you downloaded is inside your Downloads folder.
   - Open the Terminal application and paste the following exactly:
   ```
-  cd Downloads/;unzip ZSpotifyMacOs.zip; cd ZSpotify/;sudo chmod u+x install.sh;./install.sh
+  cd Downloads/;unzip ZSpotifyMacOs.zip; cd ZSpotifyGUI/;sudo chmod u+x install.sh;./install.sh
   ```
   - You will be asked to enter a password to complete the installation. Please note that when typing your password, nothing     will appear on screen. Just type the password and press enter, and if it is valid the installation will continue.
   - You will find the ZSpotify launcher in your Applications folder, or alternatively in the ZSpotify folder located in your Home folder
