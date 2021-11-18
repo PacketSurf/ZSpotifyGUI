@@ -47,7 +47,12 @@ MAC:
 <h3>MANUAL INSTALLATION<h3/>
 ..coming soon..
 
-```
+<h3>SCREENSHOTS</h3>
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/93454665/142496872-336845ad-702d-45cf-9d6b-18aa4072766b.png">
+</p>
+
+<br/>
 
 \*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it with [Homebrew](https://brew.sh) by running `brew install ffmpeg`.
 
@@ -55,7 +60,7 @@ MAC:
 
 \*\*\*VLC can be installed from [videolan.org](https://www.videolan.org/vlc/) for all operating systems. You may need to restart your PC
 
-```
+
 
 ```
 ### COMMAND LINE USAGE
