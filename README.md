@@ -19,7 +19,11 @@ Take full advantage of the power of ZSpotify with this user-friendly graphical i
 - Your spotify likes sync into the client, allowing you to easily download them
 - Easily change settings such as real-time-download, download format, download directory, and search results
 
-<br/>
+<h3>SCREENSHOTS</h3>
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/93454665/142496872-336845ad-702d-45cf-9d6b-18aa4072766b.png">
+</p>
+
 <br/>
 <h3>EASY INSTALLATION</h3>
 
@@ -29,7 +33,7 @@ WINDOWS:
   - Run the installer and follow the installation instructions.
   - You will find ZSpotify in your start menu, and Desktop (if chosen).
   - If you did not have VLC installed already, you will need to restart your PC after installation. If you already had it, then a restart is not necessary.
-
+<br/>
 MAC:
   - Download the latest MacOs zip file from [Releases](https://github.com/PacketSurf/ZSpotifyGUI/releases).
   - Make sure the zip file you downloaded is inside your Downloads folder.
@@ -47,10 +51,7 @@ MAC:
 <h3>MANUAL INSTALLATION<h3/>
 ..coming soon..
 
-<h3>SCREENSHOTS</h3>
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/93454665/142496872-336845ad-702d-45cf-9d6b-18aa4072766b.png">
-</p>
+
 
 <br/>
 
