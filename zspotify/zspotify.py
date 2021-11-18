@@ -17,18 +17,19 @@ from librespot.audio.decoders import VorbisOnlyAudioQuality
 from librespot.core import Session
 
 from const import CREDENTIALS_JSON, TYPE, \
-    PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, \
-    PLAYLIST_READ_PRIVATE, USER_LIBRARY_READ, CONFIG_DEFAULT_SETTINGS
+    PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, \
+    PLAYLIST_READ_PRIVATE, USER_LIBRARY_READ
 from utils import MusicFormat
+from config import Config
 
 
 class ZSpotify:
     SESSION: Session = None
     DOWNLOAD_QUALITY = None
-    CONFIG = {}
+    CONFIG = Config()
 
-    def __init__(self):
-        ZSpotify.load_config()
+    def __init__(self, args):
+        ZSpotify.CONFIG.load(args)
         ZSpotify.login()
 
     @classmethod
@@ -53,22 +54,6 @@ class ZSpotify:
                 pass
 
     @classmethod
-    def load_config(cls) -> None:
-        app_dir = os.path.dirname(__file__)
-        true_config_file_path = os.path.join(app_dir, CONFIG_FILE_PATH)
-        if not os.path.exists(true_config_file_path):
-            with open(true_config_file_path, 'w', encoding='utf-8') as config_file:
-                json.dump(CONFIG_DEFAULT_SETTINGS, config_file, indent=4)
-            cls.CONFIG = CONFIG_DEFAULT_SETTINGS
-        else:
-            with open(true_config_file_path, encoding='utf-8') as config_file:
-                cls.CONFIG = json.load(config_file)
-
-    @classmethod
-    def get_config(cls, key) -> Any:
-        return cls.CONFIG.get(key)
-
-    @classmethod
     def get_content_stream(cls, content_id, quality):
         return cls.SESSION.content_feeder().load(content_id, VorbisOnlyAudioQuality(quality), False, None)
 
@@ -80,14 +65,14 @@ class ZSpotify:
     def get_auth_header(cls):
         return {
             'Authorization': f'Bearer {cls.__get_auth_token()}',
-            'Accept-Language': f'{cls.CONFIG.get("LANGUAGE")}'
+            'Accept-Language': f'{cls.CONFIG.getLanguage()}'
         }
 
     @classmethod
     def get_auth_header_and_params(cls, limit, offset):
         return {
             'Authorization': f'Bearer {cls.__get_auth_token()}',
-            'Accept-Language': f'{cls.CONFIG.get("LANGUAGE")}'
+            'Accept-Language': f'{cls.CONFIG.getLanguage()}'
         }, {LIMIT: limit, OFFSET: offset}
 
     @classmethod
@@ -104,4 +89,4 @@ class ZSpotify:
     @classmethod
     def check_premium(cls) -> bool:
         """ If user has spotify premium return true """
-        return (cls.SESSION.get_user_attribute(TYPE) == PREMIUM) or cls.get_config(FORCE_PREMIUM)
+        return (cls.SESSION.get_user_attribute(TYPE) == PREMIUM) or cls.CONFIG.getForcePremium()

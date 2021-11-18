@@ -5,8 +5,7 @@ from librespot.audio.decoders import VorbisOnlyAudioQuality
 from librespot.metadata import EpisodeId
 from tqdm import tqdm
 
-from const import (CHUNK_SIZE, ERROR, ID, ITEMS, NAME, ROOT_PODCAST_PATH, SHOW,
-                   SKIP_EXISTING_FILES)
+from const import (ERROR, ID, ITEMS, NAME, SHOW)
 from utils import create_download_directory, fix_filename
 from zspotify import ZSpotify
 
@@ -80,7 +79,7 @@ def download_episode(episode_id) -> None:
 
         download_directory = os.path.join(
             os.path.dirname(__file__),
-            ZSpotify.get_config(ROOT_PODCAST_PATH),
+            ZSpotify.CONFIG.getRootPodcastPath(),
             extra_paths,
         )
         download_directory = os.path.realpath(download_directory)
@@ -97,7 +96,7 @@ def download_episode(episode_id) -> None:
             if (
                 os.path.isfile(filepath)
                 and os.path.getsize(filepath) == total_size
-                and ZSpotify.get_config(SKIP_EXISTING_FILES)
+                and ZSpotify.CONFIG.getSkipExistingFiles()
             ):
                 print(
                     "\n###   SKIPPING:",
@@ -115,9 +114,9 @@ def download_episode(episode_id) -> None:
                 unit_scale=True,
                 unit_divisor=1024
             ) as bar:
-                for _ in range(int(total_size / ZSpotify.get_config(CHUNK_SIZE)) + 1):
+                for _ in range(int(total_size / ZSpotify.CONFIG.getChunkSize()) + 1):
                     bar.update(file.write(
-                        stream.input_stream.stream().read(ZSpotify.get_config(CHUNK_SIZE))))
+                        stream.input_stream.stream().read(ZSpotify.CONFIG.getChunkSize())))
         else:
             filepath = os.path.join(download_directory, f"{filename}.mp3")
             download_podcast_directly(direct_download_url, filepath)

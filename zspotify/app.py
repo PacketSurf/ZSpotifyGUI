@@ -16,7 +16,7 @@ SEARCH_URL = 'https://api.spotify.com/v1/search'
 
 def client(args) -> None:
     """ Connects to spotify to perform query's and get songs to download """
-    ZSpotify()
+    ZSpotify(args)
 
     if not args.no_splash:
         splash()

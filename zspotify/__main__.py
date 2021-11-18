@@ -10,6 +10,9 @@ if __name__ == '__main__':
     parser.add_argument('-ns', '--no-splash',
                         action='store_true',
                         help='Suppress the splash screen when loading.')
+    parser.add_argument('--config-location',
+                        type=str,
+                        help='Specify the zs_config.json location')
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('urls',
                        type=str,
