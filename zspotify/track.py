@@ -91,10 +91,9 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
         filename = os.path.join(
             download_directory, f'{song_name}.{EXT_MAP.get(ZSpotify.CONFIG.get_download_format().lower())}')
 
-        archive_directory = os.path.join(os.path.dirname(__file__), ZSpotify.CONFIG.get_root_path())
         check_name = os.path.isfile(filename) and os.path.getsize(filename)
         check_id = scraped_song_id in get_directory_song_ids(download_directory)
-        check_all_time = scraped_song_id in get_previously_downloaded(scraped_song_id, archive_directory)
+        check_all_time = scraped_song_id in get_previously_downloaded()
 
         # a song with the same name is installed
         if not check_id and check_name:
@@ -153,7 +152,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
                     # add song id to archive file
                     if ZSpotify.CONFIG.get_skip_previously_downloaded():
-                        add_to_archive(scraped_song_id, archive_directory)
+                        add_to_archive(scraped_song_id, artists[0], name)
                     # add song id to download directory's .song_ids file
                     if not check_id:
                         add_to_directory_song_ids(download_directory, scraped_song_id)

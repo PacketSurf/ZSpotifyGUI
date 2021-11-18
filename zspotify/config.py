@@ -18,6 +18,7 @@ SPLIT_ALBUM_DISCS = 'SPLIT_ALBUM_DISCS'
 DOWNLOAD_REAL_TIME = 'DOWNLOAD_REAL_TIME'
 LANGUAGE = 'LANGUAGE'
 BITRATE = 'BITRATE'
+SONG_ARCHIVE = 'SONG_ARCHIVE'
 
 CONFIG_VALUES = {
     ROOT_PATH:                  { 'default': '../ZSpotify Music/',    'type': str,  'arg': '--root-path'                  },
@@ -33,6 +34,7 @@ CONFIG_VALUES = {
     DOWNLOAD_REAL_TIME:         { 'default': 'False',                 'type': bool, 'arg': '--download-real-time'         },
     LANGUAGE:                   { 'default': 'en',                    'type': str,  'arg': '--language'                   },
     BITRATE:                    { 'default': '',                      'type': str,  'arg': '--bitrate'                    },
+    SONG_ARCHIVE:               { 'default': '.song_archive',         'type': str,  'arg': '--song-archive'               },
 }
 
 
@@ -85,7 +87,7 @@ class Config:
         return r
 
     @classmethod
-    def parse_arg_value(cls, key, value) -> Any:
+    def parse_arg_value(cls, key: str, value: Any) -> Any:
         if type(value) == CONFIG_VALUES[key]['type']:
             return value
         if CONFIG_VALUES[key]['type'] == str:
@@ -101,7 +103,7 @@ class Config:
         raise ValueError("Unknown Type: " + value)
 
     @classmethod
-    def get(cls, key) -> Any:
+    def get(cls, key: str) -> Any:
         return cls.Values.get(key)
 
     @classmethod
@@ -155,3 +157,7 @@ class Config:
     @classmethod
     def get_bitrate(cls) -> str:
         return cls.get(BITRATE)
+
+    @classmethod
+    def get_song_archive(cls) -> str:
+        return cls.get(SONG_ARCHIVE)
