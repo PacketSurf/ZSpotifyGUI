@@ -1,6 +1,3 @@
-![Stars](https://img.shields.io/github/stars/Footsiefat/zspotify.svg)
-![Forks](https://img.shields.io/github/forks/Footsiefat/zspotify.svg)
-![Size](https://img.shields.io/github/repo-size/Footsiefat/zspotify)
 
 # ZSpotifyGUI
 
@@ -22,67 +19,42 @@ Take full advantage of the power of ZSpotify with this graphical interface.
 - Your spotify likes and playlists sync into the client, allowing you to easily download them
 - Easily change settings such as real-time-download, download format, download directory, and search results
 
+<br/>
+<br/>
+<h3>EASY INSTALLATION</h3>
 
 
+WINDOWS:
+  - Download the latest windows installer from [Releases](https://github.com/PacketSurf/releases).
+  - Run the installer and follow the installation instructions.
+  - You will find ZSpotify in your start menu, and Desktop (if chosen).
+
+
+MAC:
+  - Download the latest mac zip file from [Releases](https://github.com/PacketSurf/releases).
+  - If you don't have VLC installed already, be sure to get the version packaged with VLC included.
+  - Make sure the zip file you downloaded is inside your Downloads folder.
+  - Open the Terminal application and paste the following exactly:
+  ```
+  cd Downloads/;unzip ZSpotifyMacOs.zip; cd ZSpotify/;sudo chmod u+x install.sh;./install.sh
+  ```
+  - You will be asked to enter a password to complete the installation. Please note that when typing your password, nothing     will appear on screen. Just type the password and press enter, and if it is valid the installation will continue.
+  - You will find the ZSpotify launcher in your Applications folder, or alternatively in the ZSpotify folder located in your Home folder
+
+<br/>
+<br/>
+
+<h4>Command Line Usage</h4>
+Alternatively, you may also launch the program directly. Within the zspotify directory run:
 ```
-Requirements:
-
-Binaries
-
-- Python 3.9 or greater
-- ffmpeg*
-- vlc
-- Git**
-
-Python packages:
-
-- pip install -r requirements.txt
-
+python3 zspotify/appGui.py
 ```
-
-\*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it with [Homebrew](https://brew.sh) by running `brew install ffmpeg`.
-
-\*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
-
-
-
-
-
+or from within the internal zspotify directory:
 ```
-Install the requirements: pip install -r requirements.txt
-
-Run from main directory: python zspotify/appGui.py
-Or run the from within the zspotify directory: python appGui.py
-
-
-
+python3 appGui.py
 ```
-Run the GUI by running appGui.py
-
-From main directory: python zspotify/appGui.py
-
-
-Basic command line usage:
-  python zspotify <track/album/playlist/episode/artist url>   Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded. Can take multiple urls.
-
-Extra command line options:
-  -p, --playlist       Downloads a saved playlist from your account
-  -ls, --liked-songs   Downloads all the liked songs from your account
-  -s, --search         Loads search prompt to find then download a specific track, album or playlist
-  -ns, --no-splash     Suppress the splash screen when loading.
-
-Options that can be configured in zs_config.json:
-  ROOT_PATH           Change this path if you don't like the default directory where ZSpotify saves the music
-  ROOT_PODCAST_PATH   Change this path if you don't like the default directory where ZSpotify saves the podcasts
-
-  SKIP_EXISTING_FILES Set this to false if you want ZSpotify to overwrite files with the same name rather than skipping the song
-
-  MUSIC_FORMAT        Can be "mp3" or "ogg", mp3 is required for track metadata however ogg is slightly higher quality as it is not transcoded.
-
-  FORCE_PREMIUM       Set this to true if ZSpotify isn't automatically detecting that you are using a premium account
-
-  ANTI_BAN_WAIT_TIME  Change this setting if the time waited between bulk downloads is too high or low
-  OVERRIDE_AUTO_WAIT  Change this to true if you want to completely disable the wait between songs for faster downloads with the risk of instability
+<br/>
+<br/>
 ```
 
 ### Docker Usage
@@ -111,9 +83,9 @@ This option is much slower and is only recommended for premium users who wish to
 
 **Use ZSpotify at your own risk**, the developers of ZSpotify are not responsible if your account gets banned.
 
-### What do I do if I see "Your session has been terminated"?
+### Why is my program freezing/why are search results not showing up"?
 
-If you see this, don't worry! Just try logging back in. If you see the incorrect username or password error, reset your password and you should be able to log back in and continue using Spotify.
+There are currently some issues with losing connection to the Spotify API. Unfortunately until we can find a fix, your best option is to restart the program, and it will work correctly again. If problems persist, please contact us at the Discord server.
 
 ### Contributing
 
