@@ -2,6 +2,7 @@ import json
 import os
 import sys
 from typing import Any
+from enum import Enum
 
 CONFIG_FILE_PATH = '../zs_config.json'
 
@@ -21,6 +22,11 @@ BITRATE = 'BITRATE'
 SONG_ARCHIVE = 'SONG_ARCHIVE'
 CREDENTIALS_LOCATION = 'CREDENTIALS_LOCATION'
 OUTPUT = 'OUTPUT'
+PRINT_SPLASH = 'PRINT_SPLASH'
+PRINT_SKIPS = 'PRINT_SKIPS'
+PRINT_DOWNLOAD_PROGRESS = 'PRINT_DOWNLOAD_PROGRESS'
+PRINT_ERRORS = 'PRINT_ERRORS'
+PRINT_DOWNLOADS = 'PRINT_DOWNLOADS'
 
 CONFIG_VALUES = {
     ROOT_PATH:                  { 'default': '../ZSpotify Music/',    'type': str,  'arg': '--root-path'                  },
@@ -39,6 +45,11 @@ CONFIG_VALUES = {
     SONG_ARCHIVE:               { 'default': '.song_archive',         'type': str,  'arg': '--song-archive'               },
     CREDENTIALS_LOCATION:       { 'default': 'credentials.json',      'type': str,  'arg': '--credentials-location'       },
     OUTPUT:                     { 'default': '',                      'type': str,  'arg': '--output'                     },
+    PRINT_SPLASH:               { 'default': 'True',                  'type': bool, 'arg': '--print-splash'               },
+    PRINT_SKIPS:                { 'default': 'True',                  'type': bool, 'arg': '--print-skips'                },
+    PRINT_DOWNLOAD_PROGRESS:    { 'default': 'True',                  'type': bool, 'arg': '--print-download-progress'    },
+    PRINT_ERRORS:               { 'default': 'True',                  'type': bool, 'arg': '--print-errors'               },
+    PRINT_DOWNLOADS:            { 'default': 'False',                 'type': bool, 'arg': '--print-downloads'            },
 }
 
 OUTPUT_DEFAULT_PLAYLIST = '{playlist}/{artist} - {song_name}.{ext}'
@@ -85,6 +96,9 @@ class Config:
         for key in CONFIG_VALUES:
             if key.lower() in vars(args) and vars(args)[key.lower()] is not None:
                 cls.Values[key] = cls.parse_arg_value(key, vars(args)[key.lower()])
+
+        if args.no_splash:
+            cls.Values[PRINT_SPLASH] = False
 
     @classmethod
     def get_default_json(cls) -> Any:

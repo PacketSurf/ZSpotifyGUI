@@ -7,10 +7,10 @@ from librespot.audio.decoders import AudioQuality
 from librespot.metadata import TrackId
 from ffmpy import FFmpeg
 from pydub import AudioSegment
-from tqdm import tqdm
 
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, TRACK_STATS_URL, CODEC_MAP, EXT_MAP, DURATION_MS
+from termoutput import Printer, PrintChannel
 from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_download_directory, \
     get_directory_song_ids, add_to_directory_song_ids, get_previously_downloaded, add_to_archive
 from zspotify import ZSpotify
@@ -111,21 +111,18 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
 
 
     except Exception as e:
-        print('###   SKIPPING SONG - FAILED TO QUERY METADATA   ###')
-        print(e)
+        Printer.print(PrintChannel.ERRORS, '###   SKIPPING SONG - FAILED TO QUERY METADATA   ###')
+        Printer.print(PrintChannel.ERRORS, str(e) + "\n")
     else:
         try:
             if not is_playable:
-                print('\n###   SKIPPING:', song_name,
-                    '(SONG IS UNAVAILABLE)   ###')
+                Printer.print(PrintChannel.SKIPS, '\n###   SKIPPING: ' + song_name + ' (SONG IS UNAVAILABLE)   ###' + "\n")
             else:
                 if check_id and check_name and ZSpotify.CONFIG.get_skip_existing_files():
-                    print('\n###   SKIPPING:', song_name,
-                        '(SONG ALREADY EXISTS)   ###')
+                    Printer.print(PrintChannel.SKIPS, '\n###   SKIPPING: ' + song_name + ' (SONG ALREADY EXISTS)   ###' + "\n")
 
                 elif check_all_time and ZSpotify.CONFIG.get_skip_previously_downloaded():
-                    print('\n###   SKIPPING:', song_name,
-                        '(SONG ALREADY DOWNLOADED ONCE)   ###')
+                    Printer.print(PrintChannel.SKIPS, '\n###   SKIPPING: ' + song_name + ' (SONG ALREADY DOWNLOADED ONCE)   ###' + "\n")
 
                 else:
                     if track_id != scraped_song_id:
@@ -136,7 +133,7 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
                     create_download_directory(filedir)
                     total_size = stream.input_stream.size
 
-                    with open(filename, 'wb') as file, tqdm(
+                    with open(filename, 'wb') as file, Printer.progress(
                             desc=song_name,
                             total=total_size,
                             unit='B',
@@ -152,9 +149,10 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
                                 time.sleep(pause)
 
                     convert_audio_format(filename)
-                    set_audio_tags(filename, artists, name, album_name,
-                                release_year, disc_number, track_number)
+                    set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number)
                     set_music_thumbnail(filename, image_url)
+
+                    Printer.print(PrintChannel.DOWNLOADS, f'###   Downloaded "{song_name}" to "{os.path.relpath(filename, os.path.dirname(__file__))}"   ###' + "\n")
 
                     # add song id to archive file
                     if ZSpotify.CONFIG.get_skip_previously_downloaded():
@@ -166,9 +164,8 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
                     if not ZSpotify.CONFIG.get_anti_ban_wait_time():
                         time.sleep(ZSpotify.CONFIG.get_anti_ban_wait_time())
         except Exception as e:
-            print('###   SKIPPING:', song_name,
-                  '(GENERAL DOWNLOAD ERROR)   ###')
-            print(e)
+            Printer.print(PrintChannel.ERRORS, '###   SKIPPING: ' + song_name + ' (GENERAL DOWNLOAD ERROR)   ###')
+            Printer.print(PrintChannel.ERRORS, str(e) + "\n")
             if os.path.exists(filename):
                 os.remove(filename)
 

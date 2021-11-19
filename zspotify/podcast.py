@@ -3,9 +3,9 @@ from typing import Optional, Tuple
 
 from librespot.audio.decoders import VorbisOnlyAudioQuality
 from librespot.metadata import EpisodeId
-from tqdm import tqdm
 
 from const import (ERROR, ID, ITEMS, NAME, SHOW)
+from termoutput import PrintChannel, Printer
 from utils import create_download_directory, fix_filename
 from zspotify import ZSpotify
 
@@ -70,7 +70,7 @@ def download_episode(episode_id) -> None:
     extra_paths = podcast_name + '/'
 
     if podcast_name is None:
-        print('###   SKIPPING: (EPISODE NOT FOUND)   ###')
+        Printer.print(PrintChannel.ERRORS, '###   SKIPPING: (EPISODE NOT FOUND)   ###')
     else:
         filename = podcast_name + ' - ' + episode_name
 
@@ -98,16 +98,10 @@ def download_episode(episode_id) -> None:
                 and os.path.getsize(filepath) == total_size
                 and ZSpotify.CONFIG.get_skip_existing_files()
             ):
-                print(
-                    "\n###   SKIPPING:",
-                    podcast_name,
-                    "-",
-                    episode_name,
-                    "(EPISODE ALREADY EXISTS)   ###",
-                )
+                Printer.print(PrintChannel.SKIPS, "\n###   SKIPPING: " + podcast_name + " - " + episode_name + " (EPISODE ALREADY EXISTS)   ###")
                 return
 
-            with open(filepath, 'wb') as file, tqdm(
+            with open(filepath, 'wb') as file, Printer.progress(
                 desc=filename,
                 total=total_size,
                 unit='B',

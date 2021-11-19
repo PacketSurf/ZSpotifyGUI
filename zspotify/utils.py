@@ -86,12 +86,6 @@ def get_downloaded_song_duration(filename: str) -> float:
 
     return duration
 
-def wait(seconds: int = 3) -> None:
-    """ Pause for a set number of seconds """
-    for second in range(seconds)[::-1]:
-        print(f'\rWait for {second + 1} second(s)...', end='')
-        time.sleep(1)
-
 
 def split_input(selection) -> List[str]:
     """ Returns a list of inputted strings """
@@ -106,15 +100,15 @@ def split_input(selection) -> List[str]:
     return inputs
 
 
-def splash() -> None:
+def splash() -> str:
     """ Displays splash screen """
-    print("""
+    return """
 ███████ ███████ ██████   ██████  ████████ ██ ███████ ██    ██
    ███  ██      ██   ██ ██    ██    ██    ██ ██       ██  ██
   ███   ███████ ██████  ██    ██    ██    ██ █████     ████
  ███         ██ ██      ██    ██    ██    ██ ██         ██
 ███████ ███████ ██       ██████     ██    ██ ██         ██
-    """)
+    """
 
 
 def clear() -> None:
