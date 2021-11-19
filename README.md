@@ -1,7 +1,7 @@
 
 # ZSpotifyGUI
 
-### A user-friendly desktop app for ZSpotify music downloader for Windows, MacOs, and Linux
+### A user-friendly desktop app built on the ZSpotify music downloader for Windows, MacOs, and Linux
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/35679186/141209937-049e8a52-95fd-4028-aa6c-d70670cd0171.png">
@@ -34,6 +34,7 @@ WINDOWS:
   - You will find ZSpotify in your start menu, and Desktop (if chosen).
   - If you did not have VLC installed already, you will need to restart your PC after installation. If you already had it, then a restart is not necessary.
 <br/>
+
 MAC:
   - Download the latest MacOs zip file from [Releases](https://github.com/PacketSurf/ZSpotifyGUI/releases).
   - Make sure the zip file you downloaded is inside your Downloads folder.
