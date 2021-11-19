@@ -158,10 +158,10 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
 
                     # add song id to archive file
                     if ZSpotify.CONFIG.get_skip_previously_downloaded():
-                        add_to_archive(scraped_song_id, artists[0], name)
+                        add_to_archive(scraped_song_id, filename, artists[0], name)
                     # add song id to download directory's .song_ids file
                     if not check_id:
-                        add_to_directory_song_ids(filedir, scraped_song_id)
+                        add_to_directory_song_ids(filedir, scraped_song_id, filename, artists[0], name)
 
                     if not ZSpotify.CONFIG.get_anti_ban_wait_time():
                         time.sleep(ZSpotify.CONFIG.get_anti_ban_wait_time())
