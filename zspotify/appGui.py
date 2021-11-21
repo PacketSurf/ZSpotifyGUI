@@ -349,17 +349,37 @@ class LoginDialog(QDialog, Ui_LoginDialog):
         self.retranslateUi(self)
         self.init_signals()
         set_label_image(self.bannerLabel, LOGO_BANNER)
+        self.fail_index = 0
         self.passwordInput.setEchoMode(QLineEdit.EchoMode.Password)
+        self.fail_strings = [
+            "Incorrect username/password.",
+            "Still incorrect username/password",
+            "Think harder.",
+            "This isn't gonna work out is it?"
+        ]
+        self.attempting_login = False
 
     def send_login(self):
+        if self.attempting_login: return
         username = self.usernameInput.text()
         password = self.passwordInput.text()
-        if ZSpotify.login(username, password):
+        worker = Worker(ZSpotify.login, username, password)
+        worker.signals.result.connect(self.login_result)
+        self.attempting_login = True
+        QThreadPool.globalInstance().start(worker)
+
+
+    def login_result(self, success):
+        self.attempting_login = False
+        if success:
             self.accept()
-        else: self.try_again_text()
+        else:
+            self.try_again_text()
 
     def try_again_text(self):
-        self.loginInfoLabel.setText("Incorrect username/password.")
+        self.loginInfoLabel.setText(self.fail_strings[self.fail_index])
+        self.fail_index += 1
+        if self.fail_index >= len(self.fail_strings): self.fail_index = 0
 
     def init_signals(self):
         self.loginBtn.clicked.connect(self.send_login)

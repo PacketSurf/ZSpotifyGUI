@@ -35,7 +35,6 @@ class ZSpotify:
     @classmethod
     def login(cls, username="", password=""):
         """ Authenticates with Spotify and saves credentials to a file """
-
         if os.path.isfile(CREDENTIALS_JSON):
             try:
                 cls.SESSION = Session.Builder().stored_file().create()

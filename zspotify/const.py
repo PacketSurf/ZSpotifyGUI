@@ -125,7 +125,7 @@ SEARCH_RESULTS = 'SEARCH_RESULTS'
 
 LOG_FILE = 'main.log'
 
-LOGO_BANNER = 'Resources/ZSpotifyBannerTP.png'
+LOGO_BANNER = 'Resources/ZSpot_Banner.png'
 
 COVER_DEFAULT = 'Resources/cover_default.jpg'
 

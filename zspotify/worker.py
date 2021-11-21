@@ -16,8 +16,12 @@ class MusicSignals(WorkerSignals):
     update = pyqtSignal(float, int, int)
 
 class Worker(QRunnable):
-    #kwarg passed with key "update" is a callback function that gets connected to worker update signal
-    #When using update the fn method must have a first parameter that will be a signal emit function
+    """
+    First parameter is the function run by the worker thread. *args and *kwargs are passed to the that worker function.
+    To add an update function, pass a kwarg with key "update" where the value is a function that will get connected
+    to the worker update signal.
+    """
+
     def __init__(self, fn, *args, **kwargs):
         super().__init__()
         self.fn = fn
