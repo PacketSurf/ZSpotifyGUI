@@ -21,7 +21,7 @@ Take full advantage of the power of ZSpotify with this user-friendly graphical i
 
 <h3>SCREENSHOTS</h3>
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/93454665/142496872-336845ad-702d-45cf-9d6b-18aa4072766b.png">
+  <img src="https://user-images.githubusercontent.com/93454665/142783298-9550720a-c5c1-4714-8952-285c852f52d1.png">
 </p>
 
 <br/>
@@ -38,7 +38,7 @@ WINDOWS:
 MAC:
   - Download the latest MacOs zip file from [Releases](https://github.com/PacketSurf/ZSpotifyGUI/releases).
   - Make sure the zip file you downloaded is inside your Downloads folder.
-  - Open the Terminal application and paste the following command, then press enter:
+  - Open the Terminal application and paste the following command:
   ```
   cd Downloads/;unzip ZSpotifyMacOs.zip; cd ZSpotifyGUI/;sudo chmod u+x install.sh;./install.sh
   ```
@@ -49,18 +49,19 @@ MAC:
 <br/>
 <br/>
 
-<h3>MANUAL INSTALLATION<h3/>
-..coming soon..
+MANUAL INSTALLATION
+
+  - VLC can be installed from [videolan.org](https://www.videolan.org/vlc/) for all operating systems. You will need to restart your pc.
+  - ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it with [Homebrew](https://brew.sh) by running `brew install ffmpeg`.
+  - Install the python requirements:
+  `pip install -r requirements.txt`
 
 
 
 <br/>
 
-\*ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it with [Homebrew](https://brew.sh) by running `brew install ffmpeg`.
 
-\*\*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
-
-\*\*\*VLC can be installed from [videolan.org](https://www.videolan.org/vlc/) for all operating systems. You may need to restart your PC
+/*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 
 
 
