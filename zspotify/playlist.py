@@ -1,6 +1,5 @@
-from tqdm import tqdm
-
 from const import ITEMS, ID, TRACK, NAME
+from termoutput import Printer
 from track import download_track
 from utils import fix_filename, split_input
 from zspotify import ZSpotify
@@ -51,11 +50,10 @@ def download_playlist(playlist):
     """Downloads all the songs from a playlist"""
 
     playlist_songs = [song for song in get_playlist_songs(playlist[ID]) if song[TRACK][ID]]
-    p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
+    p_bar = Printer.progress(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
     enum = 1
     for song in p_bar:
-        download_track(song[TRACK][ID], fix_filename(playlist[NAME].strip()) + '/',
-                       prefix=True, prefix_value=str(enum) ,disable_progressbar=True)
+        download_track('extplaylist', song[TRACK][ID], extra_keys={'playlist': playlist[NAME], 'playlist_num': str(enum).zfill(2)}, disable_progressbar=True)
         p_bar.set_description(song[TRACK][NAME])
         enum += 1
 

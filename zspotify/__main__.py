@@ -1,8 +1,7 @@
 import argparse
 
 from app import client
-
-
+from config import CONFIG_VALUES
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='zspotify',
@@ -10,6 +9,9 @@ if __name__ == '__main__':
     parser.add_argument('-ns', '--no-splash',
                         action='store_true',
                         help='Suppress the splash screen when loading.')
+    parser.add_argument('--config-location',
+                        type=str,
+                        help='Specify the zs_config.json location')
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('urls',
                        type=str,
@@ -31,6 +33,12 @@ if __name__ == '__main__':
     group.add_argument('-d', '--download',
                        type=str,
                        help='Downloads tracks, playlists and albums from the URLs written in the file passed.')
+
+    for configkey in CONFIG_VALUES:
+        parser.add_argument(CONFIG_VALUES[configkey]['arg'],
+                            type=str,
+                            default=None,
+                            help='Specify the value of the ['+configkey+'] config value')
 
     parser.set_defaults(func=client)
 
