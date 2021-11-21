@@ -49,7 +49,7 @@ MAC:
 <br/>
 <br/>
 
-MANUAL INSTALLATION
+<h3>MANUAL INSTALLATION</h3>
 
   - VLC can be installed from [videolan.org](https://www.videolan.org/vlc/) for all operating systems. You will need to restart your pc.
   - ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it with [Homebrew](https://brew.sh) by running `brew install ffmpeg`.
@@ -64,11 +64,15 @@ MANUAL INSTALLATION
 /*Git can be installed via apt for Debian-based distros or by downloading the binaries from [git-scm.com](https://git-scm.com/download/win) for Windows.
 
 
+<h2>Usage</h2>
 
-```
-### COMMAND LINE USAGE
-```
-<h4>Command Line Usage</h4>
+- The primary way to run ZSpotify is by clicking on the launch icon created during the easy installation process. On Windows this is a file called ZSpotify.bat. On Mac this is a file called ZSpotify.command.
+- Alternatively you can run the program directly from the terminal by navigating to the folder containing appGui.py and running:
+`python appGui.py`
+- You may also use the regular ZSpotify CLI as normal.
+
+
+<h3>Command Line Usage</h3>
 
 Basic command line usage:
   python zspotify <track/album/playlist/episode/artist url>   Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded. Can take multiple urls.
@@ -91,21 +95,10 @@ Options that can be configured in zs_config.json:
 
   ANTI_BAN_WAIT_TIME  Change this setting if the time waited between bulk downloads is too high or low
   OVERRIDE_AUTO_WAIT  Change this to true if you want to completely disable the wait between songs for faster downloads with the risk of instability
-```
 
-### Docker Usage
 
+<h4>FAQ<h4/>
 ```
-Pull the official docker image (automatically updates):
-  docker pull cooper7692/zspotify-docker
-Or build the docker image yourself from the Dockerfile:
-  docker build -t zspotify .
-Create and run a container from the image:
-  docker run --rm -u $(id -u):$(id -g) -v "$PWD/zspotify:/app" -v "$PWD/zs_config.json:/zs_config.json" -v "$PWD/ZSpotify Music:/ZSpotify Music" -v "$PWD/ZSpotify Podcasts:/ZSpotify Podcasts" -it zspotify
-```
-
-### Google Colab
-There is a community maintained repo for Google Colab at [Ori5000/zspotifycolab](https://github.com/Ori5000/zspotifycolab) designed to make it easier to add songs to Google Drive or orther cloud services.
 
 ### Will my account get banned if I use this tool?
 
