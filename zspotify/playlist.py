@@ -1,6 +1,6 @@
 from tqdm import tqdm
 from const import ITEMS, ID, TRACK, NAME, OWNER, DISPLAY_NAME
-from track import download_track
+from track import DownloadStatus, download_track
 from utils import fix_filename, split_input
 from zspotify import ZSpotify
 
@@ -53,15 +53,19 @@ def download_playlist(playlist_id, progress_callback=None):
     playlist = get_playlist_info(playlist_id)
     p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
     enum = 1
-
+    one_success = False
     for song in p_bar:
         status = download_track(song[TRACK][ID], fix_filename(playlist[0].strip()) + '/',
                        disable_progressbar=True, prefix_value=str(enum), progress_callback=progress_callback)
         if status.value == DownloadStatus.FAILED.value:
             return DownloadStatus.FAILED
+        elif status.value == DownloadStatus.SUCCESS.value:
+            one_success = True
         p_bar.set_description(song[TRACK][NAME])
         enum += 1
-    return DownloadStatus.SUCCESS
+    if one_success:
+        return DownloadStatus.SUCCESS
+    return DownloadStatus.FAILED
 
 
 

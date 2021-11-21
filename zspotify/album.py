@@ -51,22 +51,31 @@ def download_album(album, progress_callback=None):
     album_name_fixed = fix_filename(album_name)
     tracks = get_album_tracks(album)
     downloaded = 0
+    one_success = False
     for n, track in tqdm(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=len(tracks)):
         status = download_track(track[ID], f'{artist_fixed}/{album_name_fixed}',
                        prefix=True, prefix_value=str(n), disable_progressbar=True, progress_callback=progress_callback)
         if status.value == DownloadStatus.FAILED.value:
             return DownloadStatus.FAILED
+        elif status.value == DownloadStatus.SUCCESS.value:
+            one_success = True
         downloaded += 1
-    return DownloadStatus.SUCCESS
+    if one_success:
+        return DownloadStatus.SUCCESS
+    return DownloadStatus.FAILED
 
 
 
 def download_artist_albums(artist, progress_callback=None):
     """ Downloads albums of an artist """
     albums = get_artist_albums(artist)
-
+    one_success = False
     for album_id in albums:
         status = download_album(album_id, progress_callback=progress_callback)
         if status.value == DownloadStatus.FAILED.value:
             return DownloadStatus.FAILED
-    return DownloadStatus.SUCCESS
+        elif status.value == DownloadStatus.SUCCESS.value:
+            one_success = True
+    if one_success:
+        return DownloadStatus.SUCCESS
+    return DownloadStatus.FAILED
