@@ -1,7 +1,7 @@
 from tqdm import tqdm
 
 from const import ITEMS, ARTISTS, NAME, ID
-from track import download_track
+from track import DownloadStatus, download_track
 from utils import fix_filename
 from zspotify import ZSpotify
 
@@ -52,9 +52,12 @@ def download_album(album, progress_callback=None):
     tracks = get_album_tracks(album)
     downloaded = 0
     for n, track in tqdm(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=len(tracks)):
-        download_track(track[ID], f'{artist_fixed}/{album_name_fixed}',
+        status = download_track(track[ID], f'{artist_fixed}/{album_name_fixed}',
                        prefix=True, prefix_value=str(n), disable_progressbar=True, progress_callback=progress_callback)
+        if status.value == DownloadStatus.FAILED.value:
+            return DownloadStatus.FAILED
         downloaded += 1
+    return DownloadStatus.SUCCESS
 
 
 
@@ -63,4 +66,7 @@ def download_artist_albums(artist, progress_callback=None):
     albums = get_artist_albums(artist)
 
     for album_id in albums:
-        download_album(album_id, progress_callback=progress_callback)
+        status = download_album(album_id, progress_callback=progress_callback)
+        if status.value == DownloadStatus.FAILED.value:
+            return DownloadStatus.FAILED
+    return DownloadStatus.SUCCESS

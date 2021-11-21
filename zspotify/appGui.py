@@ -67,6 +67,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.musicTabs.setCurrentIndex(0)
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.focus()
+        self.reconnecting = False
 
     def show(self):
         super().show()
@@ -112,6 +113,7 @@ class Window(QMainWindow, Ui_MainWindow):
             search = self.searchInput.text()
             worker = Worker(ZSpotify.search, search)
             worker.signals.result.connect(self.display_results)
+            worker.signals.error.connect(self.on_api_error)
             QThreadPool.globalInstance().start(worker)
             self.musicTabs.setCurrentIndex(1)
             self.searchTabs.setCurrentIndex(0)
@@ -245,6 +247,24 @@ class Window(QMainWindow, Ui_MainWindow):
         i += 1
         if i >= self.libraryTabs.count(): i = 0
         self.libraryTabs.setCurrentIndex(i)
+
+    def on_api_error(self):
+        if self.reconnecting: return
+        worker = Worker(ZSpotify.login)
+        worker.signals.result.connect(self.api_reconnect_complete)
+        self.reconnecting = True
+        QThreadPool.globalInstance().start(worker)
+
+    def api_reconnect_complete(self, success):
+        self.reconnecting = False
+        logging.info("Attempting to reconnect to spotify.")
+        print("Attempting to reconnect to spotify.")
+        if success:
+            logging.info("Reconnected to spotify.")
+            print("Reconnected to zspotify.")
+        else:
+            logging.error("Failed to reconnect to spotify.")
+            print("Failed to reconnect to spotify.")
 
     def init_liked_view(self):
         worker = Worker(ZSpotify.load_tracks_url, SAVED_TRACKS_URL)

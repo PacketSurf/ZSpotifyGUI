@@ -55,10 +55,13 @@ def download_playlist(playlist_id, progress_callback=None):
     enum = 1
 
     for song in p_bar:
-        download_track(song[TRACK][ID], fix_filename(playlist[0].strip()) + '/',
+        status = download_track(song[TRACK][ID], fix_filename(playlist[0].strip()) + '/',
                        disable_progressbar=True, prefix_value=str(enum), progress_callback=progress_callback)
+        if status.value == DownloadStatus.FAILED.value:
+            return DownloadStatus.FAILED
         p_bar.set_description(song[TRACK][NAME])
         enum += 1
+    return DownloadStatus.SUCCESS
 
 
 

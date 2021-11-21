@@ -2,7 +2,7 @@ import logging
 from zspotify import ZSpotify
 from playlist import download_playlist
 from album import download_album, download_artist_albums
-from track import download_track
+from track import DownloadStatus, download_track
 from item import Item, Track, Artist, Album, Playlist
 from worker import Worker
 from const import TRACKS, ARTISTS, ALBUMS, PLAYLISTS, ROOT_PATH, DOWNLOAD_REAL_TIME, DOWNLOAD_FORMAT, FORMATS, DIR_ICON
@@ -54,7 +54,8 @@ class DownloadController(QObject):
         self.window.downloadInfoLabel.setText(f"Downloading: {dl_info}")
         tab = self.window.searchTabs.currentIndex()
         worker = Worker(self.download_item, item, update=self.update_dl_progress)
-        worker.signals.finished.connect(self.on_download_complete)
+        worker.signals.result.connect(self.on_download_complete)
+        worker.signals.error.connect(self.window.on_api_error)
         QThreadPool.globalInstance().start(worker)
 
 
@@ -62,20 +63,25 @@ class DownloadController(QObject):
         if len(args) <= 0 or args[0] == None: return
         self.item = args[0]
         try:
+            status = DownloadStatus.FAILED
             if type(self.item) == Track:
-                download_track(self.item.id,progress_callback=signal)
+                status = download_track(self.item.id,progress_callback=signal)
             elif type(self.item) == Album:
-                download_album(self.item.id, progress_callback=signal)
+                status = download_album(self.item.id, progress_callback=signal)
             elif type(self.item) == Artist:
-                download_artist_albums(self.item.id)
+                status = download_artist_albums(self.item.id)
             elif type(self.item) == Playlist:
-                download_playlist(self.item.id,progress_callback=signal)
+                status = download_playlist(self.item.id,progress_callback=signal)
+            return status
         except Exception as e:
             logger.error(e)
             print(e)
+            return DownloadStatus.FAILED
 
 
-    def on_download_complete(self):
+    def on_download_complete(self, status):
+        if status.value == DownloadStatus.FAILED.value:
+            self.window.on_api_error()
         self.window.progressBar.setValue(0)
         self.window.progressBar.hide()
         self.window.downloadInfoLabel.setText("")
@@ -83,8 +89,9 @@ class DownloadController(QObject):
         self.download_queue.pop(0)
         self.update_dl_queue_combo()
         if self.item != None:
-            self.item.downloaded = True
-            self.downloadComplete.emit(self.item)
+            if status.value == DownloadStatus.SUCCESS.value:
+                self.item.downloaded = True
+                self.downloadComplete.emit(self.item)
         self.item = None
         self.downloading = False
         if self.window.selected_item:

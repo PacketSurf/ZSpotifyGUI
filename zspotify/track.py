@@ -1,6 +1,7 @@
 import os
 import re
 import time
+from enum import Enum
 import logging
 from typing import Any, Tuple, List
 from librespot.audio import HaltListener
@@ -20,6 +21,12 @@ from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_down
 from zspotify import ZSpotify
 
 logger = logging.getLogger(__name__)
+
+class DownloadStatus(Enum):
+    FAILED = -1
+    SKIPPED = 0
+    SUCCESS = 1
+
 
 def get_saved_tracks() -> list:
     """ Returns user's saved tracks """
@@ -121,21 +128,25 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
     except Exception as e:
         logger.error(e)
+        print(f"matt{e}")
         print('###   SKIPPING SONG - FAILED TO QUERY METADATA   ###')
-        print(e)
+        return DownloadStatus.FAILED
     else:
         try:
             if not is_playable:
                 print('\n###   SKIPPING:', song_name,
                     '(SONG IS UNAVAILABLE)   ###')
+                return DownloadStatus.SKIPPED
             else:
                 if check_id and check_name and ZSpotify.get_config(SKIP_EXISTING_FILES):
                     print('\n###   SKIPPING:', song_name,
                         '(SONG ALREADY EXISTS)   ###')
+                    return DownloadStatus.SKIPPED
 
                 elif check_all_time and ZSpotify.get_config(SKIP_PREVIOUSLY_DOWNLOADED):
                     print('\n###   SKIPPING:', song_name,
                         '(SONG ALREADY DOWNLOADED ONCE)   ###')
+                    return DownloadStatus.SKIPPED
 
                 else:
                     if track_id != scraped_song_id:
@@ -180,6 +191,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
                     if not ZSpotify.get_config(OVERRIDE_AUTO_WAIT):
                         time.sleep(ZSpotify.get_config(ANTI_BAN_WAIT_TIME))
+                    return DownloadStatus.SUCCESS
         except Exception as e:
             print('###   SKIPPING:', song_name,
                   '(GENERAL DOWNLOAD ERROR)   ###')
@@ -187,6 +199,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
             logger.error(e)
             if os.path.exists(filename):
                 os.remove(filename)
+            return DownloadStatus.FAILED
 
 
 def convert_audio_format(filename) -> None:
