@@ -1290,7 +1290,7 @@ QTabWidget::tab-bar
               <number>10</number>
              </property>
              <property name="leftMargin">
-              <number>15</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>10</number>
@@ -1319,6 +1319,18 @@ QTabWidget::tab-bar
              </item>
              <item row="0" column="1">
               <widget class="QLabel" name="infoLabel1">
+               <property name="minimumSize">
+                <size>
+                 <width>175</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -1345,6 +1357,18 @@ QTabWidget::tab-bar
              </item>
              <item row="1" column="1">
               <widget class="QLabel" name="infoLabel2">
+               <property name="minimumSize">
+                <size>
+                 <width>175</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -1371,6 +1395,18 @@ QTabWidget::tab-bar
              </item>
              <item row="2" column="1">
               <widget class="QLabel" name="infoLabel3">
+               <property name="minimumSize">
+                <size>
+                 <width>175</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -1397,6 +1433,18 @@ QTabWidget::tab-bar
              </item>
              <item row="3" column="1">
               <widget class="QLabel" name="infoLabel4">
+               <property name="minimumSize">
+                <size>
+                 <width>175</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -1423,6 +1471,18 @@ QTabWidget::tab-bar
              </item>
              <item row="4" column="1">
               <widget class="QLabel" name="infoLabel5">
+               <property name="minimumSize">
+                <size>
+                 <width>175</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -1449,6 +1509,18 @@ QTabWidget::tab-bar
              </item>
              <item row="5" column="1">
               <widget class="QLabel" name="infoLabel6">
+               <property name="minimumSize">
+                <size>
+                 <width>175</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>200</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="text">
                 <string/>
                </property>
