@@ -49,7 +49,8 @@ class ZSpotify:
                 user_name = input('Username: ')
             password = getpass()
             try:
-                cls.SESSION = Session.Builder().user_pass(user_name, password).create()
+                conf = Session.Configuration.Builder().set_stored_credential_file(cred_location).build()
+                cls.SESSION = Session.Builder(conf).user_pass(user_name, password).create()
                 return
             except RuntimeError:
                 pass
