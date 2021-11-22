@@ -1,4 +1,5 @@
 import datetime
+import math
 import os
 import platform
 import re
@@ -30,6 +31,7 @@ def create_download_directory(download_path: str) -> None:
         with open(hidden_file_path, 'w', encoding='utf-8') as f:
             pass
 
+
 def get_previously_downloaded() -> List[str]:
     """ Returns list of all time downloaded songs """
 
@@ -41,6 +43,7 @@ def get_previously_downloaded() -> List[str]:
             ids = [line.strip().split('\t')[0] for line in f.readlines()]
 
     return ids
+
 
 def add_to_archive(song_id: str, filename: str, author_name: str, song_name: str) -> None:
     """ Adds song id to all time installed songs archive """
@@ -54,6 +57,7 @@ def add_to_archive(song_id: str, filename: str, author_name: str, song_name: str
         with open(archive_path, 'w', encoding='utf-8') as file:
             file.write(f'{song_id}\t{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\t{author_name}\t{song_name}\t{filename}\n')
 
+
 def get_directory_song_ids(download_path: str) -> List[str]:
     """ Gets song ids of songs in directory """
 
@@ -66,6 +70,7 @@ def get_directory_song_ids(download_path: str) -> List[str]:
 
     return song_ids
 
+
 def add_to_directory_song_ids(download_path: str, song_id: str, filename: str, author_name: str, song_name: str) -> None:
     """ Appends song_id to .song_ids file in directory """
 
@@ -74,6 +79,7 @@ def add_to_directory_song_ids(download_path: str, song_id: str, filename: str, a
     # to be raised if something is wrong
     with open(hidden_file_path, 'a', encoding='utf-8') as file:
         file.write(f'{song_id}\t{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\t{author_name}\t{song_name}\t{filename}\n')
+
 
 def get_downloaded_song_duration(filename: str) -> float:
     """ Returns the downloaded file's duration in seconds """
@@ -251,3 +257,26 @@ def fix_filename(name):
     True
     """
     return re.sub(r'[/\\:|<>"?*\0-\x1f]|^(AUX|COM[1-9]|CON|LPT[1-9]|NUL|PRN)(?![^.])|^\s|[\s.]$', "_", str(name), flags=re.IGNORECASE)
+
+
+def fmt_seconds(secs: float) -> str:
+    val = math.floor(secs)
+
+    s = math.floor(val % 60)
+    val -= s
+    val /= 60
+
+    m = math.floor(val % 60)
+    val -= m
+    val /= 60
+
+    h = math.floor(val)
+
+    if h == 0 and m == 0 and s == 0:
+        return "0"
+    elif h == 0 and m == 0:
+        return f'{s}'.zfill(2)
+    elif h == 0:
+        return f'{m}'.zfill(2) + ':' + f'{s}'.zfill(2)
+    else:
+        return f'{h}'.zfill(2) + ':' + f'{m}'.zfill(2) + ':' + f'{s}'.zfill(2)
