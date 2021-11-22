@@ -44,7 +44,6 @@ class ItemTree:
         self.clear()
         for item in items:
             self.add_item(item)
-        self.load_cover_art()
 
     def set_header_item(self, item):
         try:
