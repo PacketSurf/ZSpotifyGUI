@@ -69,7 +69,7 @@ class DownloadController(QObject):
             elif type(self.item) == Album:
                 status = download_album(self.item.id, progress_callback=signal)
             elif type(self.item) == Artist:
-                status = download_artist_albums(self.item.id)
+                status = download_artist_albums(self.item.id, progress_callback=signal)
             elif type(self.item) == Playlist:
                 status = download_playlist(self.item.id,progress_callback=signal)
             return status
