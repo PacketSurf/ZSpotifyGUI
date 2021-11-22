@@ -64,6 +64,16 @@ def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any
 
     return artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable, duration_ms
 
+def get_cover_art(song_id):
+    """ Retrieves url for song cover art """
+    try:
+        info = ZSpotify.invoke_url(f'{TRACKS_URL}?ids={song_id}&market=from_token')
+        return info[TRACKS][0][ALBUM][IMAGES][0][URL]
+    except Exception as e:
+        logger.error(e)
+        return ""
+
+
 def get_song_duration(song_id: str) -> float:
     """ Retrieves duration of song in second as is on spotify """
 

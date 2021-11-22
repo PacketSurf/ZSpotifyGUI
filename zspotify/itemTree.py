@@ -1,7 +1,5 @@
-#from PyQt5.QtGui import QtGui
 from PyQt5.QtWidgets import QTreeWidgetItem, QMenu, QApplication, QTreeWidget
-from PyQt5.QtCore import pyqtSignal, QObject
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal, QObject
 from item import Item
 from utils import delete_file
 
@@ -27,6 +25,7 @@ class ItemTree:
         except Exception as e:
             logging.error(e)
 
+
     def add_item(self, item):
         widget_item = self.tree_widget_builder(item)
         self.items.append(item)
@@ -45,6 +44,7 @@ class ItemTree:
         self.clear()
         for item in items:
             self.add_item(item)
+        self.load_cover_art()
 
     def set_header_item(self, item):
         try:

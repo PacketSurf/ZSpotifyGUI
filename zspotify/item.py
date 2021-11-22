@@ -6,6 +6,7 @@ class Item:
         self.downloaded = downloaded
         self.path = path
 
+
 class Track(Item):
     def __init__(self, index, id, title, artists,album="", img="",release_date="", duration=-1, downloaded=False, path=""):
         super().__init__(index, downloaded, path)
@@ -16,6 +17,7 @@ class Track(Item):
         self.img = img
         self.release_date = release_date
         self.duration = duration
+    
 
 class Album(Item):
     def __init__(self, index, id, title,artists, total_tracks, release_date="", img="",downloaded=False, path=""):

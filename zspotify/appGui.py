@@ -18,7 +18,7 @@ from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALB
 from worker import Worker
 from audio import MusicController, find_local_tracks, get_track_file_as_item
 from download import DownloadController
-from track import play_track
+from track import play_track, get_cover_art
 import qdarktheme
 from itemTree import ItemTree
 from item import Track, Artist, Album, Playlist
@@ -50,6 +50,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.init_tree_views()
         self.init_results_amount_combo()
         self.init_downloads_view()
+        self.load_album_cover()
         self.tabs = [self.library_trees, self.search_trees, self.queue_trees]
         self.tabWidgets = [self.libraryTabs, self.searchTabs, self.queueTabs]
         try:
@@ -131,6 +132,9 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def update_item_info(self, item, headers, labels):
         self.selected_item = item
+        if item and item.img == "":
+            worker = Worker(self._cover_art_loader, item)
+            QThreadPool.globalInstance().start(worker)
         [lbl.setText("") for lbl in self.info_labels]
         if "Index" in headers:
             labels.pop(headers.index("Index"))
@@ -142,7 +146,8 @@ class Window(QMainWindow, Ui_MainWindow):
             else:
                 self.info_labels[i].setText("")
                 self.info_labels[i].setToolTip("")
-        if item.img != "": self.load_album_cover(item.img)
+        if item.img != "":
+            self.load_album_cover(item.img)
         self.download_controller.update_download_view(item)
 
     def update_item_labels(self, headers):
@@ -167,6 +172,11 @@ class Window(QMainWindow, Ui_MainWindow):
         lbl.setPixmap(pixmap)
         lbl.setScaledContents(True)
         lbl.show()
+
+
+
+
+
 
     def update_result_amount(self, index):
         amount = int(self.resultAmountCombo.itemText(index))
@@ -249,6 +259,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.libraryTabs.setCurrentIndex(i)
 
     def on_api_error(self):
+        self.logged_in = False
         if self.reconnecting: return
         worker = Worker(ZSpotify.login)
         worker.signals.result.connect(self.api_reconnect_complete)
@@ -359,6 +370,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.songs_tree.set_header_spacing(65,-1,-1,-1,65)
         self.albums_tree.set_header_spacing(65,-1,-1,80)
         self.playlists_tree.set_header_spacing(65,-1,-1,80)
+
+    def _cover_art_loader(self, item):
+        item.img = get_cover_art(item.id)
+        self.load_album_cover(item.img)
 
 
 class LoginDialog(QDialog, Ui_LoginDialog):
