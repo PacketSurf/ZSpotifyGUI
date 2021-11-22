@@ -63,8 +63,9 @@ class MusicController(QObject):
             if self.shuffle and self.playlist_tree != playlist_tree and playlist_tree.can_play:
                 self.shuffle_queue = playlist_tree.items.copy()
                 random.shuffle(self.shuffle_queue)
-            if playlist_tree.can_play: self.playlist_tree = playlist_tree
-            self.playlist_tree.select_item(item)
+            if playlist_tree.can_play:
+                self.playlist_tree = playlist_tree
+                self.playlist_tree.select_item(item)
             self.onPlay.emit(item)
 
 
