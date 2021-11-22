@@ -119,6 +119,7 @@ class DownloadController(QObject):
     def change_dl_dir(self):
         dialog = QFileDialog(self.window)
         dialog.setFileMode(QFileDialog.Directory)
+        dialog.setDirectory(ZSpotify.get_config(ROOT_PATH))
         if dialog.exec_():
             dir = dialog.selectedFiles()
             if len(dir) > 0: ZSpotify.set_config(ROOT_PATH, dir[0])
