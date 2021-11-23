@@ -1,5 +1,5 @@
 from tqdm import tqdm
-
+import logging
 from const import ITEMS, ARTISTS, NAME, ID
 from track import DownloadStatus, download_track
 from utils import fix_filename
@@ -8,6 +8,7 @@ from zspotify import ZSpotify
 ALBUM_URL = 'https://api.spotify.com/v1/albums'
 ARTIST_URL = 'https://api.spotify.com/v1/artists'
 
+logger = logging.getLogger(__name__)
 
 def get_album_tracks(album_id):
     """ Returns album tracklist """
@@ -33,6 +34,7 @@ def get_album_name(album_id):
 
 def get_artist_albums(artist_id):
     """ Returns artist's albums """
+    logger.info("Starting artist albums download.")
     resp = ZSpotify.invoke_url(f'{ARTIST_URL}/{artist_id}/albums?include_groups=album%2Csingle')
     # Return a list each album's id
     album_ids = [resp[ITEMS][i][ID] for i in range(len(resp[ITEMS]))]
@@ -46,12 +48,14 @@ def get_artist_albums(artist_id):
 
 def download_album(album, progress_callback=None):
     """ Downloads songs from an album """
+
     artist, album_name = get_album_name(album)
     artist_fixed = fix_filename(artist)
     album_name_fixed = fix_filename(album_name)
     tracks = get_album_tracks(album)
     downloaded = 0
     one_success = False
+    logger.info("Starting album download.")
     for n, track in tqdm(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=len(tracks)):
         status = download_track(track[ID], f'{artist_fixed}/{album_name_fixed}',
                        prefix=True, prefix_value=str(n), disable_progressbar=True, progress_callback=progress_callback)

@@ -104,9 +104,10 @@ def play_track(spotify_id):
 def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='', disable_progressbar=False, progress_callback=None) -> None:
     """ Downloads raw song audio from Spotify """
     try:
+
         (artists, album_name, name, image_url, release_year, disc_number,
          track_number, scraped_song_id, is_playable, duration_ms) = get_song_info(track_id)
-
+        logger.info(f"Initialising download {scraped_song_id}:{name} - {artists}")
         if ZSpotify.get_config(SPLIT_ALBUM_DISCS):
             download_directory = os.path.join(os.path.dirname(
                 __file__), ZSpotify.get_config(ROOT_PATH), extra_paths, f'Disc {disc_number}')
@@ -143,19 +144,23 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
         return DownloadStatus.FAILED
     else:
         try:
+            logger.info(f"Starting download {scraped_song_id}:{name} - {artists}")
             if not is_playable:
                 print('\n###   SKIPPING:', song_name,
                     '(SONG IS UNAVAILABLE)   ###')
+                logger.info('SONG IS UNAVAILABLE')
                 return DownloadStatus.SKIPPED
             else:
                 if check_id and check_name and ZSpotify.get_config(SKIP_EXISTING_FILES):
                     print('\n###   SKIPPING:', song_name,
                         '(SONG ALREADY EXISTS)   ###')
+                    logger.info('SONG ALREADY EXISTS')
                     return DownloadStatus.SKIPPED
 
                 elif check_all_time and ZSpotify.get_config(SKIP_PREVIOUSLY_DOWNLOADED):
                     print('\n###   SKIPPING:', song_name,
                         '(SONG ALREADY DOWNLOADED ONCE)   ###')
+                    logger.info('SONG ALREADY DOWNLOADED ONCE')
                     return DownloadStatus.SKIPPED
 
                 else:
@@ -185,6 +190,7 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                             if progress_callback:
                                 progress_callback(downloaded/total_size)
                             if ZSpotify.get_config(DOWNLOAD_REAL_TIME):
+                                logger.info(f"Sleeping for real time download: {pause}s")
                                 time.sleep(pause)
 
                     convert_audio_format(filename)
@@ -200,7 +206,9 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
                         add_to_directory_song_ids(download_directory, scraped_song_id)
 
                     if not ZSpotify.get_config(OVERRIDE_AUTO_WAIT):
-                        time.sleep(ZSpotify.get_config(ANTI_BAN_WAIT_TIME))
+                        duration = ZSpotify.get_config(ANTI_BAN_WAIT_TIME)
+                        logger.info(f"Sleeping for anti ban time: {duration}s")
+                        time.sleep(duration)
                     return DownloadStatus.SUCCESS
         except Exception as e:
             print('###   SKIPPING:', song_name,
@@ -214,6 +222,8 @@ def download_track(track_id: str, extra_paths='', prefix=False, prefix_value='',
 
 def convert_audio_format(filename) -> None:
     """ Converts raw audio into playable file """
+    download_format = ZSpotify.get_config(DOWNLOAD_FORMAT).lower()
+    logger.info(f"Converting downloaded file format to: {download_format}")
     temp_filename = f'{os.path.splitext(filename)[0]}.tmp'
     os.replace(filename, temp_filename)
 

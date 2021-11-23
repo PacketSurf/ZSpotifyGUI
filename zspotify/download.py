@@ -75,6 +75,7 @@ class DownloadController(QObject):
             return status
         except Exception as e:
             logger.error(e)
+            print('oooo')
             print(e)
             return DownloadStatus.FAILED
 

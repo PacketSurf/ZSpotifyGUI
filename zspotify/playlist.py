@@ -3,10 +3,12 @@ from const import ITEMS, ID, TRACK, NAME, OWNER, DISPLAY_NAME
 from track import DownloadStatus, download_track
 from utils import fix_filename, split_input
 from zspotify import ZSpotify
+import logging
 
 MY_PLAYLISTS_URL = 'https://api.spotify.com/v1/me/playlists'
 PLAYLISTS_URL = 'https://api.spotify.com/v1/playlists'
 
+logger = logging.getLogger(__name__)
 
 def get_all_playlists():
     """ Returns list of users playlists """
@@ -48,7 +50,7 @@ def get_playlist_info(playlist_id):
 
 def download_playlist(playlist_id, progress_callback=None):
     """Downloads all the songs from a playlist"""
-
+    logger.info("Starting playlist download.")
     playlist_songs = [song for song in get_playlist_songs(playlist_id) if song[TRACK][ID]]
     playlist = get_playlist_info(playlist_id)
     p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)

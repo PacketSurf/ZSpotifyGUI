@@ -13,7 +13,7 @@ class WorkerSignals(QObject):
     result = pyqtSignal(object)
 
 class MusicSignals(WorkerSignals):
-    update = pyqtSignal(float, int, int)
+    update = pyqtSignal(float,int,int)
 
 class Worker(QRunnable):
     """
@@ -35,7 +35,11 @@ class Worker(QRunnable):
 
     def run(self):
         try:
-            logger.info("Attempting to start worker thread.")
+            arg_str = ', '.join([str(arg) for arg in self.args])
+            kwarg_str = ', '.join([f"{key}:{self.kwargs[key]}" for key in self.kwargs.keys()])
+            logger.info(f"THREAD: Starting worker thread:")
+            logger.info(f"THREAD: Running function: {self.fn.__name__}")
+            logger.info(f"THREAD: With args - \n {arg_str} and kwargs - {kwarg_str}")
             if "update" in self.kwargs.keys():
                 result = self.fn(
                     self.signals.update.emit, *self.args, **self.kwargs
@@ -47,9 +51,11 @@ class Worker(QRunnable):
         except:
             traceback.print_exc()
             exctype, value = sys.exc_info()[:2]
-            logger.error(f"{exctype} : {value} - {traceback.format_exc()}")
+            logger.error(f"THREAD: ERROR WHILE RUNNING WORKER: {exctype} : {value} - {traceback.format_exc()}")
             self.signals.error.emit((exctype, value, traceback.format_exc()))
         else:
+            logger.info(f"THREAD: worker results: {result}")
             self.signals.result.emit(result)  # Return the result of the processing
         finally:
             self.signals.finished.emit()
+            logger.info(f"THREAD: Worker finished running: {self.fn.__name__}")

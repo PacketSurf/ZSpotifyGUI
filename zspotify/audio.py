@@ -4,6 +4,7 @@ import time
 import random
 import music_tag
 import logging
+import struct
 from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool, QObject
@@ -122,7 +123,7 @@ class MusicController(QObject):
 
     def update_music_progress(self, perc, elapsed, total):
         if not self.seeking:
-            self.window.playbackBar.setValue(int(perc*10000))
+            self.window.playbackBar.setValue(int(perc*100000000))
             self.queue_next_song = True
         if self.seeking:
             duration = self.audio_player.player.get_length()
@@ -136,7 +137,7 @@ class MusicController(QObject):
         while(self.audio_player.is_playing() or self.awaiting_play):
             self.awaiting_play = False
             if self.audio_player and self.audio_player.player.get_length() > 0:
-                signal(self.audio_player.get_elapsed_percent(), self.audio_player.player.get_time(), \
+                signal(round(self.audio_player.get_elapsed_percent(),9), self.audio_player.player.get_time(), \
                     self.audio_player.player.get_length())
             QtTest.QTest.qWait(100)
 

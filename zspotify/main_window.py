@@ -340,7 +340,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.playbackBar.sizePolicy().hasHeightForWidth())
         self.playbackBar.setSizePolicy(sizePolicy)
         self.playbackBar.setMinimumSize(QtCore.QSize(1, 10))
-        self.playbackBar.setMaximum(10000)
+        self.playbackBar.setMaximum(100000000)
         self.playbackBar.setPageStep(1)
         self.playbackBar.setProperty("value", 0)
         self.playbackBar.setTracking(True)
