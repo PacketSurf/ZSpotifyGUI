@@ -50,7 +50,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.init_tree_views()
         self.init_results_amount_combo()
         self.init_downloads_view()
-        self.load_album_cover()
+        set_label_image(self.coverArtLabel, COVER_DEFAULT)
         self.tabs = [self.library_trees, self.search_trees, self.queue_trees]
         self.tabWidgets = [self.libraryTabs, self.searchTabs, self.queueTabs]
         try:
@@ -131,10 +131,10 @@ class Window(QMainWindow, Ui_MainWindow):
 
 
     def update_item_info(self, item, headers, labels):
+        if not item: return
         self.selected_item = item
-        if item and item.img == "":
-            worker = Worker(self._cover_art_loader, item)
-            QThreadPool.globalInstance().start(worker)
+        worker = Worker(self._cover_art_loader, item)
+        QThreadPool.globalInstance().start(worker)
         [lbl.setText("") for lbl in self.info_labels]
         if "Index" in headers:
             labels.pop(headers.index("Index"))
@@ -146,12 +146,10 @@ class Window(QMainWindow, Ui_MainWindow):
             else:
                 self.info_labels[i].setText("")
                 self.info_labels[i].setToolTip("")
-        if item.img != "":
-            self.load_album_cover(item.img)
         self.download_controller.update_download_view(item)
 
     def update_item_labels(self, headers):
-        self.load_album_cover()
+        set_label_image(self.coverArtLabel, COVER_DEFAULT)
         if "Index" in headers: headers.remove("Index")
         for i in range(len(self.info_headers)):
             if i < len(self.info_labels):
@@ -162,7 +160,8 @@ class Window(QMainWindow, Ui_MainWindow):
             else:
                 self.info_headers[i].setText("")
 
-    def load_album_cover(self, url=""):
+    #Does network call, be careful (Run in worker thread instead)
+    def request_cover_art(self, url):
         lbl = self.coverArtLabel
         pixmap = QPixmap(COVER_DEFAULT)
         if url != "":
@@ -172,10 +171,6 @@ class Window(QMainWindow, Ui_MainWindow):
         lbl.setPixmap(pixmap)
         lbl.setScaledContents(True)
         lbl.show()
-
-
-
-
 
 
     def update_result_amount(self, index):
@@ -372,8 +367,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.playlists_tree.set_header_spacing(65,-1,-1,80)
 
     def _cover_art_loader(self, item):
-        item.img = get_cover_art(item.id)
-        self.load_album_cover(item.img)
+        if item.img == "": item.img = get_cover_art(item.id)
+        self.request_cover_art(item.img)
 
 
 class LoginDialog(QDialog, Ui_LoginDialog):
