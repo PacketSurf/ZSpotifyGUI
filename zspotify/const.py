@@ -93,9 +93,9 @@ USER_LIBRARY_READ = 'user-library-read'
 
 WINDOWS_SYSTEM = 'Windows'
 
-CREDENTIALS_JSON = 'credentials.json'
+CREDENTIALS_JSON = '../credentials.json'
 
-CONFIG_FILE_PATH = 'zs_config.json'
+CONFIG_FILE_PATH = '../zs_config.json'
 
 ROOT_PATH = 'ROOT_PATH'
 
@@ -176,8 +176,8 @@ EXT_MAP = {
 }
 
 CONFIG_DEFAULT_SETTINGS = {
-    'ROOT_PATH': 'ZSpotify Music/',
-    'ROOT_PODCAST_PATH': 'ZSpotify Podcasts/',
+    'ROOT_PATH': '../ZSpotify Music/',
+    'ROOT_PODCAST_PATH': '../ZSpotify Podcasts/',
     'SKIP_EXISTING_FILES': True,
     'SKIP_PREVIOUSLY_DOWNLOADED': False,
     'DOWNLOAD_FORMAT': 'ogg',
