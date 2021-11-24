@@ -93,7 +93,7 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
         output_template = output_template.replace("{track_id}", fix_filename(track_id))
         output_template = output_template.replace("{ext}", EXT_MAP.get(ZSpotify.CONFIG.get_download_format().lower()))
 
-        filename = os.path.join(os.path.dirname(__file__), ZSpotify.CONFIG.get_root_path(), output_template)
+        filename = os.path.join(ZSpotify.CONFIG.get_root_path(), output_template)
         filedir = os.path.dirname(filename)
 
         check_name = os.path.isfile(filename) and os.path.getsize(filename)
@@ -161,7 +161,7 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
 
                     time_finished = time.time()
 
-                    Printer.print(PrintChannel.DOWNLOADS, f'###   Downloaded "{song_name}" to "{os.path.relpath(filename, os.path.dirname(__file__))}" in {fmt_seconds(time_downloaded - time_start)} (plus {fmt_seconds(time_finished - time_downloaded)} converting)   ###' + "\n")
+                    Printer.print(PrintChannel.DOWNLOADS, f'###   Downloaded "{song_name}" to "{os.path.relpath(filename, ZSpotify.CONFIG.get_root_path())}" in {fmt_seconds(time_downloaded - time_start)} (plus {fmt_seconds(time_finished - time_downloaded)} converting)   ###' + "\n")
 
                     # add song id to archive file
                     if ZSpotify.CONFIG.get_skip_previously_downloaded():
