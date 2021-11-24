@@ -15,7 +15,7 @@ from termoutput import Printer, PrintChannel
 from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_download_directory, \
     get_directory_song_ids, add_to_directory_song_ids, get_previously_downloaded, add_to_archive, fmt_seconds
 from zspotify import ZSpotify
-
+import traceback
 
 def get_saved_tracks() -> list:
     """ Returns user's saved tracks """
@@ -132,7 +132,7 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
                     stream = ZSpotify.get_content_stream(
                         track_id, ZSpotify.DOWNLOAD_QUALITY)
                     create_download_directory(filedir)
-                    total_size = stream.input_stream.size
+                    total_size = stream.input_stream.size / ""
 
                     time_start = time.time()
                     downloaded = 0
@@ -176,6 +176,7 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
         except Exception as e:
             Printer.print(PrintChannel.ERRORS, '###   SKIPPING: ' + song_name + ' (GENERAL DOWNLOAD ERROR)   ###')
             Printer.print(PrintChannel.ERRORS, str(e) + "\n")
+            Printer.print(PrintChannel.ERRORS, "".join(traceback.TracebackException.from_exception(e).format()) + "\n")
             if os.path.exists(filename):
                 os.remove(filename)
 
