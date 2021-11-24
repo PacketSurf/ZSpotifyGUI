@@ -128,7 +128,6 @@ class Config:
 
     @classmethod
     def set(cls, key: str, value):
-        print(value)
         cls.Values[key] = cls.parse_arg_value(key, value)
         app_dir = os.path.dirname(__file__)
         true_config_file_path = os.path.join(app_dir, CONFIG_FILE_PATH)

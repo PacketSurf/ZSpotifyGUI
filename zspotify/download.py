@@ -21,7 +21,6 @@ class DownloadController(QObject):
         self.window = window
         self.window.progressBar.hide()
         dl_realtime = Config.get_download_real_time()
-        print(type(dl_realtime))
         self.window.realTimeCheckBox.setChecked(dl_realtime)
         self.load_download_format()
         self.init_signals()
