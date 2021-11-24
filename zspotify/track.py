@@ -1,3 +1,4 @@
+import math
 import os
 import re
 import time
@@ -12,7 +13,7 @@ from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAY
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, TRACK_STATS_URL, CODEC_MAP, EXT_MAP, DURATION_MS
 from termoutput import Printer, PrintChannel
 from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_download_directory, \
-    get_directory_song_ids, add_to_directory_song_ids, get_previously_downloaded, add_to_archive
+    get_directory_song_ids, add_to_directory_song_ids, get_previously_downloaded, add_to_archive, fmt_seconds
 from zspotify import ZSpotify
 
 
@@ -133,6 +134,8 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
                     create_download_directory(filedir)
                     total_size = stream.input_stream.size
 
+                    time_start = time.time()
+                    downloaded = 0
                     with open(filename, 'wb') as file, Printer.progress(
                             desc=song_name,
                             total=total_size,
@@ -141,18 +144,25 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
                             unit_divisor=1024,
                             disable=disable_progressbar
                     ) as p_bar:
-                        pause = duration_ms / ZSpotify.CONFIG.get_chunk_size()
                         for chunk in range(int(total_size / ZSpotify.CONFIG.get_chunk_size()) + 1):
                             data = stream.input_stream.stream().read(ZSpotify.CONFIG.get_chunk_size())
                             p_bar.update(file.write(data))
+                            downloaded += len(data)
                             if ZSpotify.CONFIG.get_download_real_time():
-                                time.sleep(pause)
+                                delta_real = time.time() - time_start
+                                delta_want = (downloaded / total_size) * (duration_ms/1000)
+                                if delta_want > delta_real:
+                                    time.sleep(delta_want - delta_real)
+
+                    time_downloaded = time.time()
 
                     convert_audio_format(filename)
                     set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number)
                     set_music_thumbnail(filename, image_url)
 
-                    Printer.print(PrintChannel.DOWNLOADS, f'###   Downloaded "{song_name}" to "{os.path.relpath(filename, os.path.dirname(__file__))}"   ###' + "\n")
+                    time_finished = time.time()
+
+                    Printer.print(PrintChannel.DOWNLOADS, f'###   Downloaded "{song_name}" to "{os.path.relpath(filename, os.path.dirname(__file__))}" in {fmt_seconds(time_downloaded - time_start)} (plus {fmt_seconds(time_finished - time_downloaded)} converting)   ###' + "\n")
 
                     # add song id to archive file
                     if ZSpotify.CONFIG.get_skip_previously_downloaded():
