@@ -1,3 +1,11 @@
+"""
+ZSpotifyGUI
+It's like youtube-dl, but for Spotify.
+
+(GUI made by PacketSurf - github.com/PacketSurf)
+(ZSpotify made by Deathmonger/Footsiefat - @doomslayer117:matrix.org | github.com/Footsiefat)
+"""
+
 import sys
 import time
 import requests
@@ -12,9 +20,10 @@ from librespot.core import Session
 from main_window import Ui_MainWindow
 from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
+from config import Config, TOTAL_SEARCH_RESULTS
 from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
-    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT, DOWNLOAD_REAL_TIME, SEARCH_RESULTS,\
-    DOWNLOADED, LIKED, DOWNLOAD_FORMAT, SAVED_TRACKS_URL, LOG_FILE, LOGO_BANNER
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT,\
+    DOWNLOADED, LIKED, SAVED_TRACKS_URL, LOG_FILE, LOGO_BANNER
 from worker import Worker
 from audio import MusicController, find_local_tracks, get_track_file_as_item
 from download import DownloadController
@@ -23,11 +32,13 @@ import qdarktheme
 from itemTree import ItemTree
 from item import Track, Artist, Album, Playlist
 from view import set_button_icon, set_label_image
+from config import Config
+
 
 logging.basicConfig(level=logging.INFO, filename=LOG_FILE, format='%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s')
 
 def main():
-    ZSpotify.load_config()
+    Config.load()
     app = QApplication(sys.argv)
     app.setApplicationName("ZSpotify")
     app.setStyleSheet(qdarktheme.load_stylesheet("dark"))
@@ -175,7 +186,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def update_result_amount(self, index):
         amount = int(self.resultAmountCombo.itemText(index))
-        ZSpotify.set_config(SEARCH_RESULTS, amount)
+        Config.set(TOTAL_SEARCH_RESULTS, amount)
 
 
     def select_next_item(self, current_item=None, tree=None):
@@ -310,7 +321,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.queueTabs.setCurrentIndex(0)
 
     def init_results_amount_combo(self):
-        amount = int(ZSpotify.get_config(SEARCH_RESULTS))
+        amount = int(Config.get_total_search_results())
         nextHighest = 0
         for i in range(self.resultAmountCombo.count()):
             amt = int(self.resultAmountCombo.itemText(i))
@@ -420,4 +431,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        logging.exception(f"Main crashed. Error: {e}")
+        print(f"CRITICAL ERROR: Main crashed. \nTraceback: \n{e}")
+        logging.exception(f"CRITICAL ERROR: Main crashed. Error: {e}")

@@ -2,6 +2,7 @@ from tqdm import tqdm
 import logging
 from const import ITEMS, ARTISTS, NAME, ID
 from track import DownloadStatus, download_track
+from termoutput import Printer
 from utils import fix_filename
 from zspotify import ZSpotify
 
@@ -50,15 +51,13 @@ def download_album(album, progress_callback=None):
     """ Downloads songs from an album """
 
     artist, album_name = get_album_name(album)
-    artist_fixed = fix_filename(artist)
-    album_name_fixed = fix_filename(album_name)
     tracks = get_album_tracks(album)
     downloaded = 0
     one_success = False
     logger.info("Starting album download.")
     for n, track in tqdm(enumerate(tracks, start=1), unit_scale=True, unit='Song', total=len(tracks)):
-        status = download_track(track[ID], f'{artist_fixed}/{album_name_fixed}',
-                       prefix=True, prefix_value=str(n), disable_progressbar=True, progress_callback=progress_callback)
+        status = download_track(track[ID], mode='album', extra_keys={'album_num': str(n).zfill(2), 'artist': artist, 'album': album_name, 'album_id': album},
+            disable_progressbar=True, progress_callback=progress_callback)
         if status.value == DownloadStatus.FAILED.value:
             return DownloadStatus.FAILED
         elif status.value == DownloadStatus.SUCCESS.value:

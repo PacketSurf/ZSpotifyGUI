@@ -1,5 +1,3 @@
-from const import ROOT_PATH
-
 class Item:
     def __init__(self, index, downloaded = False, path=""):
         self.index = index
@@ -17,7 +15,7 @@ class Track(Item):
         self.img = img
         self.release_date = release_date
         self.duration = duration
-    
+
 
 class Album(Item):
     def __init__(self, index, id, title,artists, total_tracks, release_date="", img="",downloaded=False, path=""):

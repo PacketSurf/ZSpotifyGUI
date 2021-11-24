@@ -9,7 +9,7 @@ from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool, QObject
 from PyQt5.QtGui import QImage, QPixmap
-from const import ROOT_PATH, SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
+from const import SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
     VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON, REPEAT_ON_ICON, REPEAT_OFF_ICON, NEXT_ICON, PREV_ICON,\
     LISTEN_QUEUE_ICON
 from zspotify import ZSpotify
@@ -18,6 +18,7 @@ from item import Item, Track
 from utils import ms_to_time_str
 from glob import glob
 from view import set_button_icon, set_label_image
+from config import Config
 
 logger = logging.getLogger(__name__)
 
@@ -249,7 +250,7 @@ class AudioPlayer:
         self.player = None
         self.track = None
         self.audio_file = ""
-        self.root = ZSpotify.get_config(ROOT_PATH)
+        self.root = Config.get_root_path()
         self.file_format = ".mp3"
         self.player = None
         self.playing = False
@@ -312,7 +313,7 @@ def find_local_track(id):
     return None
 
 def find_local_tracks():
-    root = ZSpotify.get_config(ROOT_PATH)
+    root = Config.get_root_path()
     all_results = []
     for format in FORMATS:
         try:

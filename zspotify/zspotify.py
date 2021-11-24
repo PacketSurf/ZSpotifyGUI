@@ -15,12 +15,13 @@ import requests
 from librespot.audio.decoders import VorbisOnlyAudioQuality, AudioQuality
 from librespot.core import Session
 
-from const import CREDENTIALS_JSON, TYPE, ITEMS, \
-    PREMIUM, USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, CONFIG_FILE_PATH, FORCE_PREMIUM, \
-    PLAYLIST_READ_PRIVATE, CONFIG_DEFAULT_SETTINGS,TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
-    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE, USER_LIBRARY_READ, DURATION, SEARCH_RESULTS
+from const import TYPE, ITEMS, \
+    USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, PREMIUM,\
+    PLAYLIST_READ_PRIVATE,TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE, USER_LIBRARY_READ, DURATION
 from utils import MusicFormat, ms_to_time_str
 from item import Track, Album, Artist, Playlist
+from config import Config
 
 logger = logging.getLogger(__name__)
 
@@ -28,14 +29,13 @@ class ZSpotify:
     SESSION: Session = None
     DOWNLOAD_QUALITY = None
     IS_PREMIUM = False
-    CONFIG = {}
     SEARCH_URL = 'https://api.spotify.com/v1/search'
 
 
     @classmethod
     def login(cls, username="", password=""):
         """ Authenticates with Spotify and saves credentials to a file """
-        if os.path.isfile(CREDENTIALS_JSON):
+        if os.path.isfile(Config.get_credentials_location()):
             try:
                 cls.SESSION = Session.Builder().stored_file().create()
             except:
@@ -54,24 +54,11 @@ class ZSpotify:
             ZSpotify.DOWNLOAD_QUALITY = AudioQuality.HIGH
         return True
 
-
-    @classmethod
-    def load_config(cls) -> None:
-        app_dir = os.path.dirname(__file__)
-        true_config_file_path = os.path.join(app_dir, CONFIG_FILE_PATH)
-        if not os.path.exists(true_config_file_path):
-            with open(true_config_file_path, 'w', encoding='utf-8') as config_file:
-                json.dump(CONFIG_DEFAULT_SETTINGS, config_file, indent=4)
-            cls.CONFIG = CONFIG_DEFAULT_SETTINGS
-        else:
-            with open(true_config_file_path, encoding='utf-8') as config_file:
-                cls.CONFIG = json.load(config_file)
-
     @classmethod
     def search(cls, search_terms):
         # Clean search term
         """ Searches Spotify's API for relevant data """
-        results = cls.CONFIG[SEARCH_RESULTS]
+        results = Config.get_total_search_results()
         params = {'limit': results,
                   'offset': '0',
                   'q': search_terms,
@@ -159,19 +146,6 @@ class ZSpotify:
             tracks.append(track)
         return tracks
 
-
-    @classmethod
-    def set_config(cls, key, value):
-        cls.CONFIG[key] = value
-        app_dir = os.path.dirname(__file__)
-        true_config_file_path = os.path.join(app_dir, CONFIG_FILE_PATH)
-        with open(true_config_file_path, 'w', encoding='utf-8') as config_file:
-            json.dump(cls.CONFIG, config_file, indent=4)
-
-    @classmethod
-    def get_config(cls, key) -> Any:
-        return cls.CONFIG.get(key)
-
     @classmethod
     def get_content_stream(cls, content_id, quality):
         return cls.SESSION.content_feeder().load(content_id, VorbisOnlyAudioQuality(quality), False, None)
@@ -184,14 +158,14 @@ class ZSpotify:
     def get_auth_header(cls):
         return {
             'Authorization': f'Bearer {cls.__get_auth_token()}',
-            'Accept-Language': f'{cls.CONFIG.get("LANGUAGE")}'
+            'Accept-Language': f'{Config.get_language()}'
         }
 
     @classmethod
     def get_auth_header_and_params(cls, limit, offset):
         return {
             'Authorization': f'Bearer {cls.__get_auth_token()}',
-            'Accept-Language': f'{cls.CONFIG.get("LANGUAGE")}'
+            'Accept-Language': f'{Config.get_language()}'
         }, {LIMIT: limit, OFFSET: offset}
 
     @classmethod
@@ -213,5 +187,5 @@ class ZSpotify:
     @classmethod
     def check_premium(cls) -> bool:
         """ If user has spotify premium return true """
-        cls.IS_PREMIUM = (cls.SESSION.get_user_attribute(TYPE) == PREMIUM) or cls.get_config(FORCE_PREMIUM)
+        cls.IS_PREMIUM = (cls.SESSION.get_user_attribute(TYPE) == PREMIUM) or Config.get_force_premium()
         return cls.IS_PREMIUM

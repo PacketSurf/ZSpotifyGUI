@@ -1,6 +1,7 @@
 from tqdm import tqdm
 from const import ITEMS, ID, TRACK, NAME, OWNER, DISPLAY_NAME
 from track import DownloadStatus, download_track
+from termoutput import Printer
 from utils import fix_filename, split_input
 from zspotify import ZSpotify
 import logging
@@ -53,12 +54,12 @@ def download_playlist(playlist_id, progress_callback=None):
     logger.info("Starting playlist download.")
     playlist_songs = [song for song in get_playlist_songs(playlist_id) if song[TRACK][ID]]
     playlist = get_playlist_info(playlist_id)
-    p_bar = tqdm(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
+    p_bar = Printer.progress(playlist_songs, unit='song', total=len(playlist_songs), unit_scale=True)
     enum = 1
     one_success = False
     for song in p_bar:
-        status = download_track(song[TRACK][ID], fix_filename(playlist[0].strip()) + '/',
-                       disable_progressbar=True, prefix_value=str(enum), progress_callback=progress_callback)
+        status = download_track(song[TRACK][ID], mode='extplaylist', extra_keys={'playlist': playlist[NAME], 'playlist_num': str(enum).zfill(2)},
+                       disable_progressbar=True, progress_callback=progress_callback)
         if status.value == DownloadStatus.FAILED.value:
             return DownloadStatus.FAILED
         elif status.value == DownloadStatus.SUCCESS.value:

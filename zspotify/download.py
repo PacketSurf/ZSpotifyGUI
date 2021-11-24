@@ -5,11 +5,11 @@ from album import download_album, download_artist_albums
 from track import DownloadStatus, download_track
 from item import Item, Track, Artist, Album, Playlist
 from worker import Worker
-from const import TRACKS, ARTISTS, ALBUMS, PLAYLISTS, ROOT_PATH, DOWNLOAD_REAL_TIME, DOWNLOAD_FORMAT, FORMATS, DIR_ICON
+from const import TRACKS, ARTISTS, ALBUMS, PLAYLISTS, FORMATS, DIR_ICON
 from PyQt5.QtCore import QThreadPool, QObject, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QFileDialog
 from view import set_button_icon
-
+from config import Config, ROOT_PATH, DOWNLOAD_FORMAT, DOWNLOAD_REAL_TIME
 logger = logging.getLogger(__name__)
 
 class DownloadController(QObject):
@@ -20,7 +20,8 @@ class DownloadController(QObject):
         super().__init__()
         self.window = window
         self.window.progressBar.hide()
-        dl_realtime = ZSpotify.get_config(DOWNLOAD_REAL_TIME)
+        dl_realtime = Config.get_download_real_time()
+        print(type(dl_realtime))
         self.window.realTimeCheckBox.setChecked(dl_realtime)
         self.load_download_format()
         self.init_signals()
@@ -75,13 +76,13 @@ class DownloadController(QObject):
             return status
         except Exception as e:
             logger.error(e)
-            print('oooo')
             print(e)
             return DownloadStatus.FAILED
 
 
     def on_download_complete(self, status):
-        if status.value == DownloadStatus.FAILED.value:
+        print(f"yoo{status}")
+        if status and status.value == DownloadStatus.FAILED.value:
             self.window.on_api_error()
         self.window.progressBar.setValue(0)
         self.window.progressBar.hide()
@@ -90,7 +91,7 @@ class DownloadController(QObject):
         self.download_queue.pop(0)
         self.update_dl_queue_combo()
         if self.item != None:
-            if status.value == DownloadStatus.SUCCESS.value:
+            if status and status.value == DownloadStatus.SUCCESS.value:
                 self.item.downloaded = True
                 self.downloadComplete.emit(self.item)
         self.item = None
@@ -120,31 +121,32 @@ class DownloadController(QObject):
     def change_dl_dir(self):
         dialog = QFileDialog(self.window)
         dialog.setFileMode(QFileDialog.Directory)
-        dialog.setDirectory(ZSpotify.get_config(ROOT_PATH))
+        dialog.setDirectory(Config.get_root_path())
         if dialog.exec_():
             dir = dialog.selectedFiles()
-            if len(dir) > 0: ZSpotify.set_config(ROOT_PATH, dir[0])
+            if len(dir) > 0: Config.set(ROOT_PATH, dir[0])
 
     def update_download_format(self, index):
         format = self.window.fileFormatCombo.itemText(index)
-        ZSpotify.set_config(DOWNLOAD_FORMAT, format)
+        Config.set(DOWNLOAD_FORMAT, format)
 
     def load_download_format(self):
         self.window.fileFormatCombo.clear()
-        format = ZSpotify.get_config(DOWNLOAD_FORMAT)
+        format = Config.get_download_format()
         self.window.fileFormatCombo.addItems(FORMATS)
         for i in range(len(FORMATS)):
             if format == FORMATS[i]:
                 self.window.fileFormatCombo.setCurrentIndex(i)
                 return
         self.window.fileFormatCombo.setCurrentIndex(0)
-        ZSpotify.set_config(DOWNLOAD_FORMAT, FORMATS[0])
+        Config.set(DOWNLOAD_FORMAT, FORMATS[0])
 
     def set_real_time_dl(self, value):
         if value == 0:
-            ZSpotify.set_config(DOWNLOAD_REAL_TIME, False)
+            print('nice')
+            Config.set(DOWNLOAD_REAL_TIME, False)
         else:
-            ZSpotify.set_config(DOWNLOAD_REAL_TIME, True)
+            Config.set(DOWNLOAD_REAL_TIME, True)
 
     def update_download_view(self, item):
         if item.downloaded:
