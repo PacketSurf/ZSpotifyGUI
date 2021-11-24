@@ -7,7 +7,6 @@ from typing import Any, Tuple, List
 from librespot.audio.decoders import AudioQuality
 from librespot.metadata import TrackId
 from ffmpy import FFmpeg
-from pydub import AudioSegment
 
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, TRACK_STATS_URL, CODEC_MAP, EXT_MAP, DURATION_MS
@@ -132,7 +131,7 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
                     stream = ZSpotify.get_content_stream(
                         track_id, ZSpotify.DOWNLOAD_QUALITY)
                     create_download_directory(filedir)
-                    total_size = stream.input_stream.size / ""
+                    total_size = stream.input_stream.size
 
                     time_start = time.time()
                     downloaded = 0

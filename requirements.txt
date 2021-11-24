@@ -3,6 +3,5 @@ git+https://github.com/kokarare1212/librespot-python
 music_tag
 Pillow
 protobuf
-pydub
 tabulate
 tqdm

@@ -70,9 +70,7 @@ def download_from_user_playlist():
     selection = ''
     print('\n> SELECT A PLAYLIST BY ID')
     print('> SELECT A RANGE BY ADDING A DASH BETWEEN BOTH ID\'s')
-    print('> OR PARTICULAR OPTIONS BY ADDING A COMMA BETWEEN ID\'s')
-    print('> For example, typing 10 to get one playlist or 10-20 to get\nevery playlist from 10-20 (inclusive)\n')
-    print('> Or type 10,12,15,18 to get those playlists in particular')
+    print('> OR PARTICULAR OPTIONS BY ADDING A COMMA BETWEEN ID\'s\n')
     while len(selection) == 0:
         selection = str(input('ID(s): '))
     playlist_choices = map(int, split_input(selection))

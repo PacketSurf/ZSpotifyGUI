@@ -255,9 +255,7 @@ def search(search_term):
         selection = ''
         print('\n> SELECT A DOWNLOAD OPTION BY ID')
         print('> SELECT A RANGE BY ADDING A DASH BETWEEN BOTH ID\'s')
-        print('> OR PARTICULAR OPTIONS BY ADDING A COMMA BETWEEN ID\'s')
-        print('> For example, typing 5 to get option 5 or 10-20 to get\nevery option from 10-20 (inclusive)\n')
-        print('> Or type 10,12,15,18 to get those options in particular')
+        print('> OR PARTICULAR OPTIONS BY ADDING A COMMA BETWEEN ID\'s\n')
         while len(selection) == 0:
             selection = str(input('ID(s): '))
         inputs = split_input(selection)
