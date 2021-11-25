@@ -2,6 +2,7 @@ import math
 import os
 import re
 import time
+import uuid
 from typing import Any, Tuple, List
 
 from librespot.audio.decoders import AudioQuality
@@ -83,6 +84,8 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
         for k in extra_keys:
             output_template = output_template.replace("{"+k+"}", fix_filename(extra_keys[k]))
 
+        ext = EXT_MAP.get(ZSpotify.CONFIG.get_download_format().lower())
+
         output_template = output_template.replace("{artist}", fix_filename(artists[0]))
         output_template = output_template.replace("{album}", fix_filename(album_name))
         output_template = output_template.replace("{song_name}", fix_filename(name))
@@ -91,10 +94,14 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
         output_template = output_template.replace("{track_number}", fix_filename(track_number))
         output_template = output_template.replace("{id}", fix_filename(scraped_song_id))
         output_template = output_template.replace("{track_id}", fix_filename(track_id))
-        output_template = output_template.replace("{ext}", EXT_MAP.get(ZSpotify.CONFIG.get_download_format().lower()))
+        output_template = output_template.replace("{ext}", ext)
 
         filename = os.path.join(os.path.dirname(__file__), ZSpotify.CONFIG.get_root_path(), output_template)
         filedir = os.path.dirname(filename)
+
+        filename_temp = filename
+        if ZSpotify.CONFIG.get_temp_download_dir() != '':
+            filename_temp = os.path.join(ZSpotify.CONFIG.get_temp_download_dir(), f'zspotify_{str(uuid.uuid4())}_{track_id}.{ext}')
 
         check_name = os.path.isfile(filename) and os.path.getsize(filename)
         check_id = scraped_song_id in get_directory_song_ids(filedir)
@@ -128,14 +135,13 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
                     if track_id != scraped_song_id:
                         track_id = scraped_song_id
                     track_id = TrackId.from_base62(track_id)
-                    stream = ZSpotify.get_content_stream(
-                        track_id, ZSpotify.DOWNLOAD_QUALITY)
+                    stream = ZSpotify.get_content_stream(track_id, ZSpotify.DOWNLOAD_QUALITY)
                     create_download_directory(filedir)
                     total_size = stream.input_stream.size
 
                     time_start = time.time()
                     downloaded = 0
-                    with open(filename, 'wb') as file, Printer.progress(
+                    with open(filename_temp, 'wb') as file, Printer.progress(
                             desc=song_name,
                             total=total_size,
                             unit='B',
@@ -155,9 +161,12 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
 
                     time_downloaded = time.time()
 
-                    convert_audio_format(filename)
-                    set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number)
-                    set_music_thumbnail(filename, image_url)
+                    convert_audio_format(filename_temp)
+                    set_audio_tags(filename_temp, artists, name, album_name, release_year, disc_number, track_number)
+                    set_music_thumbnail(filename_temp, image_url)
+
+                    if filename_temp != filename:
+                        os.rename(filename_temp, filename)
 
                     time_finished = time.time()
 
@@ -176,8 +185,8 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
             Printer.print(PrintChannel.ERRORS, '###   SKIPPING: ' + song_name + ' (GENERAL DOWNLOAD ERROR)   ###')
             Printer.print(PrintChannel.ERRORS, str(e) + "\n")
             Printer.print(PrintChannel.ERRORS, "".join(traceback.TracebackException.from_exception(e).format()) + "\n")
-            if os.path.exists(filename):
-                os.remove(filename)
+            if os.path.exists(filename_temp):
+                os.remove(filename_temp)
 
 
 def convert_audio_format(filename) -> None:

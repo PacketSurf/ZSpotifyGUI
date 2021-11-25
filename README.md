@@ -77,6 +77,7 @@ Be aware you have to set boolean values in the commandline like this: `--downloa
 | PRINT_DOWNLOAD_PROGRESS      | --print-download-progress        | Print the download/playlist progress bars
 | PRINT_ERRORS                 | --print-errors                   | Print errors
 | PRINT_DOWNLOADS              | --print-downloads                | Print messages when a song is finished downloading
+| TEMP_DOWNLOAD_DIR            | --temp-download-dir              | Download tracks to a temporary directory first
 
 ### Output format:
 
