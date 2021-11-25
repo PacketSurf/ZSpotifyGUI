@@ -42,7 +42,7 @@ def get_playlist_songs(playlist_id):
 
 def get_playlist_info(playlist_id):
     """ Returns information scraped from playlist """
-    resp = ZSpotify.invoke_url(f'{PLAYLISTS_URL}/{playlist_id}?fields=name,owner(display_name)&market=from_token')
+    (raw, resp) = ZSpotify.invoke_url(f'{PLAYLISTS_URL}/{playlist_id}?fields=name,owner(display_name)&market=from_token')
     return resp['name'].strip(), resp['owner']['display_name'].strip()
 
 

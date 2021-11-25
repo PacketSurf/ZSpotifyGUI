@@ -35,27 +35,34 @@ def get_saved_tracks() -> list:
 
 def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any, Any, int]:
     """ Retrieves metadata for downloaded songs """
-    info = ZSpotify.invoke_url(f'{TRACKS_URL}?ids={song_id}&market=from_token')
+    (raw, info) = ZSpotify.invoke_url(f'{TRACKS_URL}?ids={song_id}&market=from_token')
 
-    artists = []
-    for data in info[TRACKS][0][ARTISTS]:
-        artists.append(data[NAME])
-    album_name = info[TRACKS][0][ALBUM][NAME]
-    name = info[TRACKS][0][NAME]
-    image_url = info[TRACKS][0][ALBUM][IMAGES][0][URL]
-    release_year = info[TRACKS][0][ALBUM][RELEASE_DATE].split('-')[0]
-    disc_number = info[TRACKS][0][DISC_NUMBER]
-    track_number = info[TRACKS][0][TRACK_NUMBER]
-    scraped_song_id = info[TRACKS][0][ID]
-    is_playable = info[TRACKS][0][IS_PLAYABLE]
-    duration_ms = info[TRACKS][0][DURATION_MS]
+    if not TRACKS in info:
+        raise ValueError(f'Invalid response from TRACKS_URL:\n{raw}')
 
-    return artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable, duration_ms
+    try:
+        artists = []
+        for data in info[TRACKS][0][ARTISTS]:
+            artists.append(data[NAME])
+        album_name = info[TRACKS][0][ALBUM][NAME]
+        name = info[TRACKS][0][NAME]
+        image_url = info[TRACKS][0][ALBUM][IMAGES][0][URL]
+        release_year = info[TRACKS][0][ALBUM][RELEASE_DATE].split('-')[0]
+        disc_number = info[TRACKS][0][DISC_NUMBER]
+        track_number = info[TRACKS][0][TRACK_NUMBER]
+        scraped_song_id = info[TRACKS][0][ID]
+        is_playable = info[TRACKS][0][IS_PLAYABLE]
+        duration_ms = info[TRACKS][0][DURATION_MS]
+
+        return artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable, duration_ms
+    except Exception as e:
+        raise ValueError(f'Failed to parse TRACKS_URL response: {str(e)}\n{raw}')
+
 
 def get_song_duration(song_id: str) -> float:
     """ Retrieves duration of song in second as is on spotify """
 
-    resp = ZSpotify.invoke_url(f'{TRACK_STATS_URL}{song_id}')
+    (raw, resp) = ZSpotify.invoke_url(f'{TRACK_STATS_URL}{song_id}')
 
     # get duration in miliseconds
     ms_duration = resp['duration_ms']
@@ -113,6 +120,7 @@ def download_track(mode: str, track_id: str, extra_keys={}, disable_progressbar=
     except Exception as e:
         Printer.print(PrintChannel.ERRORS, '###   SKIPPING SONG - FAILED TO QUERY METADATA   ###')
         Printer.print(PrintChannel.ERRORS, str(e) + "\n")
+        Printer.print(PrintChannel.ERRORS, "".join(traceback.TracebackException.from_exception(e).format()) + "\n")
     else:
         try:
             if not is_playable:
