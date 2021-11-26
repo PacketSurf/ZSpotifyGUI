@@ -131,11 +131,11 @@ class Config:
 
     @classmethod
     def get_root_path(cls) -> str:
-        return cls.get(ROOT_PATH)
+        return os.path.join(os.path.dirname(__file__), cls.get(ROOT_PATH))
 
     @classmethod
     def get_root_podcast_path(cls) -> str:
-        return cls.get(ROOT_PODCAST_PATH)
+        return os.path.join(os.path.dirname(__file__), cls.get(ROOT_PODCAST_PATH))
 
     @classmethod
     def get_skip_existing_files(cls) -> bool:
@@ -183,11 +183,11 @@ class Config:
 
     @classmethod
     def get_song_archive(cls) -> str:
-        return cls.get(SONG_ARCHIVE)
+        return os.path.join(ZSpotify.CONFIG.get_root_path(), cls.get(SONG_ARCHIVE))
 
     @classmethod
     def get_credentials_location(cls) -> str:
-        return cls.get(CREDENTIALS_LOCATION)
+        return os.path.join(os.getcwd(), cls.get(CREDENTIALS_LOCATION))
 
     @classmethod
     def get_temp_download_dir(cls) -> str:
