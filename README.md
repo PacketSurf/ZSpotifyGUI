@@ -33,6 +33,7 @@ WINDOWS:
   - Run the installer and follow the installation instructions.
   - You will find ZSpotify in your start menu, and Desktop (if chosen).
   - If you did not have VLC installed already, you will need to restart your PC after installation. If you already had it, then a restart is not necessary.
+  - (Important) Due to a recent bug fix in one of our dependencies, it is important to update it to the newest version. This will cause major improvements to stability. This can be done by pasting this in CMD: ```pip install --upgrade git+https://github.com/kokarare1212/librespot-python```
 <br/>
 
 MAC:
@@ -45,6 +46,7 @@ MAC:
   - You will be asked to enter a password to complete the installation. Please note that when typing your password, nothing     will appear on screen. Just type the password and press enter, and if it is valid the installation will continue.
   - You will find the ZSpotify launcher in your Applications folder, or alternatively in the ZSpotify folder located in your Home folder
   - If you did not have VLC installed already, you will need to restart your PC after installation. If you already had it, then a restart is not necessary.
+  - (Important) Due to a recent bug fix in one of our dependencies, it is important to update it to the newest version. This will cause major improvements to stability. This can be done by pasting this in Terminal: ```pip3 install --upgrade git+https://github.com/kokarare1212/librespot-python```
 
 <br/>
 <br/>

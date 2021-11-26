@@ -261,7 +261,7 @@ class AudioPlayer:
         if self.player != None and self.track != None:
                 if self.is_playing:
                     self.player.stop()
-        self.audio_file = find_local_track(track.id)
+        self.audio_file = track.path
         if self.audio_file != None:
             self.track = track
             self.playing = True
