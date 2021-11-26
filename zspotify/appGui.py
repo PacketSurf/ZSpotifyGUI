@@ -5,7 +5,7 @@ It's like youtube-dl, but for Spotify.
 (GUI made by PacketSurf - github.com/PacketSurf)
 (ZSpotify made by Deathmonger/Footsiefat - @doomslayer117:matrix.org | github.com/Footsiefat)
 """
-
+import os
 import sys
 import requests
 import logging
@@ -226,6 +226,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.download_controller.downloadDirChanged.connect(self.init_downloads_view)
         self.listenQueueBtn.clicked.connect(self.show_queue_view)
         self.music_controller.onPlay.connect(self.queue_tree.load_function)
+        self.updateBtn.clicked.connect(self.update_zspotify)
         for tree in self.trees:
             if tree == self.queue_tree:
                 tree.signals.doubleClicked.connect(self.music_controller.on_play_queue_song)
@@ -377,6 +378,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.songs_tree.set_header_spacing(65, -1, -1, -1, 65)
         self.albums_tree.set_header_spacing(65, -1, -1, 80)
         self.playlists_tree.set_header_spacing(65, -1, -1, 80)
+
+    def update_zspotify(self):
+        os.system(".././zspot_update.sh")
+        QApplication.quit()
 
     def _cover_art_loader(self, item):
         if item.img == "" and not item.id == "":
