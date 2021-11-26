@@ -53,7 +53,7 @@ MAC:
 
 <h3>MANUAL INSTALLATION</h3>
 
-  - VLC can be installed from [videolan.org](https://www.videolan.org/vlc/) for all operating systems. You will need to restart your pc.
+  - 64bit VLC can be installed from [videolan.org](https://www.videolan.org/vlc/) for all operating systems. You will need to restart your pc. Sometimes the VLC website will automatically download the 32bit version. Please ensure you download the 64bit version
   - ffmpeg can be installed via apt for Debian-based distros or by downloading the binaries from [ffmpeg.org](https://ffmpeg.org) and placing them in your %PATH% in Windows. Mac users can install it with [Homebrew](https://brew.sh) by running `brew install ffmpeg`.
   - Install the python requirements:
   `pip install -r requirements.txt`

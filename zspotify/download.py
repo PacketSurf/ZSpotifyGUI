@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 class DownloadController(QObject):
 
     downloadComplete = pyqtSignal(Item)
+    downloadDirChanged = pyqtSignal()
 
     def __init__(self, window):
         super().__init__()

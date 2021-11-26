@@ -229,6 +229,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.loginBtn.clicked.connect(self.open_login_dialog)
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
         self.download_controller.downloadComplete.connect(self.init_downloads_view)
+        self.download_controller.downloadDirChanged.connect(self.init_downloads_view)
         self.listenQueueBtn.clicked.connect(self.show_queue_view)
         self.music_controller.onPlay.connect(self.queue_tree.load_function)
         for tree in self.trees:
@@ -378,7 +379,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.playlists_tree.set_header_spacing(65,-1,-1,80)
 
     def _cover_art_loader(self, item):
-        if item.img == "": item.img = get_cover_art(item.id)
+        if item.img == "" and not item.id == "": item.img = get_cover_art(item.id)
         self.request_cover_art(item.img)
 
 
