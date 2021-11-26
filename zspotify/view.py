@@ -15,12 +15,13 @@ class SeekableSlider(QSlider):
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
         if os.name == "nt":
-            self.onClicked.emit(round(event.x()/self.width(), 5))
+            self.onClicked.emit()
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
         if os.name == "nt":
             self.onReleased(round(event.x() / self.width(), 5))
+
 
 
 def set_button_icon(btn, icon_path):
