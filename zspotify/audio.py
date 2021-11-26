@@ -171,7 +171,6 @@ class MusicController(QObject):
 
     def on_stop_seeking(self):
         percent = self.window.playbackBar.value()/self.window.playbackBar.maximum()
-        print(percent)
         self.audio_player.set_time(percent)
         self.seeking = False
 

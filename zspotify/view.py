@@ -4,6 +4,7 @@ from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QSlider
 from PyQt5.QtCore import pyqtSignal
 
+
 class SeekableSlider(QSlider):
 
     onClicked = pyqtSignal()
@@ -16,18 +17,22 @@ class SeekableSlider(QSlider):
         super().mousePressEvent(event)
         if os.name == "nt":
             self.onClicked.emit()
+            perc = round(event.x() / self.width(), 5)
+            value = int(perc * self.maximum())
+            self.setValue(value)
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
         if os.name == "nt":
-            self.onReleased(round(event.x() / self.width(), 5))
-
+            perc = round(event.x() / self.width(), 5)
+            self.onReleased.emit(perc)
 
 
 def set_button_icon(btn, icon_path):
     icon = QtGui.QIcon()
     icon.addPixmap(QtGui.QPixmap(icon_path), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     btn.setIcon(icon)
+
 
 def set_label_image(label, icon_path):
     pixmap = QPixmap(icon_path)
