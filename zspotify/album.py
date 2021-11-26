@@ -26,18 +26,18 @@ def get_album_tracks(album_id):
 
 def get_album_name(album_id):
     """ Returns album name """
-    resp = ZSpotify.invoke_url(f'{ALBUM_URL}/{album_id}')
+    (raw, resp) = ZSpotify.invoke_url(f'{ALBUM_URL}/{album_id}')
     return resp[ARTISTS][0][NAME], fix_filename(resp[NAME])
 
 
 def get_artist_albums(artist_id):
     """ Returns artist's albums """
-    resp = ZSpotify.invoke_url(f'{ARTIST_URL}/{artist_id}/albums?include_groups=album%2Csingle')
+    (raw, resp) = ZSpotify.invoke_url(f'{ARTIST_URL}/{artist_id}/albums?include_groups=album%2Csingle')
     # Return a list each album's id
     album_ids = [resp[ITEMS][i][ID] for i in range(len(resp[ITEMS]))]
     # Recursive requests to get all albums including singles an EPs
     while resp['next'] is not None:
-        resp = ZSpotify.invoke_url(resp['next'])
+        (raw, resp) = ZSpotify.invoke_url(resp['next'])
         album_ids.extend([resp[ITEMS][i][ID] for i in range(len(resp[ITEMS]))])
 
     return album_ids

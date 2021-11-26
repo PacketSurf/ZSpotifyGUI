@@ -86,7 +86,8 @@ class ZSpotify:
     @classmethod
     def invoke_url(cls, url):
         headers = cls.get_auth_header()
-        return requests.get(url, headers=headers).json()
+        response = requests.get(url, headers=headers)
+        return response.text, response.json()
 
     @classmethod
     def check_premium(cls) -> bool:
