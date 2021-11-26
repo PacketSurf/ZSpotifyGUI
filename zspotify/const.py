@@ -76,7 +76,7 @@ ALBUMS = 'albums'
 
 DURATION = "duration_ms"
 
-SPOTIFY_ID = 'comment'
+COMMENT = 'comment'
 
 DOWNLOADED = 'downloaded'
 

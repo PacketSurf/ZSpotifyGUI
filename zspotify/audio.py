@@ -9,13 +9,13 @@ from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool, QObject
 from PyQt5.QtGui import QImage, QPixmap
-from const import SPOTIFY_ID, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
+from const import COMMENT, ID, ARTWORK, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
     VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON, REPEAT_ON_ICON, REPEAT_OFF_ICON, NEXT_ICON, PREV_ICON,\
     LISTEN_QUEUE_ICON
 from zspotify import ZSpotify
 from worker import Worker, MusicSignals
 from item import Item, Track
-from utils import ms_to_time_str
+from utils import ms_to_time_str, parse_meta_data
 from glob import glob
 from view import set_button_icon, set_label_image
 from config import Config
@@ -335,12 +335,17 @@ def get_track_file_as_item(file, index):
     for format in FORMATS:
         if format in file:
             tag = music_tag.load_file(file)
-            track = Track(index, str(tag[SPOTIFY_ID]), str(tag[TRACKTITLE]), str(tag[ARTIST]), \
-                album=str(tag[ALBUM]), downloaded=True, path=Path(file))
+            meta_data = parse_meta_data(tag[COMMENT])
+            item_id = meta_data.get(ID) or ""
+            img = meta_data.get(ARTWORK) or ""
+            track = Track(index, item_id, str(tag[TRACKTITLE]), str(tag[ARTIST]),
+                          album=str(tag[ALBUM]), img=img, downloaded=True, path=Path(file))
             return track
     return None
 
 
 def find_id_in_metadata(path):
     tag = music_tag.load_file(path)
-    return str(tag[SPOTIFY_ID])
+    data = parse_meta_data(tag[COMMENT])
+    print(f"mate{data.get(ID)}")
+    return data.get(ID) if None else ""

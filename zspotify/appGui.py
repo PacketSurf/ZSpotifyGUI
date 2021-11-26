@@ -379,7 +379,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.playlists_tree.set_header_spacing(65,-1,-1,80)
 
     def _cover_art_loader(self, item):
-        if item.img == "" and not item.id == "": item.img = get_cover_art(item.id)
+        if item.img == "" and not item.id == "":
+            item.img = get_cover_art(item.id)
+            if type(item) == Track:
+                item.update_meta_tags()
         self.request_cover_art(item.img)
 
 

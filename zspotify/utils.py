@@ -11,7 +11,7 @@ import music_tag
 import requests
 
 from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
-    WINDOWS_SYSTEM, ALBUMARTIST, SPOTIFY_ID
+    WINDOWS_SYSTEM, ALBUMARTIST, COMMENT, ID
 from config import Config
 logger = logging.getLogger(__name__)
 
@@ -119,7 +119,7 @@ def clear() -> None:
         os.system('clear')
 
 
-def set_audio_tags(filename, artists, name, album_name, release_year, disc_number, track_number, spotify_id="") -> None:
+def set_audio_tags(filename, artists, name, album_name, release_year=-1, disc_number=-1, track_number=-1, spotify_id="", img="") -> None:
     """ sets music_tag metadata """
     tags = music_tag.load_file(filename)
     tags[ALBUMARTIST] = artists[0]
@@ -129,9 +129,34 @@ def set_audio_tags(filename, artists, name, album_name, release_year, disc_numbe
     tags[YEAR] = release_year
     tags[DISCNUMBER] = disc_number
     tags[TRACKNUMBER] = track_number
-    tags[SPOTIFY_ID] = spotify_id #saves the spotify ID in one of unused media tags such as comment
+    meta_data = {}
+    if not spotify_id == "": meta_data[ID] = spotify_id
+    if not img == "": meta_data[ARTWORK] = img
+    tags[COMMENT] = format_meta_data(meta_data)
     tags.save()
 
+
+def format_meta_data(meta_data: dict) -> str:
+    data_str = ""
+    for key in meta_data.keys():
+        if meta_data[key] == "":
+            continue
+        data_str += f"{key}${meta_data[key]};"
+    return data_str
+
+
+def parse_meta_data(meta_str: str) -> dict:
+    meta_str = str(meta_str)
+    meta_data = {}
+    if ";" in meta_str:
+        items = meta_str.split(";")
+        for item in items:
+            pair = item.split("$")
+            if len(pair) > 1:
+                meta_data[str(pair[0])] = str(pair[1])
+    if meta_data == {} and meta_str != "":
+        meta_data[ID] = meta_str
+    return meta_data
 
 def conv_artist_format(artists) -> str:
     """ Returns converted artist format """
