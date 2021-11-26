@@ -121,7 +121,9 @@ class DownloadController(QObject):
         dialog.setDirectory(Config.get_root_path())
         if dialog.exec_():
             dir = dialog.selectedFiles()
-            if len(dir) > 0: Config.set(ROOT_PATH, dir[0])
+            if len(dir) > 0:
+                Config.set(ROOT_PATH, dir[0])
+                self.downloadDirChanged.emit()
 
     def update_download_format(self, index):
         format = self.window.fileFormatCombo.itemText(index)
