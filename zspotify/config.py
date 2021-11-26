@@ -183,7 +183,7 @@ class Config:
 
     @classmethod
     def get_song_archive(cls) -> str:
-        return os.path.join(ZSpotify.CONFIG.get_root_path(), cls.get(SONG_ARCHIVE))
+        return os.path.join(cls.get_root_path(), cls.get(SONG_ARCHIVE))
 
     @classmethod
     def get_credentials_location(cls) -> str:
@@ -193,7 +193,7 @@ class Config:
     def get_temp_download_dir(cls) -> str:
         if cls.get(TEMP_DOWNLOAD_DIR) == '':
             return ''
-        return os.path.join(ZSpotify.CONFIG.get_root_path(), cls.get(TEMP_DOWNLOAD_DIR))
+        return os.path.join(cls.get_root_path(), cls.get(TEMP_DOWNLOAD_DIR))
 
     @classmethod
     def get_output(cls, mode: str) -> str:
