@@ -55,6 +55,11 @@ class ZSpotify:
         return True
 
     @classmethod
+    def logout(cls):
+        if cls.SESSION:
+            cls.SESSION.close()
+
+    @classmethod
     def search(cls, search_terms):
         # Clean search term
         """ Searches Spotify's API for relevant data """

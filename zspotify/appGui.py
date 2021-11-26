@@ -83,6 +83,12 @@ class Window(QMainWindow, Ui_MainWindow):
         else:
             self.on_login_finished(1)
 
+    def on_click_login(self):
+        if self.logged_in:
+            ZSpotify.logout()
+            self.loginBtn.setText("Login")
+        self.open_login_dialog()
+
     def open_login_dialog(self):
         login_dialog = LoginDialog()
         login_dialog.finished.connect(self.on_login_finished)
@@ -91,7 +97,7 @@ class Window(QMainWindow, Ui_MainWindow):
     def on_login_finished(self, result):
         if result == 1:
             self.logged_in = True
-            self.loginBtn.setEnabled(False)
+            self.loginBtn.setText("Logout")
             if ZSpotify.IS_PREMIUM:
                 self.accountTypeLabel.setText("Premium Account")
                 self.dlQualityLabel.setText("320kbps")
@@ -220,7 +226,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.searchTabs.currentChanged.connect(self.on_tab_change)
         self.libraryTabs.currentChanged.connect(self.on_tab_change)
         self.queueTabs.currentChanged.connect(self.on_tab_change)
-        self.loginBtn.clicked.connect(self.open_login_dialog)
+        self.loginBtn.clicked.connect(self.on_click_login)
         self.resultAmountCombo.currentIndexChanged.connect(self.update_result_amount)
         self.download_controller.downloadComplete.connect(self.init_downloads_view)
         self.download_controller.downloadDirChanged.connect(self.init_downloads_view)
