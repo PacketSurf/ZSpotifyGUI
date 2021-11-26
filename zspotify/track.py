@@ -218,7 +218,7 @@ def download_track(track_id: str, extra_keys='', prefix=False, prefix_value='', 
                         duration = Config.get_anti_ban_wait_time()
                         time.sleep(duration)
                         logger.info(f"Sleeping for anti ban time: {duration}s")
-
+                    logger.info(f"Successfully downloaded: {output_template}")
                     return DownloadStatus.SUCCESS
         except Exception as e:
             Printer.print(PrintChannel.ERRORS, '###   SKIPPING: ' + song_name + ' (GENERAL DOWNLOAD ERROR)   ###')

@@ -60,6 +60,7 @@ OUTPUT_DEFAULT_LIKED_SONGS = 'Liked Songs/{artist} - {song_name}.{ext}'
 OUTPUT_DEFAULT_SINGLE = '{artist} - {song_name}.{ext}'
 OUTPUT_DEFAULT_ALBUM = '{artist}/{album}/{album_num} - {artist} - {song_name}.{ext}'
 
+
 class Config:
     Values = {}
 
@@ -133,6 +134,7 @@ class Config:
         true_config_file_path = os.path.join(app_dir, CONFIG_FILE_PATH)
         with open(true_config_file_path, 'w', encoding='utf-8') as config_file:
             json.dump(cls.Values, config_file, indent=4)
+
     @classmethod
     def get(cls, key: str) -> Any:
         return cls.Values.get(key)

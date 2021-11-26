@@ -7,22 +7,17 @@ It's like youtube-dl, but for Spotify.
 """
 
 import sys
-import time
 import requests
 import logging
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, QThreadPool
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTreeWidget, QTreeWidgetItem, QFileDialog, QLineEdit
+from PyQt5.QtCore import QThreadPool
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTreeWidgetItem, QLineEdit
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.uic import loadUi
-from librespot.audio.decoders import AudioQuality
-from librespot.core import Session
 from main_window import Ui_MainWindow
 from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
 from config import Config, TOTAL_SEARCH_RESULTS
-from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
-    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, PREMIUM, COVER_DEFAULT,\
+from const import ARTISTS, TRACKS, ALBUMS, PLAYLISTS, COVER_DEFAULT, \
     DOWNLOADED, LIKED, SAVED_TRACKS_URL, LOG_FILE, LOGO_BANNER
 from worker import Worker
 from audio import MusicController, find_local_tracks, get_track_file_as_item
@@ -32,10 +27,10 @@ import qdarktheme
 from itemTree import ItemTree
 from item import Track, Artist, Album, Playlist
 from view import set_button_icon, set_label_image
-from config import Config
 
+logging.basicConfig(level=logging.INFO, filename=LOG_FILE,
+                    format='%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s')
 
-logging.basicConfig(level=logging.INFO, filename=LOG_FILE, format='%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s')
 
 def main():
     Config.load()
@@ -56,7 +51,7 @@ class Window(QMainWindow, Ui_MainWindow):
         set_label_image(self.bannerLabel, LOGO_BANNER)
         self.libraryTabList = ["Downloaded", "Liked"]
         self.searchTabList = [TRACKS, ARTISTS, ALBUMS, PLAYLISTS]
-        self.library = {DOWNLOADED:[], LIKED:[]}
+        self.library = {DOWNLOADED: [], LIKED: []}
         self.init_info_labels()
         self.init_tree_views()
         self.init_results_amount_combo()
@@ -119,7 +114,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.selected_tab.load_content()
         self.selected_tab.focus()
 
-    #run worker on thread that searches and return results through signal callback
+    # run worker on thread that searches and return results through signal callback
     def send_search_input(self):
         if ZSpotify.SESSION:
             search = self.searchInput.text()
@@ -139,7 +134,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.artists_tree.set_items(results[ARTISTS])
         self.albums_tree.set_items(results[ALBUMS])
         self.playlists_tree.set_items(results[PLAYLISTS])
-
 
     def update_item_info(self, item, headers, labels):
         if not item: return
@@ -171,7 +165,7 @@ class Window(QMainWindow, Ui_MainWindow):
             else:
                 self.info_headers[i].setText("")
 
-    #Does network call, be careful (Run in worker thread instead)
+    # Does network call, be careful (Run in worker thread instead)
     def request_cover_art(self, url):
         lbl = self.coverArtLabel
         pixmap = QPixmap(COVER_DEFAULT)
@@ -183,11 +177,9 @@ class Window(QMainWindow, Ui_MainWindow):
         lbl.setScaledContents(True)
         lbl.show()
 
-
     def update_result_amount(self, index):
         amount = int(self.resultAmountCombo.itemText(index))
         Config.set(TOTAL_SEARCH_RESULTS, amount)
-
 
     def select_next_item(self, current_item=None, tree=None):
         if not tree: tree = self.selected_tab
@@ -216,8 +208,10 @@ class Window(QMainWindow, Ui_MainWindow):
         return tree.select_index(index)
 
     def init_info_labels(self):
-        self.info_labels = [self.infoLabel1, self.infoLabel2, self.infoLabel3, self.infoLabel4, self.infoLabel5, self.infoLabel6]
-        self.info_headers = [self.infoHeader1, self.infoHeader2, self.infoHeader3, self.infoHeader4, self.infoHeader5, self.infoHeader6]
+        self.info_labels = [self.infoLabel1, self.infoLabel2, self.infoLabel3, self.infoLabel4, self.infoLabel5,
+                            self.infoLabel6]
+        self.info_headers = [self.infoHeader1, self.infoHeader2, self.infoHeader3, self.infoHeader4, self.infoHeader5,
+                             self.infoHeader6]
 
     def init_signals(self):
         self.searchBtn.clicked.connect(self.send_search_input)
@@ -241,15 +235,14 @@ class Window(QMainWindow, Ui_MainWindow):
             tree.signals.onListenQueued.connect(self.music_controller.queue_track)
             tree.signals.onDownloadQueued.connect(self.download_controller.on_click_download)
             return_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Return,
-                tree.tree,
-                context=QtCore.Qt.WidgetShortcut,
-                activated=self.on_press_return_item)
+                                                  tree.tree,
+                                                  context=QtCore.Qt.WidgetShortcut,
+                                                  activated=self.on_press_return_item)
 
             space_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Space,
-                tree.tree,
-                context=QtCore.Qt.WidgetShortcut,
-                activated=self.on_press_space_item)
-
+                                                 tree.tree,
+                                                 context=QtCore.Qt.WidgetShortcut,
+                                                 activated=self.on_press_space_item)
 
     def on_press_return_item(self):
         item = self.selected_tab.get_selected_item()
@@ -294,7 +287,7 @@ class Window(QMainWindow, Ui_MainWindow):
             if item in self.liked_tree.items:
                 continue
             else:
-                 self.liked_tree.set_items(items)
+                self.liked_tree.set_items(items)
 
     def init_downloads_view(self):
         try:
@@ -332,31 +325,38 @@ class Window(QMainWindow, Ui_MainWindow):
             if amount < amt: nextHighest = i
         self.resultAmountCombo.insertItem(nextHighest)
 
-    #Defines the information displayed in song tree headers, the QTreeWidgetItem lamba must
+    # Defines the information displayed in song tree headers, the QTreeWidgetItem lamba must
     # have variables that match the header text given in the next line
     def init_tree_views(self):
         self.songs_tree = ItemTree(self.songsTree)
-        self.songs_tree.set_header_item(Track("Index", 0,"Title", "Artists", "Album", duration="Duration", release_date="Release Date"))
+        self.songs_tree.set_header_item(
+            Track("Index", 0, "Title", "Artists", "Album", duration="Duration", release_date="Release Date"))
 
         self.artists_tree = ItemTree(self.artistsTree, lambda artist: QTreeWidgetItem([str(artist.index), artist.name]))
-        self.artists_tree.set_header_item(Artist("Index",0,"Name"))
+        self.artists_tree.set_header_item(Artist("Index", 0, "Name"))
 
-        self.albums_tree = ItemTree(self.albumsTree, lambda album: QTreeWidgetItem([str(album.index), album.title, album.artists, \
-            str(album.total_tracks), str(album.release_date)]))
-        self.albums_tree.set_header_item(Album("Index", 0,"Title", "Artists", "Total Tracks", "Release Date"))
+        self.albums_tree = ItemTree(self.albumsTree,
+                                    lambda album: QTreeWidgetItem([str(album.index), album.title, album.artists, \
+                                                                   str(album.total_tracks), str(album.release_date)]))
+        self.albums_tree.set_header_item(Album("Index", 0, "Title", "Artists", "Total Tracks", "Release Date"))
 
-        self.playlists_tree = ItemTree(self.playlistsTree, lambda playlist: QTreeWidgetItem([str(playlist.index), playlist.title, \
-            str(playlist.creator), str(playlist.total_tracks)]))
+        self.playlists_tree = ItemTree(self.playlistsTree,
+                                       lambda playlist: QTreeWidgetItem([str(playlist.index), playlist.title, \
+                                                                         str(playlist.creator),
+                                                                         str(playlist.total_tracks)]))
         self.playlists_tree.set_header_item(Playlist("Index", 0, "Title", "Author", "Total Tracks"))
 
-        self.download_tree = ItemTree(self.downloadedTree, lambda track: QTreeWidgetItem([track.title, track.artists, track.album]))
+        self.download_tree = ItemTree(self.downloadedTree,
+                                      lambda track: QTreeWidgetItem([track.title, track.artists, track.album]))
         self.download_tree.set_header_item(Track("", 0, "Title", "Artists", "Albums"))
 
-        self.liked_tree = ItemTree(self.likedTree, lambda track: QTreeWidgetItem([track.title, track.artists, track.album]))
+        self.liked_tree = ItemTree(self.likedTree,
+                                   lambda track: QTreeWidgetItem([track.title, track.artists, track.album]))
         self.liked_tree.set_header_item(Track("", 0, "Title", "Artists", "Albums"))
         self.liked_tree.load_function = self.init_liked_view
 
-        self.queue_tree = ItemTree(self.queueTree, lambda track: QTreeWidgetItem([track.title, track.artists, track.album]), False)
+        self.queue_tree = ItemTree(self.queueTree,
+                                   lambda track: QTreeWidgetItem([track.title, track.artists, track.album]), False)
         self.queue_tree.set_header_item(Track("", 0, "Title", "Artists", "Albums"))
         self.queue_tree.load_function = self.init_queue_view
 
@@ -364,19 +364,19 @@ class Window(QMainWindow, Ui_MainWindow):
         self.library_trees = [self.download_tree, self.liked_tree]
         self.queue_trees = [self.queue_tree]
         self.trees = [self.songs_tree, self.artists_tree, self.albums_tree, self.playlists_tree, \
-            self.download_tree, self.liked_tree, self.queue_tree]
+                      self.download_tree, self.liked_tree, self.queue_tree]
 
         for tree in self.library_trees:
-            tree.set_header_spacing(270,270,270)
-            tree.tree.sortItems(0,0)
+            tree.set_header_spacing(270, 270, 270)
+            tree.tree.sortItems(0, 0)
         for tree in self.queue_trees:
-            tree.set_header_spacing(270,270,270)
-            tree.tree.sortItems(0,0)
+            tree.set_header_spacing(270, 270, 270)
+            tree.tree.sortItems(0, 0)
         for tree in self.search_trees:
             tree.set_header_spacing(65)
-        self.songs_tree.set_header_spacing(65,-1,-1,-1,65)
-        self.albums_tree.set_header_spacing(65,-1,-1,80)
-        self.playlists_tree.set_header_spacing(65,-1,-1,80)
+        self.songs_tree.set_header_spacing(65, -1, -1, -1, 65)
+        self.albums_tree.set_header_spacing(65, -1, -1, 80)
+        self.playlists_tree.set_header_spacing(65, -1, -1, 80)
 
     def _cover_art_loader(self, item):
         if item.img == "" and not item.id == "":
@@ -388,7 +388,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
 class LoginDialog(QDialog, Ui_LoginDialog):
 
-    def __init__(self,parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
         self.retranslateUi(self)
@@ -412,7 +412,6 @@ class LoginDialog(QDialog, Ui_LoginDialog):
         worker.signals.result.connect(self.login_result)
         self.attempting_login = True
         QThreadPool.globalInstance().start(worker)
-
 
     def login_result(self, success):
         self.attempting_login = False
