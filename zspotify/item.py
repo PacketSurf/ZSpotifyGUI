@@ -23,8 +23,7 @@ class Track(Item):
         self.track_number = track_number
 
     def update_meta_tags(self):
-        print("MATE")
-        print(self.release_date)
+        print(self.artists)
         set_audio_tags(self.path, self.artists, self.title, self.album,
                        disc_number=self.disc_number, track_number=self.track_number, spotify_id=self.id, img=self.img)
 
