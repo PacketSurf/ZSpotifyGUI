@@ -14,7 +14,7 @@ import subprocess
 from const import TRACKS, ALBUM, NAME, ITEMS, DISC_NUMBER, TRACK_NUMBER, IS_PLAYABLE, ARTISTS, IMAGES, URL, \
     RELEASE_DATE, ID, TRACKS_URL, SAVED_TRACKS_URL, TRACK_STATS_URL, CODEC_MAP, EXT_MAP, DURATION_MS
 from termoutput import Printer, PrintChannel
-from utils import fix_filename, set_audio_tags, set_music_thumbnail, create_download_directory, \
+from utils import fix_filename, conv_artist_format, set_audio_tags, set_music_thumbnail, create_download_directory, \
     get_directory_song_ids, add_to_directory_song_ids, get_previously_downloaded, add_to_archive
 from zspotify import ZSpotify
 from config import Config
@@ -200,7 +200,7 @@ def download_track(track_id: str, extra_keys='', prefix=False, prefix_value='', 
 
                     convert_audio_format(filename)
                     logger.info("Setting track metadata.")
-                    set_audio_tags(filename, artists, name, album_name,
+                    set_audio_tags(filename, conv_artist_format(artists), name, album_name,
                                 release_year, disc_number, track_number, spotify_id=scraped_song_id, img=image_url)
                     logger.info("Setting track thumbnail.")
                     set_music_thumbnail(filename, image_url)

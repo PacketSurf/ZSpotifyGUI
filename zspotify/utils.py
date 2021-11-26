@@ -123,7 +123,7 @@ def set_audio_tags(filename, artists, name, album_name, release_year=-1, disc_nu
     """ sets music_tag metadata """
     tags = music_tag.load_file(filename)
     tags[ALBUMARTIST] = artists[0]
-    tags[ARTIST] = conv_artist_format(artists)
+    tags[ARTIST] = artists
     tags[TRACKTITLE] = name
     tags[ALBUM] = album_name
     tags[YEAR] = release_year
