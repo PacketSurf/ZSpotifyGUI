@@ -347,5 +347,4 @@ def get_track_file_as_item(file, index):
 def find_id_in_metadata(path):
     tag = music_tag.load_file(path)
     data = parse_meta_data(tag[COMMENT])
-    print(f"mate{data.get(ID)}")
     return data.get(ID) if None else ""
