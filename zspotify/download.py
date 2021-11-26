@@ -78,9 +78,7 @@ class DownloadController(QObject):
             print(e)
             return DownloadStatus.FAILED
 
-
     def on_download_complete(self, status):
-        print(f"yoo{status}")
         if status and status.value == DownloadStatus.FAILED.value:
             self.window.on_api_error()
         self.window.progressBar.setValue(0)
@@ -100,7 +98,6 @@ class DownloadController(QObject):
         QApplication.processEvents()
         if len(self.download_queue) > 0:
             self.start_download(self.download_queue[0])
-
 
     def update_dl_progress(self, amount):
         perc = int(amount*100)

@@ -333,7 +333,7 @@ class Ui_MainWindow(object):
         self.elapsedTimeLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.elapsedTimeLabel.setObjectName("elapsedTimeLabel")
         self.horizontalLayout_6.addWidget(self.elapsedTimeLabel)
-        self.playbackBar = QtWidgets.QSlider(self.mediaControls)
+        self.playbackBar = SeekableSlider(self.mediaControls)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -380,7 +380,7 @@ class Ui_MainWindow(object):
         self.label_7.setTextFormat(QtCore.Qt.RichText)
         self.label_7.setObjectName("label_7")
         self.horizontalLayout_5.addWidget(self.label_7)
-        self.volumeSlider = QtWidgets.QSlider(self.mediaControls)
+        self.volumeSlider = SeekableSlider(self.mediaControls)
         self.volumeSlider.setMinimumSize(QtCore.QSize(150, 0))
         self.volumeSlider.setMaximumSize(QtCore.QSize(150, 10))
         self.volumeSlider.setStyleSheet("color:#5d605f")
@@ -689,3 +689,4 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Download Queue:"))
         self.downloadBtn.setText(_translate("MainWindow", "Download "))
         self.dirBtn.setToolTip(_translate("MainWindow", "Change download directory"))
+from view import SeekableSlider

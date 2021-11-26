@@ -1032,7 +1032,7 @@ QTabWidget::tab-bar
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSlider" name="playbackBar">
+                  <widget class="SeekableSlider" name="playbackBar">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -1163,7 +1163,7 @@ QTabWidget::tab-bar
               </widget>
              </item>
              <item>
-              <widget class="QSlider" name="volumeSlider">
+              <widget class="SeekableSlider" name="volumeSlider">
                <property name="minimumSize">
                 <size>
                  <width>150</width>
@@ -1758,6 +1758,13 @@ QTabWidget::tab-bar
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SeekableSlider</class>
+   <extends>QSlider</extends>
+   <header>view</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -135,19 +135,17 @@ class MusicController(QObject):
         self.window.remainingTimeLabel.setText(f"-{ms_to_time_str(int(total)-int(elapsed))}")
 
     def run_progress_bar(self, signal, *args, **kwargs):
-        while(self.audio_player.is_playing() or self.awaiting_play):
+        while self.audio_player.is_playing() or self.awaiting_play:
             self.awaiting_play = False
             if self.audio_player and self.audio_player.player.get_length() > 0:
-                signal(round(self.audio_player.get_elapsed_percent(),9), self.audio_player.player.get_time(), \
-                    self.audio_player.player.get_length())
+                signal(round(self.audio_player.get_elapsed_percent(), 9), self.audio_player.player.get_time(),
+                       self.audio_player.player.get_length())
             QtTest.QTest.qWait(100)
-
 
     def on_progress_finished(self):
         self.worker = None
         if self.queue_next_song:
             self.on_next()
-
 
     def set_volume(self, value):
         self.audio_player.set_volume(value)
@@ -163,11 +161,17 @@ class MusicController(QObject):
                 self.play(self.window.selected_item, self.window.selected_tab)
             else: self.unpause()
 
+    def seek_to_percent(self, percent):
+        self.seeking = True
+        self.audio_player.set_time(percent)
+        self.seeking = False
+
     def on_seek(self):
         self.seeking = True
 
     def on_stop_seeking(self):
         percent = self.window.playbackBar.value()/self.window.playbackBar.maximum()
+        print(percent)
         self.audio_player.set_time(percent)
         self.seeking = False
 
@@ -238,11 +242,13 @@ class MusicController(QObject):
         self.window.playBtn.clicked.connect(self.on_press_play)
         self.window.playbackBar.sliderPressed.connect(self.on_seek)
         self.window.playbackBar.sliderReleased.connect(self.on_stop_seeking)
+        self.window.playbackBar.onClicked.connect(self.seek_to_percent)
         self.window.volumeSlider.valueChanged.connect(self.set_volume)
         self.window.nextBtn.clicked.connect(self.on_next)
         self.window.prevBtn.clicked.connect(self.on_prev)
         self.window.shuffleBtn.clicked.connect(self.toggle_shuffle)
         self.window.repeatBtn.clicked.connect(self.toggle_repeat)
+
 
 class AudioPlayer:
 
@@ -258,11 +264,10 @@ class AudioPlayer:
         self.volume = 100
 
     def play(self, track):
-        if self.player != None and self.track != None:
-                if self.is_playing:
-                    self.player.stop()
+        if self.player and self.track and self.is_playing:
+            self.player.stop()
         self.audio_file = track.path
-        if self.audio_file != None:
+        if self.audio_file:
             self.track = track
             self.playing = True
             try:
@@ -286,23 +291,23 @@ class AudioPlayer:
             self.player.set_time(0)
 
     def get_elapsed_percent(self):
-        if self.player == None or self.player.get_length() == 0: return 0
+        if not self.player or self.player.get_length() == 0:
+            return 0
         return self.player.get_time()/self.player.get_length()
 
     def set_time(self, percent):
-        if self.player == None: return
+        if not self.player: return
         self.player.set_position(percent)
 
-
     def is_playing(self):
-        if self.player != None and self.player.is_playing():
+        if self.player and self.player.is_playing():
             self.playing = self.player.is_playing()
             return True
         return False
 
     def set_volume(self, value):
         self.volume = max(0, min(100, value))
-        if self.player != None:
+        if self.player:
             self.player.audio_set_volume(value)
 
 
@@ -311,6 +316,7 @@ def find_local_track(id):
     for file in track_files:
         if find_id_in_metadata(file) == str(id): return file
     return None
+
 
 def find_local_tracks():
     root = Config.get_root_path()
@@ -324,6 +330,7 @@ def find_local_tracks():
             logger.error(e)
     return all_results
 
+
 def get_track_file_as_item(file, index):
     for format in FORMATS:
         if format in file:
@@ -332,6 +339,7 @@ def get_track_file_as_item(file, index):
                 album=str(tag[ALBUM]), downloaded=True, path=Path(file))
             return track
     return None
+
 
 def find_id_in_metadata(path):
     tag = music_tag.load_file(path)

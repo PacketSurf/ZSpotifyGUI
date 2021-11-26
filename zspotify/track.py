@@ -63,6 +63,7 @@ def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any
 
     return artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable, duration_ms
 
+
 def get_cover_art(song_id):
     """ Retrieves url for song cover art """
     try:
@@ -82,6 +83,7 @@ def get_song_duration(song_id: str) -> float:
 
     return duration
 
+
 def play_track(spotify_id):
     track_id = TrackId.from_base62(spotify_id)
     stream = ZSpotify.SESSION.content_feeder().load(track_id,
@@ -98,6 +100,7 @@ def play_track(spotify_id):
         if byte == -1:
             return
         ffplay.stdin.write(byte)
+
 
 # noinspection PyBroadException
 def download_track(track_id: str, extra_keys='', prefix=False, prefix_value='', disable_progressbar=False, progress_callback=None, mode: str="single") -> None:
@@ -140,8 +143,6 @@ def download_track(track_id: str, extra_keys='', prefix=False, prefix_value='', 
             ext = os.path.splitext(os.path.basename(filename))[1]
 
             filename = os.path.join(filedir, f'{fname}_{c}{ext}')
-
-
 
     except Exception as e:
         logger.error(e)
