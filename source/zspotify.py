@@ -47,7 +47,7 @@ class ZSpotify:
         elif username != "" and password != "":
             try:
                 conf = Session.Configuration.Builder().set_stored_credential_file(cred_location).build()
-                cls.SESSION = Session.Builder(conf).user_pass(user_name, password).create()
+                cls.SESSION = Session.Builder(conf).user_pass(username, password).create()
             except Exception as e:
                 logger.error(e)
                 return False
