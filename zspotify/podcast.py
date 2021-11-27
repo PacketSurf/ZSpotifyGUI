@@ -15,7 +15,7 @@ SHOWS_URL = 'https://api.spotify.com/v1/shows'
 
 
 def get_episode_info(episode_id_str) -> Tuple[Optional[str], Optional[str]]:
-    info = ZSpotify.invoke_url(f'{EPISODE_INFO_URL}/{episode_id_str}')
+    (raw, info) = ZSpotify.invoke_url(f'{EPISODE_INFO_URL}/{episode_id_str}')
     if ERROR in info:
         return None, None
     return fix_filename(info[SHOW][NAME]), fix_filename(info[NAME])
@@ -78,11 +78,7 @@ def download_episode(episode_id) -> None:
         direct_download_url = ZSpotify.invoke_url(
             'https://api-partner.spotify.com/pathfinder/v1/query?operationName=getEpisode&variables={"uri":"spotify:episode:' + episode_id + '"}&extensions={"persistedQuery":{"version":1,"sha256Hash":"224ba0fd89fcfdfb3a15fa2d82a6112d3f4e2ac88fba5c6713de04d1b72cf482"}}')["data"]["episode"]["audio"]["items"][-1]["url"]
 
-        download_directory = os.path.join(
-            os.path.dirname(__file__),
-            Config.get_root_podcast_path(),
-            extra_paths,
-        )
+        download_directory = os.path.join(Config.get_root_podcast_path(), extra_paths)
         download_directory = os.path.realpath(download_directory)
         create_download_directory(download_directory)
 

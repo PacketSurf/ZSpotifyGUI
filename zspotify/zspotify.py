@@ -35,7 +35,10 @@ class ZSpotify:
     @classmethod
     def login(cls, username="", password=""):
         """ Authenticates with Spotify and saves credentials to a file """
-        if os.path.isfile(Config.get_credentials_location()):
+
+        cred_location = Config.get_credentials_location()
+
+        if os.path.isfile(cred_location):
             try:
                 cls.SESSION = Session.Builder().stored_file().create()
             except:
@@ -43,7 +46,8 @@ class ZSpotify:
                 return False
         elif username != "" and password != "":
             try:
-                cls.SESSION = Session.Builder().user_pass(username, password).create();
+                conf = Session.Configuration.Builder().set_stored_credential_file(cred_location).build()
+                cls.SESSION = Session.Builder(conf).user_pass(user_name, password).create()
             except Exception as e:
                 logger.error(e)
                 return False
@@ -187,7 +191,8 @@ class ZSpotify:
     @classmethod
     def invoke_url(cls, url):
         headers = cls.get_auth_header()
-        return requests.get(url, headers=headers).json()
+        response = requests.get(url, headers=headers)
+        return response.text, response.json()
 
     @classmethod
     def check_premium(cls) -> bool:
