@@ -47,7 +47,6 @@ def get_saved_tracks() -> list:
 def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any, Any, int]:
     """ Retrieves metadata for downloaded songs """
     info = ZSpotify.invoke_url(f'{TRACKS_URL}?ids={song_id}&market=from_token')
-
     artists = []
     for data in info[TRACKS][0][ARTISTS]:
         artists.append(data[NAME])
@@ -103,22 +102,19 @@ def play_track(spotify_id):
 
 
 # noinspection PyBroadException
-def download_track(track_id: str, extra_keys='', prefix=False, prefix_value='', disable_progressbar=False, progress_callback=None, mode: str="single") -> None:
+def download_track(track_id: str, extra_keys='', prefix=False, prefix_value='', disable_progressbar=False,
+                   progress_callback=None, mode: str="single") -> None:
     """ Downloads raw song audio from Spotify """
     try:
-
         logger.info(f"Initialising download {track_id}.")
         (artists, album_name, name, image_url, release_year, disc_number,
          track_number, scraped_song_id, is_playable, duration_ms) = get_song_info(track_id)
         logger.info(f"Scraped track info.")
-
         song_name = fix_filename(artists[0]) + ' - ' + fix_filename(name)
 
         output_template = Config.get_output(mode)
-
         for k in extra_keys:
             output_template = output_template.replace("{"+k+"}", fix_filename(extra_keys[k]))
-
         output_template = output_template.replace("{artist}", fix_filename(artists[0]))
         output_template = output_template.replace("{album}", fix_filename(album_name))
         output_template = output_template.replace("{song_name}", fix_filename(name))

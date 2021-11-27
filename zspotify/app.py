@@ -11,7 +11,7 @@ from termoutput import Printer, PrintChannel
 from track import download_track, get_saved_tracks
 from utils import fix_filename, splash, split_input, regex_input_for_urls
 from zspotify import ZSpotify
-
+from config import Config
 SEARCH_URL = 'https://api.spotify.com/v1/search'
 
 
@@ -69,7 +69,8 @@ def client(args) -> None:
         if not download_from_urls([search_text]):
             search(search_text)
 
-def download_from_urls(urls: list[str]) -> bool:
+
+def download_from_urls(urls) -> bool:
     """ Downloads from a list of spotify urls """
     download = False
 
@@ -283,5 +284,5 @@ def search(search_term):
                         download_artist_albums(dic[ID])
                     else:
                         download_playlist(dic[ID])
-if __name__ == '__main__':
-    client(args)
+
+
