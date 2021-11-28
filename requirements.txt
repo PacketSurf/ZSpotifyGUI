@@ -9,3 +9,4 @@ pyqtdarktheme
 python-vlc
 requests
 tqdm
+pydub
