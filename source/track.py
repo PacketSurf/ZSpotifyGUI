@@ -77,7 +77,7 @@ def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any
 def get_cover_art(song_id):
     """ Retrieves url for song cover art """
     try:
-        info = ZSpotify.invoke_url(f'{TRACKS_URL}?ids={song_id}&market=from_token')
+        (text, info) = ZSpotify.invoke_url(f'{TRACKS_URL}?ids={song_id}&market=from_token')
         return info[TRACKS][0][ALBUM][IMAGES][0][URL]
     except Exception as e:
         logger.error(e)
