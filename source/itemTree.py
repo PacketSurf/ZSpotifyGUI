@@ -131,6 +131,7 @@ class ItemTree:
     def on_double_clicked(self,widget_item, item):
         item = self.get_selected_item()
         if item:
+            self.tree.itemClicked.emit(widget_item, self.item_index(item))
             self.signals.doubleClicked.emit(item, self)
 
     def on_delete_item(self):

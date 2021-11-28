@@ -237,22 +237,23 @@ class Window(QMainWindow, Ui_MainWindow):
                 tree.signals.doubleClicked.connect(self.music_controller.on_play_queue_song)
             tree.signals.itemChanged.connect(self.update_item_info)
             tree.signals.onSelected.connect(self.update_item_labels)
-            tree.signals.doubleClicked.connect(self.music_controller.play)
+            tree.signals.doubleClicked.connect(self.on_try_play_item)
             tree.signals.onListenQueued.connect(self.music_controller.queue_track)
             tree.signals.onDownloadQueued.connect(self.download_controller.on_click_download)
             return_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Return,
                                                   tree.tree,
                                                   context=QtCore.Qt.WidgetShortcut,
-                                                  activated=self.on_press_return_item)
+                                                  activated=self.on_try_play_item)
 
             space_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Space,
                                                  tree.tree,
                                                  context=QtCore.Qt.WidgetShortcut,
                                                  activated=self.on_press_space_item)
 
-    def on_press_return_item(self):
+    def on_try_play_item(self):
         item = self.selected_tab.get_selected_item()
-        if item: self.music_controller.play(item, self.selected_tab)
+        if item and self.selected_tab.can_play:
+            self.music_controller.play(item, self.selected_tab)
 
     def on_press_space_item(self):
         item = self.selected_tab.get_selected_item()

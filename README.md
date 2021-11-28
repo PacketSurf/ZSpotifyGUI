@@ -12,12 +12,12 @@
 
 
 Take full advantage of the power of ZSpotify with this user-friendly graphical interface.
-- Find the music you want faster and easier.
+- Find and download the music you want faster and easier.
 - Listen to your music directly in ZSpotify with it's fully featured music player.
 - Continue to search for music while downloading.
 - Queue up downloads so you can maximise your downloading potential.
-- Your spotify likes sync into the client, allowing you to easily download them
-- Easily change settings such as real-time-download, download format, download directory, and search results
+- Your spotify likes sync into the client, allowing you to easily download them.
+- Easily change settings such as real-time-download, download format, download directory, and search results within the client.
 
 <h3>SCREENSHOTS</h3>
 <p align="center">
@@ -33,7 +33,7 @@ WINDOWS:
   - Run the installer and follow the installation instructions.
   - You will find ZSpotify in your start menu, and Desktop (if chosen).
   - If you did not have VLC installed already, you will need to restart your PC after installation. If you already had it, then a restart is not necessary.
-  
+
 <br/>
 
 MAC:

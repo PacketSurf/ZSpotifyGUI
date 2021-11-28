@@ -222,7 +222,7 @@ def download_track(track_id: str, extra_keys='', prefix=False, prefix_value='', 
 
                     convert_audio_format(filename_temp)
                     logger.info("Setting track metadata.")
-                    set_audio_tags(filename_temp, artists, name, album_name, release_year, disc_number, track_number)
+                    set_audio_tags(filename_temp, artists, name, album_name, release_year, disc_number, track_number, spotify_id=scraped_song_id, img=image_url)
                     logger.info("Setting track thumbnail.")
                     set_music_thumbnail(filename_temp, image_url)
 

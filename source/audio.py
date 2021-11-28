@@ -53,6 +53,7 @@ class MusicController(QObject):
 
 
     def play(self, item, playlist_tree):
+        if not playlist_tree.can_play: return
         if self.audio_player.play(item):
             logger.info(f"Playing track: {item.id}")
             self.start_progress_worker()
