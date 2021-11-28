@@ -45,7 +45,7 @@ CONFIG_VALUES = {
     LANGUAGE:                   { 'default': 'en',                    'type': str,  'arg': '--language'                   },
     BITRATE:                    { 'default': '',                      'type': str,  'arg': '--bitrate'                    },
     SONG_ARCHIVE:               { 'default': '.song_archive',         'type': str,  'arg': '--song-archive'               },
-    CREDENTIALS_LOCATION:       { 'default': 'credentials.json',      'type': str,  'arg': '--credentials-location'       },
+    CREDENTIALS_LOCATION:       { 'default': '../credentials.json',   'type': str,  'arg': '--credentials-location'       },
     TOTAL_SEARCH_RESULTS:       { 'default': '50',                    'type': int,  'arg': '--total_search_results'       },
     OUTPUT:                     { 'default': '',                      'type': str,  'arg': '--output'                     },
     PRINT_SPLASH:               { 'default': 'True',                  'type': bool, 'arg': '--print-splash'               },
