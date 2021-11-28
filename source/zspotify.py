@@ -143,7 +143,7 @@ class ZSpotify:
 
     @classmethod
     def load_tracks_url(cls, url):
-        items = cls.invoke_url(url)
+        text, items = cls.invoke_url(url)
         if not items or len(items) <= 0: return
         index = 0
         tracks = []
