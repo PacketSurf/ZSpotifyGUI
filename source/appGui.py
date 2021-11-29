@@ -5,10 +5,10 @@ It's like youtube-dl, but for Spotify.
 (GUI made by PacketSurf - github.com/PacketSurf)
 (ZSpotify made by Deathmonger/Footsiefat - @doomslayer117:matrix.org | github.com/Footsiefat)
 """
-import os
 import sys
 import requests
 import logging
+import subprocess
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QThreadPool
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTreeWidgetItem, QLineEdit
@@ -18,15 +18,16 @@ from login_dialog import Ui_LoginDialog
 from zspotify import ZSpotify
 from config import Config, TOTAL_SEARCH_RESULTS
 from const import ARTISTS, TRACKS, ALBUMS, PLAYLISTS, COVER_DEFAULT, \
-    DOWNLOADED, LIKED, SAVED_TRACKS_URL, LOG_FILE, LOGO_BANNER
+    DOWNLOADED, LIKED, SAVED_TRACKS_URL, LOG_FILE, LOGO_BANNER, UPDATE_SCRIPT
 from worker import Worker
 from audio import MusicController, find_local_tracks, get_track_file_as_item
 from download import DownloadController
-from track import play_track, get_cover_art
+from track import get_cover_art
 import qdarktheme
 from itemTree import ItemTree
 from item import Track, Artist, Album, Playlist
-from view import set_button_icon, set_label_image
+from view import set_label_image
+from zspotify.update import is_up_to_date
 
 logging.basicConfig(level=logging.INFO, filename=LOG_FILE,
                     format='%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s')
@@ -75,6 +76,13 @@ class Window(QMainWindow, Ui_MainWindow):
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.focus()
         self.reconnecting = False
+        if is_up_to_date():
+            print('up to date')
+            #self.updateBtn.setEnabled(False)
+            #self.updateBtn.setText("Up to date")
+        else:
+            self.updateBtn.setEnabled(True)
+            self.updateBtn.setText("Update")
 
     def show(self):
         super().show()
@@ -386,9 +394,13 @@ class Window(QMainWindow, Ui_MainWindow):
         self.albums_tree.set_header_spacing(65, -1, -1, 80)
         self.playlists_tree.set_header_spacing(65, -1, -1, 80)
 
+
+
+
     def update_zspotify(self):
-        os.system(".././zspot_update.sh")
+
         QApplication.quit()
+        subprocess.Popen(UPDATE_SCRIPT, shell=True)
 
     def _cover_art_loader(self, item):
         if item.img == "" and not item.id == "":

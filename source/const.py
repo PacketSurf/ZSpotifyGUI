@@ -1,4 +1,12 @@
+UPDATE_SCRIPT = '.././zspot_update.sh'
 
+VERSION_FILE = 'zspot_info.json'
+
+UPDATED_AT = 'updated_at'
+
+REPO = 'https://github.com/PacketSurf/ZSpotifyGUI.git'
+
+REPO_API = 'https://api.github.com/repos/PacketSurf/ZSpotifyGUI'
 
 SAVED_TRACKS_URL = 'https://api.spotify.com/v1/me/tracks'
 

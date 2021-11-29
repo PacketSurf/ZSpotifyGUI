@@ -22,6 +22,7 @@ BITRATE = 'BITRATE'
 SONG_ARCHIVE = 'SONG_ARCHIVE'
 CREDENTIALS_LOCATION = 'CREDENTIALS_LOCATION'
 TOTAL_SEARCH_RESULTS = 'TOTAL_SEARCH_RESULTS'
+LAST_UPDATED = '-'
 OUTPUT = 'OUTPUT'
 PRINT_SPLASH = 'PRINT_SPLASH'
 PRINT_SKIPS = 'PRINT_SKIPS'
@@ -47,6 +48,7 @@ CONFIG_VALUES = {
     SONG_ARCHIVE:               { 'default': '.song_archive',         'type': str,  'arg': '--song-archive'               },
     CREDENTIALS_LOCATION:       { 'default': '../credentials.json',   'type': str,  'arg': '--credentials-location'       },
     TOTAL_SEARCH_RESULTS:       { 'default': '50',                    'type': int,  'arg': '--total_search_results'       },
+    LAST_UPDATED:               { 'default':  '-',                    'type': str,  'arg': '--last_updated'               },
     OUTPUT:                     { 'default': '',                      'type': str,  'arg': '--output'                     },
     PRINT_SPLASH:               { 'default': 'True',                  'type': bool, 'arg': '--print-splash'               },
     PRINT_SKIPS:                { 'default': 'True',                  'type': bool, 'arg': '--print-skips'                },
@@ -210,6 +212,10 @@ class Config:
     @classmethod
     def get_total_search_results(cls):
         return cls.get(TOTAL_SEARCH_RESULTS)
+
+    @classmethod
+    def get_last_updated(cls):
+        return cls.get(LAST_UPDATED)
 
     @classmethod
     def get_output(cls, mode: str) -> str:

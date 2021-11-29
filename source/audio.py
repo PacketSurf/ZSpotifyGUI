@@ -51,7 +51,6 @@ class MusicController(QObject):
         set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
         set_button_icon(self.window.listenQueueBtn, LISTEN_QUEUE_ICON)
 
-
     def play(self, item, playlist_tree):
         if not playlist_tree.can_play: return
         if self.audio_player.play(item):
@@ -70,7 +69,6 @@ class MusicController(QObject):
                 self.playlist_tree = playlist_tree
                 self.playlist_tree.select_item(item)
             self.onPlay.emit(item)
-
 
     def start_progress_worker(self):
         self.worker = Worker(self.run_progress_bar, update=self.update_music_progress, signals=MusicSignals())

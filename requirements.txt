@@ -8,3 +8,4 @@ PyQt5
 pyqtdarktheme
 python-vlc
 requests
+tqdm
