@@ -11,7 +11,6 @@ from typing import List, Tuple
 import logging
 import music_tag
 import requests
-import json
 from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
     WINDOWS_SYSTEM, ALBUMARTIST, COMMENT, ID, UPDATED_AT, REPO_API
 from config import Config, LAST_UPDATED
@@ -325,4 +324,32 @@ def fmt_seconds(secs: float) -> str:
     else:
         return f'{h}'.zfill(2) + ':' + f'{m}'.zfill(2) + ':' + f'{s}'.zfill(2)
 
+def is_up_to_date():
+    last_updated = Config.get_last_updated()
+    result = requests.get(REPO_API)
+    data = result.json()
+    [print(key) for key in data.keys()]
+    new_last_updated = data[UPDATED_AT]
+    if last_updated == "-":
+        Config.set(LAST_UPDATED, new_last_updated)
+        return True
+    up_date, up_time = parse_updated_str(last_updated)
+    new_up_date, new_up_time = parse_updated_str(new_last_updated)
+    if new_up_date < up_date:
+        return True
+    elif new_up_date == up_date:
+        if new_up_time >= up_time:
+            return True
+    return False
 
+
+def parse_updated_str(updated_str: str):
+    if "T" not in updated_str:
+        return None, None
+    split = updated_str.split("T")
+    if len(split) < 1:
+        return None, None
+    up_date = time.strptime(split[0], '%Y-%m-%d')
+    time_str = split[1].replace("Z", "")
+    up_info = time.strptime(time_str, '%H:%M:%S')
+    return up_date, up_info

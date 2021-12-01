@@ -27,7 +27,7 @@ import qdarktheme
 from itemTree import ItemTree
 from item import Track, Artist, Album, Playlist
 from view import set_label_image
-from zspotify.update import is_up_to_date
+from utils import is_up_to_date
 
 logging.basicConfig(level=logging.INFO, filename=LOG_FILE,
                     format='%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s')
@@ -395,10 +395,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.playlists_tree.set_header_spacing(65, -1, -1, 80)
 
 
-
-
     def update_zspotify(self):
-
         QApplication.quit()
         subprocess.Popen(UPDATE_SCRIPT, shell=True)
 

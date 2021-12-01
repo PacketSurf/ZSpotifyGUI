@@ -1,8 +1,8 @@
-UPDATE_SCRIPT = '.././zspot_update.sh'
+UPDATE_SCRIPT = 'python3 ../update.py -r'
 
 VERSION_FILE = 'zspot_info.json'
 
-UPDATED_AT = 'updated_at'
+UPDATED_AT = 'pushed_at'
 
 REPO = 'https://github.com/PacketSurf/ZSpotifyGUI.git'
 
