@@ -1,7 +1,7 @@
 import os
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QSlider
+from PyQt5 import QtGui
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QSlider, QMessageBox
 from PyQt5.QtCore import pyqtSignal
 
 
@@ -39,3 +39,17 @@ def set_label_image(label, icon_path):
     label.setPixmap(pixmap)
     label.setScaledContents(True)
     label.show()
+
+def show_confirmation_dialog(text, title="Are you sure?", callback=None):
+    msgBox = QMessageBox()
+    msgBox.setIcon(QMessageBox.Information)
+    msgBox.setText(text)
+    msgBox.setWindowTitle(title)
+    msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+    if callback:
+        msgBox.buttonClicked.connect(callback)
+
+    resp = msgBox.exec()
+    if resp == QMessageBox.Ok:
+        return True
+    return False

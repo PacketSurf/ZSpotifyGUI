@@ -26,7 +26,7 @@ from track import get_cover_art
 import qdarktheme
 from itemTree import ItemTree
 from item import Track, Artist, Album, Playlist
-from view import set_label_image
+from view import set_label_image, show_confirmation_dialog
 from utils import is_up_to_date
 
 logging.basicConfig(level=logging.INFO, filename=LOG_FILE,
@@ -396,8 +396,11 @@ class Window(QMainWindow, Ui_MainWindow):
 
 
     def update_zspotify(self):
-        QApplication.quit()
-        subprocess.Popen(UPDATE_SCRIPT, shell=True)
+        confirmation = show_confirmation_dialog("Would you like to update ZSpotify? This will interrupt any active downloads.",
+                                                title="Update ZSpotify?")
+        if confirmation:
+            QApplication.quit()
+            subprocess.Popen(UPDATE_SCRIPT, shell=True)
 
     def _cover_art_loader(self, item):
         if item.img == "" and not item.id == "":
