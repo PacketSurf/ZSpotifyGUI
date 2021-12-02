@@ -57,6 +57,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.init_tree_views()
         self.init_results_amount_combo()
         self.init_downloads_view()
+        self.init_update_btn()
         set_label_image(self.coverArtLabel, COVER_DEFAULT)
         self.tabs = [self.library_trees, self.search_trees, self.queue_trees]
         self.tabWidgets = [self.libraryTabs, self.searchTabs, self.queueTabs]
@@ -76,13 +77,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.focus()
         self.reconnecting = False
-        if is_up_to_date():
-            print('up to date')
-            #self.updateBtn.setEnabled(False)
-            #self.updateBtn.setText("Up to date")
-        else:
-            self.updateBtn.setEnabled(True)
-            self.updateBtn.setText("Update")
 
     def show(self):
         super().show()
@@ -340,6 +334,14 @@ class Window(QMainWindow, Ui_MainWindow):
                 return
             if amount < amt: nextHighest = i
         self.resultAmountCombo.insertItem(nextHighest)
+
+    def init_update_btn(self):
+        if is_up_to_date():
+            self.updateBtn.setEnabled(False)
+            self.updateBtn.setText("Up to date")
+        else:
+            self.updateBtn.setEnabled(True)
+            self.updateBtn.setText("Update")
 
     # Defines the information displayed in song tree headers, the QTreeWidgetItem lamba must
     # have variables that match the header text given in the next line

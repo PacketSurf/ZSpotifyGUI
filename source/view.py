@@ -40,6 +40,7 @@ def set_label_image(label, icon_path):
     label.setScaledContents(True)
     label.show()
 
+
 def show_confirmation_dialog(text, title="Are you sure?", callback=None):
     msgBox = QMessageBox()
     msgBox.setIcon(QMessageBox.Information)
