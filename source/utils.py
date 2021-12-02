@@ -328,7 +328,6 @@ def is_up_to_date():
     last_updated = Config.get_last_updated()
     result = requests.get(REPO_API)
     data = result.json()
-    [print(key) for key in data.keys()]
     new_last_updated = data[UPDATED_AT]
     if last_updated == "-":
         Config.set(LAST_UPDATED, new_last_updated)
