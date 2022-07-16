@@ -35,11 +35,14 @@ class MusicController(QObject):
         self.playlist_tree = None
         self.shuffle = False
         self.repeat = False
+
         self.listen_queue = []
         self.shuffle_queue = []
         self.awaiting_play = False
         self.queue_next_song = False
         self.paused = False
+        self.muted = False
+        self._volume = 100
         self.seeking = False
         self.worker = None
         self.audio_player = AudioPlayer(self.update_music_progress)
@@ -51,6 +54,7 @@ class MusicController(QObject):
         set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
         set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
         set_button_icon(self.window.listenQueueBtn, LISTEN_QUEUE_ICON)
+        set_button_icon(self.window.volIconBtn, VOL_ICON)
         if Config.get_enable_media_keys():
             keyboard.on_press(self.key_pressed)
 
@@ -152,10 +156,12 @@ class MusicController(QObject):
             self.on_next()
 
     def set_volume(self, value):
+        self._volume = value
+        self.muted = False
         self.audio_player.set_volume(value)
         if value == 0:
-            set_label_image(self.window.volIconLabel, MUTE_ICON)
-        else: set_label_image(self.window.volIconLabel, VOL_ICON)
+            self.set_button_icon(self.window.volIconBtn, MUTE_ICON)
+        else: self.set_button_icon(self.window.volIconBtn, VOL_ICON)
 
     def on_press_play(self):
         if self.audio_player.is_playing():
@@ -222,6 +228,16 @@ class MusicController(QObject):
         if item in self.shuffle_queue:
             self.shuffle_queue
 
+    def toggle_mute(self):
+        if self.muted:
+            self.audio_player.set_volume(self._volume)
+            if self._volume != 0:
+                self.set_button_icon(self.window.volIconBtn, VOL_ICON)
+        else:
+            self.audio_player.set_volume(0)
+            self.set_button_icon(self.window.volIconBtn, MUTE_ICON)
+        self.muted = not self.muted
+
 
     def update_playing_info(self, item):
         self.window.playingInfo1.setText(item.title)
@@ -235,7 +251,7 @@ class MusicController(QObject):
         btn.setIcon(icon)
 
     def set_vol_icon(self, icon_path):
-        lbl = self.window.volIconLabel
+        lbl = self.window.volIconBtn
         pixmap = QPixmap(icon_path)
         lbl.setPixmap(pixmap)
         lbl.setScaledContents(True)
@@ -252,6 +268,7 @@ class MusicController(QObject):
         self.window.prevBtn.clicked.connect(self.on_prev)
         self.window.shuffleBtn.clicked.connect(self.toggle_shuffle)
         self.window.repeatBtn.clicked.connect(self.toggle_repeat)
+        self.window.volIconBtn.clicked.connect(self.toggle_mute)
 
     def key_pressed(self, e):
         if e.name == "play/pause media":
