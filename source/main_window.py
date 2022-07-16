@@ -10,8 +10,16 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+_translate = QtCore.QCoreApplication.translate
 
 class Ui_MainWindow(object):
+    def __init__(self):
+        self.largeFont = QtGui.QFont()
+        self.largeFont.setPointSize(11)
+        self.largeBoldFont = QtGui.QFont()
+        self.largeBoldFont.setPointSize(11)
+        self.largeBoldFont.setBold(True)
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1440, 855)
@@ -84,13 +92,14 @@ class Ui_MainWindow(object):
         self.musicTabs = QtWidgets.QTabWidget(self.centralwidget)
         self.musicTabs.setStyleSheet("QTabWidget::pane\n"
 "{\n"
-"    border:0px;\n"
+"    border: 0px;\n"
 "}\n"
 "\n"
 "QTabWidget::tab-bar\n"
 "{\n"
 "    alignment: center;\n"
 "}")
+        self.musicTabs.setFont(self.largeFont)
         self.musicTabs.setTabPosition(QtWidgets.QTabWidget.West)
         self.musicTabs.setTabBarAutoHide(True)
         self.musicTabs.setObjectName("musicTabs")
@@ -104,6 +113,7 @@ class Ui_MainWindow(object):
 "{\n"
 "    alignment: center;\n"
 "}")
+        self.libraryTabs.setFont(self.largeFont)
         self.libraryTabs.setObjectName("libraryTabs")
         self.downloadedTab = QtWidgets.QWidget()
         self.downloadedTab.setObjectName("downloadedTab")
@@ -212,6 +222,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.setContentsMargins(3, 0, 3, 3)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
         self.queueTabs = QtWidgets.QTabWidget(self.queueTabLayout)
+        self.queueTabs.setFont(self.largeFont)
         self.queueTabs.setObjectName("queueTabs")
         self.queueTreeTab = QtWidgets.QWidget()
         self.queueTreeTab.setObjectName("queueTreeTab")
@@ -245,12 +256,14 @@ class Ui_MainWindow(object):
         self.playingInfo1.setMinimumSize(QtCore.QSize(250, 0))
         self.playingInfo1.setMaximumSize(QtCore.QSize(250, 16777215))
         self.playingInfo1.setText("")
+        self.playingInfo1.setFont(self.largeBoldFont)
         self.playingInfo1.setObjectName("playingInfo1")
         self.verticalLayout_6.addWidget(self.playingInfo1)
         self.playingInfo2 = QtWidgets.QLabel(self.mediaControls)
         self.playingInfo2.setMinimumSize(QtCore.QSize(250, 0))
         self.playingInfo2.setMaximumSize(QtCore.QSize(250, 16777215))
         self.playingInfo2.setText("")
+        self.playingInfo2.setFont(self.largeFont)
         self.playingInfo2.setObjectName("playingInfo2")
         self.verticalLayout_6.addWidget(self.playingInfo2)
         self.horizontalLayout_5.addLayout(self.verticalLayout_6)
@@ -270,6 +283,7 @@ class Ui_MainWindow(object):
         self.repeatBtn.setIcon(icon)
         self.repeatBtn.setFlat(True)
         self.repeatBtn.setObjectName("repeatBtn")
+        self.repeatBtn.setToolTip(_translate("MainWindow", "Repeat"))
         self.horizontalLayout_7.addWidget(self.repeatBtn)
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_8.setContentsMargins(-1, -1, 0, -1)
@@ -284,6 +298,7 @@ class Ui_MainWindow(object):
         self.prevBtn.setIconSize(QtCore.QSize(16, 16))
         self.prevBtn.setFlat(True)
         self.prevBtn.setObjectName("prevBtn")
+        self.prevBtn.setToolTip(_translate("MainWindow", "Previous"))
         self.horizontalLayout_8.addWidget(self.prevBtn)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setContentsMargins(0, -1, -1, 20)
@@ -299,6 +314,7 @@ class Ui_MainWindow(object):
         self.playBtn.setIconSize(QtCore.QSize(24, 24))
         self.playBtn.setFlat(True)
         self.playBtn.setObjectName("playBtn")
+        self.playBtn.setToolTip(_translate("MainWindow", "Play/Pause"))
         self.verticalLayout_5.addWidget(self.playBtn)
         self.horizontalLayout_8.addLayout(self.verticalLayout_5)
         self.nextBtn = QtWidgets.QPushButton(self.mediaControls)
@@ -310,6 +326,7 @@ class Ui_MainWindow(object):
         self.nextBtn.setIconSize(QtCore.QSize(16, 16))
         self.nextBtn.setFlat(True)
         self.nextBtn.setObjectName("nextBtn")
+        self.nextBtn.setToolTip(_translate("MainWindow", "Next"))
         self.horizontalLayout_8.addWidget(self.nextBtn)
         self.horizontalLayout_7.addLayout(self.horizontalLayout_8)
         self.shuffleBtn = QtWidgets.QPushButton(self.mediaControls)
@@ -320,6 +337,7 @@ class Ui_MainWindow(object):
         self.shuffleBtn.setIconSize(QtCore.QSize(16, 16))
         self.shuffleBtn.setFlat(True)
         self.shuffleBtn.setObjectName("shuffleBtn")
+        self.shuffleBtn.setToolTip(_translate("MainWindow", "Shuffle"))
         self.horizontalLayout_7.addWidget(self.shuffleBtn)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem3)
@@ -365,6 +383,7 @@ class Ui_MainWindow(object):
         self.listenQueueBtn.setIconSize(QtCore.QSize(20, 20))
         self.listenQueueBtn.setFlat(True)
         self.listenQueueBtn.setObjectName("listenQueueBtn")
+        self.listenQueueBtn.setToolTip(_translate("MainWindow", "Queue"))
         self.horizontalLayout_5.addWidget(self.listenQueueBtn)
         self.volIconLabel = QtWidgets.QLabel(self.mediaControls)
         self.volIconLabel.setMinimumSize(QtCore.QSize(16, 16))
@@ -633,7 +652,6 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ZSpotify"))
         self.searchInput.setPlaceholderText(_translate("MainWindow", "Search Spotify"))
         self.searchBtn.setText(_translate("MainWindow", "Search"))
