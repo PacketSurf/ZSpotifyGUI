@@ -51,7 +51,8 @@ class MusicController(QObject):
         set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
         set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
         set_button_icon(self.window.listenQueueBtn, LISTEN_QUEUE_ICON)
-        keyboard.on_press(self.key_pressed)
+        if Config.get_enable_media_keys():
+            keyboard.on_press(self.key_pressed)
 
 
     def play(self, item, playlist_tree):
