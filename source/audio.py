@@ -5,6 +5,7 @@ import random
 import music_tag
 import logging
 import struct
+import keyboard
 from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool, QObject
@@ -50,6 +51,7 @@ class MusicController(QObject):
         set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
         set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
         set_button_icon(self.window.listenQueueBtn, LISTEN_QUEUE_ICON)
+        keyboard.on_press(self.key_pressed)
 
 
     def play(self, item, playlist_tree):
@@ -250,6 +252,14 @@ class MusicController(QObject):
         self.window.shuffleBtn.clicked.connect(self.toggle_shuffle)
         self.window.repeatBtn.clicked.connect(self.toggle_repeat)
 
+    def key_pressed(self, e):
+        if e.name == "play/pause media":
+            self.window.playBtn.click()
+        elif e.name == "next track":
+            self.window.nextBtn.click()
+        elif e.name == "previous track":
+            self.window.prevBtn.click()
+
 
 class AudioPlayer:
 
@@ -349,3 +359,4 @@ def find_id_in_metadata(path):
     tag = music_tag.load_file(path)
     data = parse_meta_data(tag[COMMENT])
     return data.get(ID) if None else ""
+
