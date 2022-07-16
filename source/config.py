@@ -30,6 +30,7 @@ PRINT_ERRORS = 'PRINT_ERRORS'
 PRINT_DOWNLOADS = 'PRINT_DOWNLOADS'
 TEMP_DOWNLOAD_DIR = 'TEMP_DOWNLOAD_DIR'
 ENABLE_MEDIA_KEYS = 'ENABLE_MEDIA_KEYS'
+RELATIVE_TIME = 'RELATIVE_TIME'
 
 CONFIG_VALUES = {
     ROOT_PATH:                  { 'default': '../ZSpotify Music/',    'type': str,  'arg': '--root-path'                  },
@@ -55,7 +56,8 @@ CONFIG_VALUES = {
     PRINT_ERRORS:               { 'default': 'True',                  'type': bool, 'arg': '--print-errors'               },
     PRINT_DOWNLOADS:            { 'default': 'False',                 'type': bool, 'arg': '--print-downloads'            },
     TEMP_DOWNLOAD_DIR:          { 'default': '',                      'type': str,  'arg': '--temp-download-dir'          },
-    ENABLE_MEDIA_KEYS:          { 'default': 'True',                  'type': bool, 'arg': '--enable-media-keys'          }
+    ENABLE_MEDIA_KEYS:          { 'default': 'True',                  'type': bool, 'arg': '--enable-media-keys'          },
+    RELATIVE_TIME:              { 'default': 'True',                  'type': bool, 'arg': '--relative-time'              }
 }
 
 OUTPUT_DEFAULT_PLAYLIST = '{playlist}/{artist} - {song_name}.{ext}'
@@ -216,6 +218,10 @@ class Config:
     @classmethod
     def get_enable_media_keys(cls):
         return cls.get(ENABLE_MEDIA_KEYS)
+
+    @classmethod
+    def get_relative_time(cls):
+        return cls.get(RELATIVE_TIME)
 
     @classmethod
     def get_output(cls, mode: str) -> str:

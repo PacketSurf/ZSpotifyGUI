@@ -57,6 +57,8 @@ class MusicController(QObject):
         set_button_icon(self.window.volIconBtn, VOL_ICON)
         if Config.get_enable_media_keys():
             keyboard.on_press(self.key_pressed)
+        if not Config.get_relative_time():
+            self.window.remainingTimeLabel.setText(self.window._translate("MainWindow", "0:00"))
 
 
     def play(self, item, playlist_tree):
@@ -87,12 +89,14 @@ class MusicController(QObject):
 
     def pause(self):
         self.set_button_icon(self.window.playBtn, PLAY_ICON)
+        self.window.playBtn.setToolTip(self.window._translate("MainWindow", "Play"))
         self.paused = True
         self.queue_next_song = False
         self.audio_player.pause()
 
     def unpause(self):
         self.set_button_icon(self.window.playBtn, PAUSE_ICON)
+        self.window.playBtn.setToolTip(self.window._translate("MainWindow", "Pause"))
         self.paused = False
         self.queue_next_song = True
         self.audio_player.unpause()
@@ -103,7 +107,7 @@ class MusicController(QObject):
         if index == -1:
             self.listen_queue.append(item)
         else:
-             self.listen_queue.insert(index,item)
+            self.listen_queue.insert(index,item)
 
     def remove_track(self, item):
         if not item: return
@@ -118,17 +122,21 @@ class MusicController(QObject):
         if self.shuffle:
             if self.playlist_tree and self.playlist_tree.items:
                 self.set_button_icon(self.window.shuffleBtn, SHUFFLE_ON_ICON)
+                self.window.shuffleBtn.setToolTip(self.window._translate("MainWindow", "Disable shuffle"))
                 self.shuffle_queue = self.playlist_tree.items.copy()
                 random.shuffle(self.shuffle_queue)
         else:
             self.set_button_icon(self.window.shuffleBtn, SHUFFLE_OFF_ICON)
+            self.window.shuffleBtn.setToolTip(self.window._translate("MainWindow", "Enable shuffle"))
 
     def toggle_repeat(self):
         self.repeat = not self.repeat
         if self.repeat:
             self.set_button_icon(self.window.repeatBtn, REPEAT_ON_ICON)
+            self.window.repeatBtn.setToolTip(self.window._translate("MainWindow", "Disable repeat"))
         else:
             self.set_button_icon(self.window.repeatBtn, REPEAT_OFF_ICON)
+            self.window.repeatBtn.setToolTip(self.window._translate("MainWindow", "Enable repeat"))
 
     def update_music_progress(self, perc, elapsed, total):
         if not self.seeking:
@@ -138,9 +146,9 @@ class MusicController(QObject):
             duration = self.audio_player.player.get_length()
             playback_bar_perc = self.window.playbackBar.value()/self.window.playbackBar.maximum()
             self.window.elapsedTimeLabel.setText(ms_to_time_str(duration * playback_bar_perc))
-            self.window.remainingTimeLabel.setText(f"-{ms_to_time_str(duration * (1-playback_bar_perc))}")
+            self.window.remainingTimeLabel.setText(f"-{ms_to_time_str(duration * (1-playback_bar_perc))}" if Config.get_relative_time() else ms_to_time_str(int(total)))
         self.window.elapsedTimeLabel.setText(ms_to_time_str(elapsed))
-        self.window.remainingTimeLabel.setText(f"-{ms_to_time_str(int(total)-int(elapsed))}")
+        self.window.remainingTimeLabel.setText(f"-{ms_to_time_str(int(total)-int(elapsed))}" if Config.get_relative_time() else ms_to_time_str(int(total)))
 
     def run_progress_bar(self, signal, *args, **kwargs):
         while self.audio_player.is_playing() or self.awaiting_play:
@@ -161,7 +169,10 @@ class MusicController(QObject):
         self.audio_player.set_volume(value)
         if value == 0:
             self.set_button_icon(self.window.volIconBtn, MUTE_ICON)
-        else: self.set_button_icon(self.window.volIconBtn, VOL_ICON)
+            self.window.volIconBtn.setToolTip(self.window._translate("MainWindow", "Unmute"))
+        else:
+            self.set_button_icon(self.window.volIconBtn, VOL_ICON)
+            self.window.volIconBtn.setToolTip(self.window._translate("MainWindow", "Mute"))
 
     def on_press_play(self):
         if self.audio_player.is_playing():
@@ -229,19 +240,21 @@ class MusicController(QObject):
             self.shuffle_queue
 
     def toggle_mute(self):
+        self.muted = not self.muted
         if self.muted:
+            self.audio_player.set_volume(0)
+            self.set_button_icon(self.window.volIconBtn, MUTE_ICON)
+            self.window.volIconBtn.setToolTip(self.window._translate("MainWindow", "Unmute"))
+        else:
             self.audio_player.set_volume(self._volume)
             if self._volume != 0:
                 self.set_button_icon(self.window.volIconBtn, VOL_ICON)
-        else:
-            self.audio_player.set_volume(0)
-            self.set_button_icon(self.window.volIconBtn, MUTE_ICON)
-        self.muted = not self.muted
+                self.window.volIconBtn.setToolTip(self.window._translate("MainWindow", "Mute"))
 
 
     def update_playing_info(self, item):
         self.window.playingInfo1.setText(item.title)
-        self.window.playingInfo1.setToolTip(item.title)
+        self.window.playingInfo1.setToolTip(f"On album {item.album}")
         self.window.playingInfo2.setText(item.artists)
         self.window.playingInfo2.setToolTip(item.artists)
 
