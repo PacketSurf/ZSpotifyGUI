@@ -116,8 +116,8 @@ Be aware you have to set boolean values in the commandline like this: `--downloa
 
 | Key (zs-config)              | commandline parameter            | Description
 |------------------------------|----------------------------------|---------------------------------------------------------------------|
-| ROOT_PATH                    | --root-path                      | directory where ZSpotify saves the music
-| ROOT_PODCAST_PATH            | --root-podcast-path              | directory where ZSpotify saves the podcasts
+| ROOT_PATH                    | --root-path                      | Directory where ZSpotify saves the music
+| ROOT_PODCAST_PATH            | --root-podcast-path              | Directory where ZSpotify saves the podcasts
 | SKIP_EXISTING_FILES          | --skip-existing-files            | Skip songs with the same name
 | SKIP_PREVIOUSLY_DOWNLOADED   | --skip-previously-downloaded     | Create a .song_archive file and skip previously downloaded songs
 | DOWNLOAD_FORMAT              | --download-format                | The download audio format (aac, fdk_aac, m4a, mp3, ogg, opus, vorbis)
@@ -125,8 +125,8 @@ Be aware you have to set boolean values in the commandline like this: `--downloa
 | ANTI_BAN_WAIT_TIME           | --anti-ban-wait-time             | The wait time between bulk downloads
 | OVERRIDE_AUTO_WAIT           | --override-auto-wait             | Totally disable wait time between songs with the risk of instability
 | CHUNK_SIZE                   | --chunk-size                     | chunk size for downloading
-| SPLIT_ALBUM_DISCS            | --split-album-discs              | split downloaded albums by disc
-| DOWNLOAD_REAL_TIME           | --download-real-time             | only downloads songs as fast as they would be played, can prevent account bans
+| SPLIT_ALBUM_DISCS            | --split-album-discs              | Split downloaded albums by disc
+| DOWNLOAD_REAL_TIME           | --download-real-time             | Only downloads songs as fast as they would be played, can prevent account bans
 | LANGUAGE                     | --language                       | Language for spotify metadata
 | BITRATE                      | --bitrate                        | Overwrite the bitrate for ffmpeg encoding
 | SONG_ARCHIVE                 | --song-archive                   | The song_archive file for SKIP_PREVIOUSLY_DOWNLOADED
@@ -138,6 +138,8 @@ Be aware you have to set boolean values in the commandline like this: `--downloa
 | PRINT_ERRORS                 | --print-errors                   | Print errors
 | PRINT_DOWNLOADS              | --print-downloads                | Print messages when a song is finished downloading
 | TEMP_DOWNLOAD_DIR            | --temp-download-dir              | Download tracks to a temporary directory first
+| ENABLE_MEDIA_KEYS            | --enable-media-keys              | Allows use of the media keys on your keyboard to play/pause, change track
+| RELATIVE_TIME                | --relative-time                  | Changes the song duration time to time remaining
 
 ### Output format:
 
