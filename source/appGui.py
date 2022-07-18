@@ -9,6 +9,7 @@ It's like youtube-dl, but for Spotify.
 import sys
 import requests
 import logging
+from mutagen.id3 import ID3
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QThreadPool
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QTreeWidgetItem, QLineEdit
@@ -75,6 +76,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.libraryTabs.setCurrentIndex(0)
         self.download_tree.focus()
         self.reconnecting = False
+
 
     def show(self):
         super().show()
@@ -144,8 +146,11 @@ class Window(QMainWindow, Ui_MainWindow):
     def update_item_info(self, item, headers, labels):
         if not item: return
         self.selected_item = item
-        worker = Worker(self._cover_art_loader, item)
-        QThreadPool.globalInstance().start(worker)
+        if item.downloaded:
+            self.extract_cover_art(item)
+        else:
+            worker = Worker(self._cover_art_loader, item)
+            QThreadPool.globalInstance().start(worker)
         [lbl.setText("") for lbl in self.info_labels]
         if "Index" in headers:
             labels.pop(headers.index("Index"))
@@ -179,6 +184,20 @@ class Window(QMainWindow, Ui_MainWindow):
             image = QImage()
             image.loadFromData(requests.get(url).content)
             pixmap = QPixmap(image)
+        lbl.setPixmap(pixmap)
+        lbl.setScaledContents(True)
+        lbl.show()
+
+    def extract_cover_art(self, item):
+        tags = ID3(item.path)
+        pict = [v for v in tags.values() if v.FrameID == "APIC"]
+        if not len(pict):
+            pass
+        if not pict[0]:
+            pass
+        pixmap = QPixmap()
+        pixmap.loadFromData(pict[0].data)
+        lbl = self.coverArtLabel
         lbl.setPixmap(pixmap)
         lbl.setScaledContents(True)
         lbl.show()
@@ -239,6 +258,7 @@ class Window(QMainWindow, Ui_MainWindow):
             tree.signals.onSelected.connect(self.update_item_labels)
             tree.signals.doubleClicked.connect(self.on_try_play_item)
             tree.signals.onListenQueued.connect(self.music_controller.queue_track)
+            tree.signals.onListenUnqueued.connect(self.music_controller.remove_track)
             tree.signals.onDownloadQueued.connect(self.download_controller.on_click_download)
             return_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Return,
                                                   tree.tree,
@@ -339,32 +359,32 @@ class Window(QMainWindow, Ui_MainWindow):
         self.songs_tree.set_header_item(
             Track("Index", 0, "Title", "Artists", "Album", duration="Duration", release_date="Release Date"))
 
-        self.artists_tree = ItemTree(self.artistsTree, lambda artist: QTreeWidgetItem([str(artist.index), artist.name]))
+        self.artists_tree = ItemTree(self.artistsTree, lambda artist: QTreeWidgetItem([str(artist.index), artist.name]), "artists")
         self.artists_tree.set_header_item(Artist("Index", 0, "Name"))
 
         self.albums_tree = ItemTree(self.albumsTree,
                                     lambda album: QTreeWidgetItem([str(album.index), album.title, album.artists, \
-                                                                   str(album.total_tracks), str(album.release_date)]))
+                                                                   str(album.total_tracks), str(album.release_date)]), "albums")
         self.albums_tree.set_header_item(Album("Index", 0, "Title", "Artists", "Total Tracks", "Release Date"))
 
         self.playlists_tree = ItemTree(self.playlistsTree,
                                        lambda playlist: QTreeWidgetItem([str(playlist.index), playlist.title, \
                                                                          str(playlist.creator),
-                                                                         str(playlist.total_tracks)]))
+                                                                         str(playlist.total_tracks)]), "playlists")
         self.playlists_tree.set_header_item(Playlist("Index", 0, "Title", "Author", "Total Tracks"))
 
         self.download_tree = ItemTree(self.downloadedTree,
-                                      lambda track: QTreeWidgetItem([track.title, track.artists, track.album]))
-        self.download_tree.set_header_item(Track("", 0, "Title", "Artists", "Albums"))
+                                      lambda track: QTreeWidgetItem([track.title, track.artists, track.album]), "download")
+        self.download_tree.set_header_item(Track("", 0, "Title", "Artists", "Album"))
 
         self.liked_tree = ItemTree(self.likedTree,
-                                   lambda track: QTreeWidgetItem([track.title, track.artists, track.album]))
-        self.liked_tree.set_header_item(Track("", 0, "Title", "Artists", "Albums"))
+                                   lambda track: QTreeWidgetItem([track.title, track.artists, track.album]), "liked")
+        self.liked_tree.set_header_item(Track("", 0, "Title", "Artists", "Album"))
         self.liked_tree.load_function = self.init_liked_view
 
         self.queue_tree = ItemTree(self.queueTree,
-                                   lambda track: QTreeWidgetItem([track.title, track.artists, track.album]), False)
-        self.queue_tree.set_header_item(Track("", 0, "Title", "Artists", "Albums"))
+                                   lambda track: QTreeWidgetItem([track.title, track.artists, track.album]), "queue", False)
+        self.queue_tree.set_header_item(Track("", 0, "Title", "Artists", "Album"))
         self.queue_tree.load_function = self.init_queue_view
 
         self.search_trees = [self.songs_tree, self.artists_tree, self.albums_tree, self.playlists_tree]
