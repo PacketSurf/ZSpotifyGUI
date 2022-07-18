@@ -78,6 +78,7 @@ MAC:
 
 <h3>Command Line Usage</h3>
 
+```
 Basic command line usage:
   python zspotify <track/album/playlist/episode/artist url>   Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded. Can take multiple urls.
 
@@ -90,7 +91,6 @@ Different usage modes:
 
 Extra command line options:
   -ns, --no-splash     Suppress the splash screen when loading.
-<<<<<<< HEAD
 
 Options that can be configured in zs_config.json:
   ROOT_PATH           Change this path if you don't like the default directory where ZSpotify saves the music
@@ -107,13 +107,15 @@ Options that can be configured in zs_config.json:
 
 =======
   --config-location    Use a different zs_config.json, defaults to the one in the program directory
-```
+  ```
+
+
 
 ### Options:
 
 All these options can either be configured in the zs_config or via the commandline, in case of both the commandline-option has higher priority.  
 Be aware you have to set boolean values in the commandline like this: `--download-real-time=True`
-
+```
 | Key (zs-config)              | commandline parameter            | Description
 |------------------------------|----------------------------------|---------------------------------------------------------------------|
 | ROOT_PATH                    | --root-path                      | Directory where ZSpotify saves the music
@@ -140,12 +142,12 @@ Be aware you have to set boolean values in the commandline like this: `--downloa
 | TEMP_DOWNLOAD_DIR            | --temp-download-dir              | Download tracks to a temporary directory first
 | ENABLE_MEDIA_KEYS            | --enable-media-keys              | Allows use of the media keys on your keyboard to play/pause, change track
 | RELATIVE_TIME                | --relative-time                  | Changes the song duration time to time remaining
-
+```
 ### Output format:
 
 With the option `OUTPUT` (or the commandline parameter `--output`) you can specify the output location and format.  
 The value is relative to the `ROOT_PATH`/`ROOT_PODCAST_PATH` directory and can contain the following placeholder:
-
+```
 | Placeholder     | Description
 |-----------------|--------------------------------
 | {artist}        | The song artist
@@ -161,7 +163,7 @@ The value is relative to the `ROOT_PATH`/`ROOT_PODCAST_PATH` directory and can c
 | {album_num}     | (only when downloading albums) Incrementing track number
 | {playlist}      | (only when downloading playlists) Name of the playlist
 | {playlist_num}  | (only when downloading playlists) Incrementing track number
-
+```
 Example values could be:
 ~~~~
 {playlist}/{artist} - {song_name}.{ext}
@@ -173,10 +175,9 @@ Liked Songs/{artist} - {song_name}.{ext}
 ~~~~
 
 ### Docker Usage
->>>>>>> 1585133e70ad6ab21c70e07f5c9d98b1127eca3e
+`>>>>>>> 1585133e70ad6ab21c70e07f5c9d98b1127eca3e`
 
-<h4>FAQ<h4/>
-```
+## FAQ
 
 ### Will my account get banned if I use this tool?
 
