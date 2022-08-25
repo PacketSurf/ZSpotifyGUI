@@ -1,0 +1,16 @@
+ffmpy
+git+https://github.com/kokarare1212/librespot-python
+music_tag
+Pillow
+protobuf
+tabulate
+PyQt5
+pyqtdarktheme
+python-vlc
+requests
+tqdm
+pydub
+keyboard
+mutagen
+pyperclip
+git+https://github.com/qwertyquerty/pypresence

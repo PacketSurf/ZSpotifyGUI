@@ -1,3 +1,4 @@
+import pyperclip
 from PyQt5.QtWidgets import QTreeWidgetItem, QMenu, QApplication, QTreeWidget
 from PyQt5.QtCore import Qt, pyqtSignal, QObject
 from item import Item
@@ -164,6 +165,10 @@ class ItemTree:
         self.signals.onListenUnqueued.emit(self.selected_item)
         self.remove_item(self.selected_item)
 
+    def on_copy_link(self):
+        if not self.selected_item or self.selected_item.downloaded: return
+        pyperclip.copy(self.selected_item.url)
+
     def on_context_menu(self, pos):
         if not self.selected_item: return
         node = self.tree.mapToGlobal(pos)
@@ -173,7 +178,9 @@ class ItemTree:
             if self.name == "queue":
                 self.popup_menu.addAction("Remove from listen queue", self.on_listen_unqueue)
         else:
-             self.popup_menu.addAction("Add to download queue", self.on_download_item)
+            self.popup_menu.addAction("Add to download queue", self.on_download_item)
+            if self.selected_item.type == "Track" and self.selected_item.url != "":
+                self.popup_menu.addAction("Copy link", self.on_copy_link)
         if self.selected_item.downloaded:
             self.popup_menu.addSeparator()
             self.popup_menu.addAction("Delete", self.on_delete_item)
@@ -184,6 +191,7 @@ class ItemTree:
         self.tree.itemDoubleClicked.connect(self.on_double_clicked)
         self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self.on_context_menu)
+
 
 class ItemTreeSignals(QObject):
     doubleClicked = pyqtSignal(Item, ItemTree)

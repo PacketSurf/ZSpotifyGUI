@@ -40,6 +40,10 @@ ID = 'id'
 
 URL = 'url'
 
+EXTERNAL_URLS = 'external_urls'
+
+SPOTIFY = 'spotify'
+
 RELEASE_DATE = 'release_date'
 
 IMAGES = 'images'

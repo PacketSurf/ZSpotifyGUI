@@ -18,7 +18,8 @@ from librespot.core import Session
 from const import TYPE, ITEMS, \
     USER_READ_EMAIL, AUTHORIZATION, OFFSET, LIMIT, PREMIUM,\
     PLAYLIST_READ_PRIVATE,TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
-    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE, USER_LIBRARY_READ, DURATION
+    OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME, IMAGES, URL, TOTAL_TRACKS, TOTAL, RELEASE_DATE, \
+    USER_LIBRARY_READ, DURATION, EXTERNAL_URLS, SPOTIFY
 from utils import MusicFormat, ms_to_time_str
 from item import Track, Album, Artist, Playlist
 from config import Config
@@ -92,10 +93,13 @@ class ZSpotify:
             for t in resp[TRACKS][ITEMS]:
                 try:
                     artists = ', '.join([artist[NAME] for artist in t[ARTISTS]])
-                    url = t[ALBUM][IMAGES][1][URL]
+                    if SPOTIFY in t[EXTERNAL_URLS]:
+	                    url = t[EXTERNAL_URLS][SPOTIFY]
+                    else: url = ""
+                    image_url = t[ALBUM][IMAGES][1][URL]
                     duration = ms_to_time_str(t[DURATION])
                     track = Track(counter, t[ID], str(t[NAME]), artists, str(t[ALBUM][NAME]), \
-                        release_date=t[ALBUM][RELEASE_DATE], duration=duration, img=url)
+                        release_date=t[ALBUM][RELEASE_DATE], duration=duration, img=image_url, url=url)
                     results[TRACKS].append(track)
                     counter += 1
                 except Exception as e:
@@ -105,11 +109,10 @@ class ZSpotify:
             for a in resp[ALBUMS][ITEMS]:
                 try:
                     if len(a[IMAGES]) > 1:
-                        url = a[IMAGES][1][URL]
-                    else:
-                        url = ""
+                        iamge_url = a[IMAGES][1][URL]
+                    else: image_url = ""
                     artists = ', '.join([artist[NAME] for artist in a[ARTISTS]])
-                    album = Album(counter, a[ID], a[NAME], artists, a[TOTAL_TRACKS], release_date=a[RELEASE_DATE], img=url)
+                    album = Album(counter, a[ID], a[NAME], artists, a[TOTAL_TRACKS], release_date=a[RELEASE_DATE], img=image_url)
                     results[ALBUMS].append(album)
                     counter += 1
                 except Exception as e:
@@ -119,9 +122,9 @@ class ZSpotify:
             for ar in resp[ARTISTS][ITEMS]:
                 try:
                     if len(ar[IMAGES]) >= 1:
-                        url = ar[IMAGES][1][URL]
-                    else: url = ""
-                    artist = Artist(counter, ar[ID], ar[NAME], img=url)
+                        image_url = ar[IMAGES][1][URL]
+                    else: image_url = ""
+                    artist = Artist(counter, ar[ID], ar[NAME], img=image_url)
                     results[ARTISTS].append(artist)
                     counter += 1
                 except Exception as e:
@@ -131,10 +134,9 @@ class ZSpotify:
             for playlist in resp[PLAYLISTS][ITEMS]:
                 try:
                     if len(playlist[IMAGES]) > 0:
-                        url = playlist[IMAGES][0][URL]
-                    else:
-                        url = ""
-                    playlist = Playlist(counter, playlist[ID], playlist[NAME], playlist[OWNER][DISPLAY_NAME], playlist[TRACKS][TOTAL], img=url)
+                        image_url = playlist[IMAGES][0][URL]
+                    else: image_url = ""
+                    playlist = Playlist(counter, playlist[ID], playlist[NAME], playlist[OWNER][DISPLAY_NAME], playlist[TRACKS][TOTAL], img=image_url)
                     results[PLAYLISTS].append(playlist)
                     counter += 1
                 except Exception as e:
@@ -151,7 +153,7 @@ class ZSpotify:
             artists = ', '.join([artist[NAME] for artist in item[TRACK][ARTISTS]])
             duration = ms_to_time_str(item[TRACK][DURATION])
             track = Track(index, item[TRACK][ID], item[TRACK][NAME], artists, album=item[TRACK][ALBUM][NAME], \
-            img=item[TRACK][ALBUM][IMAGES][1][URL], duration=duration)
+            img=item[TRACK][ALBUM][IMAGES][1][URL], duration=duration, url=url)
             tracks.append(track)
         return tracks
 

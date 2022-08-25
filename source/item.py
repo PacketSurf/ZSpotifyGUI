@@ -2,17 +2,20 @@ from utils import set_audio_tags
 
 
 class Item:
-    def __init__(self, index, downloaded=False, path=""):
+    def __init__(self, index, downloaded=False, path="", url=""):
+        self.type = ""
         self.index = index
         self.downloaded = downloaded
         self.path = path
+        self.url = url
 
 
 class Track(Item):
-    def __init__(self, index, id, title, artists, album="", img="",release_date="", duration=-1, disc_number=-1,
-                 track_number=1, downloaded=False, path=""):
-        super().__init__(index, downloaded, path)
-        self.id = id
+    def __init__(self, index, ID, title, artists, album="", img="", release_date="", duration=-1, disc_number=-1,
+                 track_number=1, downloaded=False, path="", url=""):
+        super().__init__(index, downloaded, path, url)
+        self.type = "Track"
+        self.id = ID
         self.title = title
         self.artists = artists
         self.album = album
@@ -28,10 +31,11 @@ class Track(Item):
 
 
 class Album(Item):
-    def __init__(self, index, id, title,artists, total_tracks, release_date="", img="",downloaded=False, path=""):
-        super().__init__(index, downloaded, path)
+    def __init__(self, index, ID, title, artists, total_tracks, release_date="", img="", downloaded=False, path="", url=""):
+        super().__init__(index, downloaded, path, url)
+        self.type = "Album"
         self.index = index
-        self.id = id
+        self.id = ID
         self.title = title
         self.artists = artists
         self.img = img
@@ -41,18 +45,20 @@ class Album(Item):
 
 
 class Artist(Item):
-    def __init__(self,index, id, name, img="",downloaded=False, path=""):
-        super().__init__(index, downloaded, path)
-        self.id = id
+    def __init__(self,index, ID, name, img="", downloaded=False, path="", url=""):
+        super().__init__(index, downloaded, path, url)
+        self.type = "Artist"
+        self.id = ID
         self.name = name
         self.img = img
         self.index = index
 
 
 class Playlist(Item):
-    def __init__(self, index, id, title,creator, total_tracks, img="", downloaded=False, path=""):
-        super().__init__(index, downloaded, path)
-        self.id = id
+    def __init__(self, index, ID, title, creator, total_tracks, img="", downloaded=False, path="", url=""):
+        super().__init__(index, downloaded, path, url)
+        self.type = "Playlist"
+        self.id = ID
         self.title = title
         self.creator = creator
         self.total_tracks = total_tracks
