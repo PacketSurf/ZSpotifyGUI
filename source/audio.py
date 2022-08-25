@@ -20,6 +20,7 @@ from utils import ms_to_time_str, parse_meta_data
 from glob import glob
 from view import set_button_icon, set_label_image
 from config import Config
+from discordRpc import RPC
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +60,8 @@ class MusicController(QObject):
             keyboard.on_press(self.key_pressed)
         if not Config.get_relative_time():
             self.window.remainingTimeLabel.setText(self.window._translate("MainWindow", "0:00"))
+        if Config.get_enable_discord_rpc():
+            self.rpc = RPC()
 
 
     def play(self, item, playlist_tree):
@@ -79,6 +82,12 @@ class MusicController(QObject):
                 self.playlist_tree = playlist_tree
                 self.playlist_tree.select_item(item)
             self.onPlay.emit(item)
+
+            if Config.get_enable_discord_rpc():
+                try:
+                    self.rpc.set_rpc_to_item(item)
+                except:
+                    logging.error("Discord RPC failed")
 
 
     def start_progress_worker(self):
