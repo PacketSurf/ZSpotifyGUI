@@ -38,7 +38,15 @@ NAME = 'name'
 
 ID = 'id'
 
+ALBUM_ID = 'album_id'
+
 URL = 'url'
+
+EXTERNAL_URLS = 'external_urls'
+
+SPOTIFY = 'spotify'
+
+SPOTIFY_URL = 'https://open.spotify.com/'
 
 RELEASE_DATE = 'release_date'
 

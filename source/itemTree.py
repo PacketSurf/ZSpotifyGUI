@@ -1,12 +1,15 @@
+import pyperclip
 from PyQt5.QtWidgets import QTreeWidgetItem, QMenu, QApplication, QTreeWidget
 from PyQt5.QtCore import Qt, pyqtSignal, QObject
+from const import TRACK
 from item import Item
 from utils import delete_file
 
 class ItemTree:
 
-    def __init__(self, tree, tree_widget_builder = None, can_play = True):
+    def __init__(self, tree, tree_widget_builder = None, name = "", can_play = True):
         self.tree = tree
+        self.name = name
         self.items = []
         self.tree_items = {}
         self.selected_item = None
@@ -31,8 +34,10 @@ class ItemTree:
         self.items.append(item)
         self.tree_items[item] = widget_item
         self.tree.addTopLevelItem(widget_item)
+        self.update_index(item)
 
     def remove_item(self, item):
+        if item not in self.items: return
         self.items.remove(item)
         if item in self.tree_items:
             index = self.item_index(item)
@@ -84,6 +89,9 @@ class ItemTree:
                 return i
         return -1
 
+    def update_index(self, item):
+        item.index = self.item_index(item)
+
     def current_item_index(self):
         item = self.get_selected_item()
         if not item: return -1
@@ -96,6 +104,7 @@ class ItemTree:
         self.tree.clear()
 
 
+    # FIXME: doesn't work properly if multiple of same entry
     def get_selected_item(self):
         tree_widget = self.tree.currentItem()
         if tree_widget:
@@ -148,16 +157,36 @@ class ItemTree:
 
     def on_listen_queue(self):
         if not self.selected_item: return
+        if self.name == "queue":
+            self.add_item(self.selected_item)
         self.signals.onListenQueued.emit(self.selected_item)
+
+    def on_listen_unqueue(self):
+        if not self.selected_item: return
+        self.signals.onListenUnqueued.emit(self.selected_item)
+        self.remove_item(self.selected_item)
+
+    def on_copy_link(self):
+        pyperclip.copy(self.selected_item.url)
+
+    def on_copy_album_link(self):
+        pyperclip.copy(self.selected_item.album_url)
 
     def on_context_menu(self, pos):
         if not self.selected_item: return
+        #self.selected_item.update_meta_tags()
         node = self.tree.mapToGlobal(pos)
         self.popup_menu = QMenu(None)
         if self.selected_item.downloaded:
             self.popup_menu.addAction("Add to listen queue", self.on_listen_queue)
+            if self.name == "queue":
+                self.popup_menu.addAction("Remove from listen queue", self.on_listen_unqueue)
         else:
-             self.popup_menu.addAction("Add to download queue", self.on_download_item)
+            self.popup_menu.addAction("Add to download queue", self.on_download_item)
+        if self.selected_item.url != "":
+            self.popup_menu.addAction("Copy link", self.on_copy_link)
+        if self.selected_item.type == TRACK and self.selected_item.album_url != "":
+            self.popup_menu.addAction("Copy album link", self.on_copy_album_link)
         if self.selected_item.downloaded:
             self.popup_menu.addSeparator()
             self.popup_menu.addAction("Delete", self.on_delete_item)
@@ -169,10 +198,12 @@ class ItemTree:
         self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self.on_context_menu)
 
+
 class ItemTreeSignals(QObject):
     doubleClicked = pyqtSignal(Item, ItemTree)
     itemChanged = pyqtSignal(Item, list, list)
     onSelected = pyqtSignal(list)
     onDeleted = pyqtSignal(Item, QTreeWidget)
     onListenQueued = pyqtSignal(Item)
+    onListenUnqueued = pyqtSignal(Item)
     onDownloadQueued = pyqtSignal(Item)

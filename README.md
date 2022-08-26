@@ -7,7 +7,9 @@
   <img src="https://user-images.githubusercontent.com/35679186/141209937-049e8a52-95fd-4028-aa6c-d70670cd0171.png">
 </p>
 
+<!---
 [Discord Server](https://discord.gg/skVNQKtyFq) - [Matrix Server](https://matrix.to/#/#zspotify:matrix.org) - [Gitea Mirror](https://git.robinsmediateam.dev/Footsiefat/zspotify) - [Main Site](https://footsiefat.github.io/)
+-->
 
 
 
@@ -76,6 +78,7 @@ MAC:
 
 <h3>Command Line Usage</h3>
 
+```
 Basic command line usage:
   python zspotify <track/album/playlist/episode/artist url>   Downloads the track, album, playlist or podcast episode specified as a command line argument. If an artist url is given, all albums by specified artist will be downloaded. Can take multiple urls.
 
@@ -88,7 +91,6 @@ Different usage modes:
 
 Extra command line options:
   -ns, --no-splash     Suppress the splash screen when loading.
-<<<<<<< HEAD
 
 Options that can be configured in zs_config.json:
   ROOT_PATH           Change this path if you don't like the default directory where ZSpotify saves the music
@@ -105,17 +107,19 @@ Options that can be configured in zs_config.json:
 
 =======
   --config-location    Use a different zs_config.json, defaults to the one in the program directory
-```
+  ```
+
+
 
 ### Options:
 
 All these options can either be configured in the zs_config or via the commandline, in case of both the commandline-option has higher priority.  
 Be aware you have to set boolean values in the commandline like this: `--download-real-time=True`
-
+```
 | Key (zs-config)              | commandline parameter            | Description
 |------------------------------|----------------------------------|---------------------------------------------------------------------|
-| ROOT_PATH                    | --root-path                      | directory where ZSpotify saves the music
-| ROOT_PODCAST_PATH            | --root-podcast-path              | directory where ZSpotify saves the podcasts
+| ROOT_PATH                    | --root-path                      | Directory where ZSpotify saves the music
+| ROOT_PODCAST_PATH            | --root-podcast-path              | Directory where ZSpotify saves the podcasts
 | SKIP_EXISTING_FILES          | --skip-existing-files            | Skip songs with the same name
 | SKIP_PREVIOUSLY_DOWNLOADED   | --skip-previously-downloaded     | Create a .song_archive file and skip previously downloaded songs
 | DOWNLOAD_FORMAT              | --download-format                | The download audio format (aac, fdk_aac, m4a, mp3, ogg, opus, vorbis)
@@ -123,8 +127,8 @@ Be aware you have to set boolean values in the commandline like this: `--downloa
 | ANTI_BAN_WAIT_TIME           | --anti-ban-wait-time             | The wait time between bulk downloads
 | OVERRIDE_AUTO_WAIT           | --override-auto-wait             | Totally disable wait time between songs with the risk of instability
 | CHUNK_SIZE                   | --chunk-size                     | chunk size for downloading
-| SPLIT_ALBUM_DISCS            | --split-album-discs              | split downloaded albums by disc
-| DOWNLOAD_REAL_TIME           | --download-real-time             | only downloads songs as fast as they would be played, can prevent account bans
+| SPLIT_ALBUM_DISCS            | --split-album-discs              | Split downloaded albums by disc
+| DOWNLOAD_REAL_TIME           | --download-real-time             | Only downloads songs as fast as they would be played, can prevent account bans
 | LANGUAGE                     | --language                       | Language for spotify metadata
 | BITRATE                      | --bitrate                        | Overwrite the bitrate for ffmpeg encoding
 | SONG_ARCHIVE                 | --song-archive                   | The song_archive file for SKIP_PREVIOUSLY_DOWNLOADED
@@ -136,12 +140,14 @@ Be aware you have to set boolean values in the commandline like this: `--downloa
 | PRINT_ERRORS                 | --print-errors                   | Print errors
 | PRINT_DOWNLOADS              | --print-downloads                | Print messages when a song is finished downloading
 | TEMP_DOWNLOAD_DIR            | --temp-download-dir              | Download tracks to a temporary directory first
-
+| ENABLE_MEDIA_KEYS            | --enable-media-keys              | Allows use of the media keys on your keyboard to play/pause, change track
+| RELATIVE_TIME                | --relative-time                  | Changes the song duration time to time remaining
+```
 ### Output format:
 
 With the option `OUTPUT` (or the commandline parameter `--output`) you can specify the output location and format.  
 The value is relative to the `ROOT_PATH`/`ROOT_PODCAST_PATH` directory and can contain the following placeholder:
-
+```
 | Placeholder     | Description
 |-----------------|--------------------------------
 | {artist}        | The song artist
@@ -157,7 +163,7 @@ The value is relative to the `ROOT_PATH`/`ROOT_PODCAST_PATH` directory and can c
 | {album_num}     | (only when downloading albums) Incrementing track number
 | {playlist}      | (only when downloading playlists) Name of the playlist
 | {playlist_num}  | (only when downloading playlists) Incrementing track number
-
+```
 Example values could be:
 ~~~~
 {playlist}/{artist} - {song_name}.{ext}
@@ -169,10 +175,9 @@ Liked Songs/{artist} - {song_name}.{ext}
 ~~~~
 
 ### Docker Usage
->>>>>>> 1585133e70ad6ab21c70e07f5c9d98b1127eca3e
+`>>>>>>> 1585133e70ad6ab21c70e07f5c9d98b1127eca3e`
 
-<h4>FAQ<h4/>
-```
+## FAQ
 
 ### Will my account get banned if I use this tool?
 

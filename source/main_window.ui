@@ -1125,29 +1125,21 @@ QTabWidget::tab-bar
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="volIconLabel">
-               <property name="minimumSize">
-                <size>
-                 <width>16</width>
-                 <height>16</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16</width>
-                 <height>16</height>
-                </size>
-               </property>
+              <widget class="QPushButton" name="volIconBtn">
                <property name="text">
                 <string/>
                </property>
-               <property name="textFormat">
-                <enum>Qt::RichText</enum>
+               <property name="icon">
+                <iconset>
+                 <normaloff>Resources/volIcon.png</normaloff>Resources/volIcon.png</iconset>
                </property>
-               <property name="pixmap">
-                <pixmap>Resources/volIcon.png</pixmap>
+               <property name="iconSize">
+                <size>
+                 <width>16</width>
+                 <height>16</height>
+                </size>
                </property>
-               <property name="scaledContents">
+               <property name="flat">
                 <bool>true</bool>
                </property>
               </widget>

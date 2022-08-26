@@ -29,6 +29,10 @@ PRINT_DOWNLOAD_PROGRESS = 'PRINT_DOWNLOAD_PROGRESS'
 PRINT_ERRORS = 'PRINT_ERRORS'
 PRINT_DOWNLOADS = 'PRINT_DOWNLOADS'
 TEMP_DOWNLOAD_DIR = 'TEMP_DOWNLOAD_DIR'
+ENABLE_MEDIA_KEYS = 'ENABLE_MEDIA_KEYS'
+RELATIVE_TIME = 'RELATIVE_TIME'
+ENABLE_DISCORD_RPC = 'ENABLE_DISCORD_RPC'
+DISCORD_RPC_APP_ID = 'DISCORD_RPC_APP_ID'
 
 CONFIG_VALUES = {
     ROOT_PATH:                  { 'default': '../ZSpotify Music/',    'type': str,  'arg': '--root-path'                  },
@@ -54,6 +58,10 @@ CONFIG_VALUES = {
     PRINT_ERRORS:               { 'default': 'True',                  'type': bool, 'arg': '--print-errors'               },
     PRINT_DOWNLOADS:            { 'default': 'False',                 'type': bool, 'arg': '--print-downloads'            },
     TEMP_DOWNLOAD_DIR:          { 'default': '',                      'type': str,  'arg': '--temp-download-dir'          },
+    ENABLE_MEDIA_KEYS:          { 'default': 'True',                  'type': bool, 'arg': '--enable-media-keys'          },
+    RELATIVE_TIME:              { 'default': 'True',                  'type': bool, 'arg': '--relative-time'              },
+    ENABLE_DISCORD_RPC:         { 'default': 'False',                 'type': bool, 'arg': '--enable-discord-rpc'         },
+    DISCORD_RPC_APP_ID:         { 'default': '',                      'type': int,  'arg': '--discord-rpc-app-id'         }
 }
 
 OUTPUT_DEFAULT_PLAYLIST = '{playlist}/{artist} - {song_name}.{ext}'
@@ -210,6 +218,22 @@ class Config:
     @classmethod
     def get_total_search_results(cls):
         return cls.get(TOTAL_SEARCH_RESULTS)
+
+    @classmethod
+    def get_enable_media_keys(cls):
+        return cls.get(ENABLE_MEDIA_KEYS)
+
+    @classmethod
+    def get_relative_time(cls):
+        return cls.get(RELATIVE_TIME)
+
+    @classmethod
+    def get_enable_discord_rpc(cls):
+        return cls.get(ENABLE_DISCORD_RPC)
+
+    @classmethod
+    def get_discord_rpc_app_id(cls):
+        return cls.get(DISCORD_RPC_APP_ID)
 
     @classmethod
     def get_output(cls, mode: str) -> str:
