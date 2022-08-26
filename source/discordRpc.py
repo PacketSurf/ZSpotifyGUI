@@ -28,7 +28,7 @@ class RPC:
             state = item.artists
         if "album" in dir(item):
             if "artists" in dir(item):
-                state += " - " + item.title
+                state += " - " + item.album
             else:
                 state = item.album
         if state == "":
