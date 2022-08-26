@@ -10,7 +10,7 @@ from pathlib import Path
 from PyQt5 import QtCore, QtGui, QtTest
 from PyQt5.QtCore import pyqtSignal, QThreadPool, QObject
 from PyQt5.QtGui import QImage, QPixmap
-from const import COMMENT, ID, ARTWORK, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
+from const import COMMENT, ID, ALBUM_ID, ARTWORK, PLAY_ICON, PAUSE_ICON, TRACKTITLE, ARTIST, ALBUM, ARTWORK, FORMATS, \
     VOL_ICON, MUTE_ICON, SHUFFLE_ON_ICON, SHUFFLE_OFF_ICON, REPEAT_ON_ICON, REPEAT_OFF_ICON, NEXT_ICON, PREV_ICON,\
     LISTEN_QUEUE_ICON
 from zspotify import ZSpotify
@@ -389,8 +389,9 @@ def get_track_file_as_item(file, index):
             meta_data = parse_meta_data(tag[COMMENT])
             item_id = meta_data.get(ID) or ""
             img = meta_data.get(ARTWORK) or ""
+            album_id = meta_data.get(ALBUM_ID) or ""
             track = Track(index, item_id, str(tag[TRACKTITLE]), str(tag[ARTIST]),
-                          album=str(tag[ALBUM]), img=img, downloaded=True, path=Path(file))
+                          album=str(tag[ALBUM]), img=img, album_id=album_id, downloaded=True, path=Path(file))
             return track
     return None
 

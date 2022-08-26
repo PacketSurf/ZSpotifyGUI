@@ -189,6 +189,7 @@ class Window(QMainWindow, Ui_MainWindow):
         lbl.show()
 
     def extract_cover_art(self, item):
+        if item.path == "": return
         tags = ID3(item.path)
         pict = [v for v in tags.values() if v.FrameID == "APIC"]
         if not len(pict):

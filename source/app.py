@@ -3,7 +3,7 @@ from tabulate import tabulate
 from getpass import getpass
 import os
 from album import download_album, download_artist_albums
-from const import TRACK, NAME, ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
+from const import TRACK, NAME, ID, ALBUM_ID, ARTIST, ARTISTS, ITEMS, TRACKS, EXPLICIT, ALBUM, ALBUMS, \
     OWNER, PLAYLIST, PLAYLISTS, DISPLAY_NAME
 from playlist import get_playlist_songs, get_playlist_info, download_from_user_playlist, download_playlist
 from podcast import download_episode, get_show_episodes
@@ -182,6 +182,7 @@ def search(search_term):
                 dics.append({
                     ID: track[ID],
                     NAME: track[NAME],
+                    ALBUM_ID: track[ALBUM][ID],
                     'type': TRACK,
                 })
 

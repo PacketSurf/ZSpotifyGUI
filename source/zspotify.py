@@ -93,13 +93,13 @@ class ZSpotify:
             for t in resp[TRACKS][ITEMS]:
                 try:
                     artists = ', '.join([artist[NAME] for artist in t[ARTISTS]])
-                    if SPOTIFY in t[EXTERNAL_URLS]:
-	                    url = t[EXTERNAL_URLS][SPOTIFY]
-                    else: url = ""
+                    #if SPOTIFY in t[EXTERNAL_URLS]:
+	                    #url = t[EXTERNAL_URLS][SPOTIFY]
+                    #else: url = ""
                     image_url = t[ALBUM][IMAGES][1][URL]
                     duration = ms_to_time_str(t[DURATION])
                     track = Track(counter, t[ID], str(t[NAME]), artists, str(t[ALBUM][NAME]), \
-                        release_date=t[ALBUM][RELEASE_DATE], duration=duration, img=image_url, url=url)
+                        release_date=t[ALBUM][RELEASE_DATE], duration=duration, album_id=t[ALBUM][ID], img=image_url)#, url=url)
                     results[TRACKS].append(track)
                     counter += 1
                 except Exception as e:
@@ -109,7 +109,7 @@ class ZSpotify:
             for a in resp[ALBUMS][ITEMS]:
                 try:
                     if len(a[IMAGES]) > 1:
-                        iamge_url = a[IMAGES][1][URL]
+                        image_url = a[IMAGES][1][URL]
                     else: image_url = ""
                     artists = ', '.join([artist[NAME] for artist in a[ARTISTS]])
                     album = Album(counter, a[ID], a[NAME], artists, a[TOTAL_TRACKS], release_date=a[RELEASE_DATE], img=image_url)
@@ -153,7 +153,7 @@ class ZSpotify:
             artists = ', '.join([artist[NAME] for artist in item[TRACK][ARTISTS]])
             duration = ms_to_time_str(item[TRACK][DURATION])
             track = Track(index, item[TRACK][ID], item[TRACK][NAME], artists, album=item[TRACK][ALBUM][NAME], \
-            img=item[TRACK][ALBUM][IMAGES][1][URL], duration=duration, url=url)
+            img=item[TRACK][ALBUM][IMAGES][1][URL], duration=duration, album_id=item[TRACK][ALBUM][ID])
             tracks.append(track)
         return tracks
 

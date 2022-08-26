@@ -1,6 +1,7 @@
 import pyperclip
 from PyQt5.QtWidgets import QTreeWidgetItem, QMenu, QApplication, QTreeWidget
 from PyQt5.QtCore import Qt, pyqtSignal, QObject
+from const import TRACK
 from item import Item
 from utils import delete_file
 
@@ -166,11 +167,14 @@ class ItemTree:
         self.remove_item(self.selected_item)
 
     def on_copy_link(self):
-        if not self.selected_item or self.selected_item.downloaded: return
         pyperclip.copy(self.selected_item.url)
+
+    def on_copy_album_link(self):
+        pyperclip.copy(self.selected_item.album_url)
 
     def on_context_menu(self, pos):
         if not self.selected_item: return
+        #self.selected_item.update_meta_tags()
         node = self.tree.mapToGlobal(pos)
         self.popup_menu = QMenu(None)
         if self.selected_item.downloaded:
@@ -179,8 +183,10 @@ class ItemTree:
                 self.popup_menu.addAction("Remove from listen queue", self.on_listen_unqueue)
         else:
             self.popup_menu.addAction("Add to download queue", self.on_download_item)
-            if self.selected_item.type == "Track" and self.selected_item.url != "":
-                self.popup_menu.addAction("Copy link", self.on_copy_link)
+        if self.selected_item.url != "":
+            self.popup_menu.addAction("Copy link", self.on_copy_link)
+        if self.selected_item.type == TRACK and self.selected_item.album_url != "":
+            self.popup_menu.addAction("Copy album link", self.on_copy_album_link)
         if self.selected_item.downloaded:
             self.popup_menu.addSeparator()
             self.popup_menu.addAction("Delete", self.on_delete_item)

@@ -12,7 +12,7 @@ import music_tag
 import requests
 
 from const import ARTIST, TRACKTITLE, ALBUM, YEAR, DISCNUMBER, TRACKNUMBER, ARTWORK, \
-    WINDOWS_SYSTEM, ALBUMARTIST, COMMENT, ID
+    WINDOWS_SYSTEM, ALBUMARTIST, COMMENT, ID, ALBUM_ID
 from config import Config
 logger = logging.getLogger(__name__)
 
@@ -125,7 +125,7 @@ def clear() -> None:
         os.system('clear')
 
 
-def set_audio_tags(filename, artists, name, album_name, release_year=-1, disc_number=-1, track_number=-1, spotify_id="", img="") -> None:
+def set_audio_tags(filename, artists, name, album_name, release_year=-1, disc_number=-1, track_number=-1, spotify_id="", album_id="", img="") -> None:
     """ sets music_tag metadata """
     tags = music_tag.load_file(filename)
     tags[ALBUMARTIST] = artists[0]
@@ -138,6 +138,7 @@ def set_audio_tags(filename, artists, name, album_name, release_year=-1, disc_nu
     meta_data = {}
     if not spotify_id == "": meta_data[ID] = spotify_id
     if not img == "": meta_data[ARTWORK] = img
+    if not album_id == "": meta_data[ALBUM_ID] = album_id
     tags[COMMENT] = format_meta_data(meta_data)
     tags.save()
 

@@ -67,8 +67,9 @@ def get_song_info(song_id) -> Tuple[List[str], str, str, Any, Any, Any, Any, Any
         scraped_song_id = info[TRACKS][0][ID]
         is_playable = info[TRACKS][0][IS_PLAYABLE]
         duration_ms = info[TRACKS][0][DURATION_MS]
+        album_id = info[TRACKS][0][ALBUM][ID]
 
-        return artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable, duration_ms
+        return artists, album_name, name, image_url, release_year, disc_number, track_number, scraped_song_id, is_playable, duration_ms, album_id
     except Exception as e:
         raise ValueError(f'Failed to parse TRACKS_URL response: {str(e)}\n{raw}')
 
@@ -121,7 +122,7 @@ def download_track(track_id: str, extra_keys='', prefix=False, prefix_value='', 
     try:
         logger.info(f"Initialising download {track_id}.")
         (artists, album_name, name, image_url, release_year, disc_number,
-         track_number, scraped_song_id, is_playable, duration_ms) = get_song_info(track_id)
+         track_number, scraped_song_id, is_playable, duration_ms, album_id) = get_song_info(track_id)
         logger.info(f"Scraped track info.")
         song_name = fix_filename(artists[0]) + ' - ' + fix_filename(name)
 
@@ -139,6 +140,7 @@ def download_track(track_id: str, extra_keys='', prefix=False, prefix_value='', 
         output_template = output_template.replace("{track_number}", fix_filename(track_number))
         output_template = output_template.replace("{id}", fix_filename(scraped_song_id))
         output_template = output_template.replace("{track_id}", fix_filename(track_id))
+        output_template = output_template.replace("{album_id}", fix_filename(album_id))
         output_template = output_template.replace("{ext}", ext)
 
         filename = os.path.join(Config.get_root_path(), output_template)
@@ -222,7 +224,7 @@ def download_track(track_id: str, extra_keys='', prefix=False, prefix_value='', 
 
                     convert_audio_format(filename_temp)
                     logger.info("Setting track metadata.")
-                    set_audio_tags(filename_temp, artists, name, album_name, release_year, disc_number, track_number, spotify_id=scraped_song_id, img=image_url)
+                    set_audio_tags(filename_temp, artists, name, album_name, release_year, disc_number, track_number, spotify_id=scraped_song_id, album_id=album_id, img=image_url)
                     logger.info("Setting track thumbnail.")
                     set_music_thumbnail(filename_temp, image_url)
 
